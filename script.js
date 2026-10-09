@@ -811,13 +811,6 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("beforeunload", () => saveGame(false))
 })
 
-
-
-/* -------------------- GLOBAL LEADERBOARD --------------------
-   Configure SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY below after creating
-   a Supabase project. The leaderboard uses anonymous auth, so players do not
-   need to provide an email address.
-*/
 const SUPABASE_URL = "https://soofisuqqwszdhqxiqzw.supabase.co"
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_r68LSwAd5IFOdsI9sm31Gg_cx2-DmSe"
 const LEADERBOARD_TABLE = "fribby_leaderboard"
