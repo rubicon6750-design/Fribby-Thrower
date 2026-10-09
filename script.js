@@ -818,8 +818,8 @@ document.addEventListener("DOMContentLoaded", () => {
    a Supabase project. The leaderboard uses anonymous auth, so players do not
    need to provide an email address.
 */
-const SUPABASE_URL = "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE"
-const SUPABASE_PUBLISHABLE_KEY = "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE"
+const SUPABASE_URL = https://soofisuqqwszdhqxiqzw.supabase.co
+const SUPABASE_PUBLISHABLE_KEY = sb_publishable_r68LSwAd5IFOdsI9sm31Gg_cx2-DmSe
 const LEADERBOARD_TABLE = "fribby_leaderboard"
 let leaderboardClient = null
 let leaderboardUserId = null
