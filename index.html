@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+    <title>Fribby Thrower</title>
+  </head>
+    <body>
+    <main class="clicker-area">
+      <h1>Fribby Thrower</h1>
+      <button id="fribbyButton" onclick="throwFribby()">Fribby!</button>
+      <p id="fribbyAmount">Fribbies Thrown: 0</p>
+      <div class="save-controls" aria-label="Game save controls">
+        <button type="button" onclick="saveGame(true)">Save Game</button>
+        <button type="button" onclick="loadGame(true)">Load Save</button>
+        <button type="button" onclick="exportSave()">Export Save File</button>
+        <button type="button" onclick="document.getElementById('importSaveFile').click()">Import Save File</button>
+        <input id="importSaveFile" type="file" accept=".json,application/json" hidden onchange="importSaveFile(event)">
+        <p id="saveStatus" role="status" aria-live="polite">Autosave is ready.</p>
+      </div>
+
+      <div class="upgrade-list" aria-label="Upgrades">
+        <button id="upgrade0" onclick="buy0()">Extra Hand (0, +1 Fribby per click) - 50 Fribbies</button>
+        <button id="upgrade1" onclick="buy1()">Auto Thrower (0, +1 auto throw/sec) - 200 Fribbies</button>
+        <button id="upgrade2" onclick="buy2()">Intern (0, +1 Fribby per auto throw) - 500</button>
+        <button id="upgrade3" onclick="buy3()">Fribby Cannon (0, +5 Fribbies per click) - 1000 Fribbies</button>
+        <button id="upgrade4" onclick="buy4()">Supervisor (0, +5 Fribbies per auto throw) - 2500 Fribbies</button>
+        <button id="upgrade5" onclick="buy5()">Power Throw (0, +10 Fribbies per click) - 5000 Fribbies</button>
+        <button id="upgrade6" onclick="buy6()">Fribby Factory (0, +10 Fribbies per auto throw) - 10000 Fribbies</button>
+        <button id="upgrade7" onclick="buy7()">Turbo Thrower (0, +5 auto throws/sec) - 25000 Fribbies</button>
+        <button id="upgrade8" onclick="buy8()">Mega Cannon (0, +100 per click) - 50000 Fribbies</button>
+        <button id="minigameUpgrade" type="button" onclick="buyMinigameUnlock()">Unlock Minigame (0/6, lets you play for Fribbies) - 5000 Fribbies</button>
+      </div>
+    </main>
+
+    <section id="leaderboardArea" class="leaderboard-area">
+      <h2>Global Leaderboard</h2>
+      <p>Compete with players around the world by your current Fribby balance.</p>
+      <div class="leaderboard-controls">
+        <label for="leaderboardName">Player name</label>
+        <input id="leaderboardName" type="text" maxlength="20" placeholder="Choose a name" autocomplete="nickname">
+        <button type="button" onclick="submitLeaderboardScore()">Submit Score</button>
+        <button type="button" onclick="refreshLeaderboard()">Refresh Rankings</button>
+      </div>
+      <p id="leaderboardStatus" role="status" aria-live="polite">Leaderboard setup required. See README-LEADERBOARD.txt.</p>
+      <ol id="leaderboardList" aria-label="Global leaderboard rankings">
+        <li>Connect Supabase to load global rankings.</li>
+      </ol>
+    </section>
+
+    <div id="minigamesArea" hidden>
+        <h2>Minigames</h2>
+    <p id="minigameUnlockStatus" aria-live="polite">Unlock minigames with the upgrade above.</p>
+    <nav id="minigameSelector" aria-label="Choose a minigame">
+      <button type="button" data-minigame="patternRecall" onclick="showMinigame('patternRecall')" hidden>Pattern Recall</button>
+      <button type="button" data-minigame="luckySpin" onclick="showMinigame('luckySpin')" hidden>Lucky Spin</button>
+      <button type="button" data-minigame="numberGuess" onclick="showMinigame('numberGuess')" hidden>Number Guess</button>
+      <button type="button" data-minigame="pathFinder" onclick="showMinigame('pathFinder')" hidden>Path Finder</button>
+      <button type="button" data-minigame="matching" onclick="showMinigame('matching')" hidden>Fribby Match</button>
+      <button type="button" data-minigame="minesweeper" onclick="showMinigame('minesweeper')" hidden>Fribbysweeper</button>
+    </nav>
+
+    <section id="minigame-minesweeper" hidden>
+      <h3>Fribbysweeper!</h3>
+      <button id="minesweeperButton" onclick="createMinesweeper()">New Fribbysweeper Game</button>
+      <p id="minesweeperStatus" aria-live="polite"></p>
+      <div id="minesweeperBoard" aria-label="Minesweeper board"></div>
+    </section>
+        <section id="minigame-numberGuess" hidden>
+      <h3>Number Guess</h3>
+      <p>Guess how many Fribbies I'm thinking of, from 1 to 20. Win 100 Fribbies!</p>
+      <button type="button" onclick="startNumberGuess()">Deal a Fribby Number</button>
+      <label for="numberGuessInput">Your Fribby guess:</label>
+      <input id="numberGuessInput" type="number" min="1" max="20">
+      <button type="button" onclick="checkNumberGuess()">Guess</button>
+      <p id="numberGuessStatus" aria-live="polite">Start a new game when you're ready.</p>
+    </section>
+
+    <section id="minigame-matching" hidden>
+      <h3>Fribby Match</h3>
+      <p>Match the colorful flying discs! Find all 8 pairs to earn 150 Fribbies.</p>
+      <button type="button" onclick="createMatchingGame()">Shuffle the Fribbies</button>
+      <p id="matchingStatus" aria-live="polite">Ready to match some Fribbies?</p>
+      <div id="matchingBoard" aria-label="Matching game board"></div>
+        </section>
+
+    <section id="minigame-pathFinder" hidden>
+      <h3>Path Finder</h3>
+      <p>Guide your flying Fribby through the course to the target. Use arrow keys or buttons to win 100 Fribbies!</p>
+      <p id="pathFinderStatus" aria-live="polite">Start a new maze to play.</p>
+      <div id="pathFinderBoard" aria-label="Path Finder maze"></div>
+      <div id="pathFinderControls" aria-label="Move through the maze">
+        <button type="button" onclick="movePathFinder(0, -1)" aria-label="Move up">↑</button>
+        <div>
+          <button type="button" onclick="movePathFinder(-1, 0)" aria-label="Move left">←</button>
+          <button type="button" onclick="movePathFinder(0, 1)" aria-label="Move down">↓</button>
+          <button type="button" onclick="movePathFinder(1, 0)" aria-label="Move right">→</button>
+        </div>
+      </div>
+      <button type="button" onclick="createPathFinderGame()">New Maze</button>
+    </section>
+
+    <section id="minigame-patternRecall" hidden>
+      <h3>Pattern Recall</h3>
+      <p>Watch the flying Fribby sequence, then repeat it. Earn 10 Fribbies for the first round, plus 10 more for each consecutive round completed.</p>
+      <button type="button" onclick="startPatternRecall()">Launch a Pattern</button>
+      <p id="patternRecallStatus" aria-live="polite">Ready to launch? Start a new pattern!</p>
+      <div id="patternRecallBoard" aria-label="Pattern Recall buttons"></div>
+    </section>
+
+    <section id="minigame-luckySpin" hidden>
+      <h3>Lucky Spin</h3>
+      <p>Give the Fribby wheel a spin! Each spin costs 50 Fribbies, with prizes from 0 to 200 Fribbies.</p>
+      <button id="luckySpinButton" type="button" onclick="spinLuckyWheel()">🥏 Spin the Fribby Wheel (50 Fribbies)</button>
+      <p id="luckySpinStatus" aria-live="polite">Ready, set, spin!</p>
+    </section>
+    </div>
+
+  </body>
+</html>

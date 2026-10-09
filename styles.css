@@ -1,0 +1,250 @@
+body{
+  padding: 25px;
+  background: #f5f8ff;
+  color: #24304a;
+  font-family: Arial, sans-serif;
+}
+
+#minigamesArea section,
+.clicker-area {
+  max-width: 560px;
+  margin: 18px 0;
+  padding: 16px;
+  border: 2px solid #c8d8f3;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ffffff, #eef5ff);
+  box-shadow: 0 4px 12px #24304a18;
+}
+
+#minigamesArea h2,
+#minigamesArea h3 {
+  color: #405eaa;
+}
+
+#minigamesArea button,
+.clicker-area button {
+  border: 1px solid #9aafd8;
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: #26395f;
+  background: #e8efff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+#minigamesArea button:hover:not(:disabled),
+.clicker-area button:hover:not(:disabled) {
+  background: #d4e1ff;
+}
+
+.clicker-area h1 {
+  margin-top: 0;
+  color: #405eaa;
+}
+
+#fribbyAmount {
+  margin: 12px 0 18px;
+  color: #405eaa;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.upgrade-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+#fribbyButton {
+  padding: 12px 24px;
+  border-color: #6f8fd0;
+  background: #d4e1ff;
+  color: #243b72;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.title {
+	color: #5C6AC4;
+}
+
+#minesweeperBoard {
+  display: grid;
+  grid-template-columns: repeat(10, 36px);
+  gap: 3px;
+  margin-top: 12px;
+}
+
+.minesweeper-tile {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.minesweeper-tile.revealed {
+  background: #e3e3e3;
+  border: 1px solid #aaa;
+  cursor: default;
+}
+
+.minesweeper-tile.mine {
+  background: #f2a0a0;
+}
+
+#matchingBoard {
+  display: grid;
+  grid-template-columns: repeat(4, 64px);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+#pathFinderBoard {
+  display: grid;
+  grid-template-columns: repeat(7, 38px);
+  gap: 3px;
+  margin: 12px 0;
+}
+
+.path-cell {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: #e8f2e8;
+}
+
+.path-cell.wall {
+  background: #555;
+}
+
+.path-cell.goal {
+  background: #b8e6b8;
+}
+
+#pathFinderControls {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+#pathFinderControls button {
+  min-width: 42px;
+  min-height: 36px;
+}
+
+#patternRecallBoard {
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pattern-tile {
+  width: 64px;
+  height: 64px;
+  background: #dce5f5;
+  cursor: pointer;
+  transition: background-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+#minigamesArea button.pattern-tile.pattern-active {
+  background: #ffd45c;
+  border-color: #c58b00;
+  box-shadow: 0 0 0 3px #ffd45c66;
+}
+
+.pattern-tile:disabled {
+  cursor: default;
+}
+
+.matching-card {
+  width: 64px;
+  height: 64px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.matching-card.revealed {
+  background: #e3e3e3;
+}
+
+.matching-card.matched {
+  background: #b8e6b8;
+  cursor: default;
+}
+
+.save-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 18px;
+}
+
+#saveStatus {
+  flex-basis: 100%;
+  margin: 2px 0;
+  color: #405eaa;
+  font-size: 0.92rem;
+}
+
+#saveStatus {
+  overflow-wrap: anywhere;
+}
+
+
+.leaderboard-area {
+  width: min(720px, calc(100% - 32px));
+  margin: 24px auto;
+  padding: 20px;
+  border: 1px solid #c9d4e8;
+  border-radius: 12px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.leaderboard-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+#leaderboardName {
+  min-width: 150px;
+  max-width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #aab8d0;
+  border-radius: 6px;
+  font: inherit;
+}
+
+#leaderboardList {
+  padding-left: 2.2rem;
+}
+
+#leaderboardList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 9px 10px;
+  border-bottom: 1px solid #e5eaf2;
+  overflow-wrap: anywhere;
+}
+
+#leaderboardList li:first-child {
+  font-weight: 700;
+}
+
+#leaderboardList strong {
+  white-space: nowrap;
+}
+
+#leaderboardStatus {
+  overflow-wrap: anywhere;
+  color: #405eaa;
+}
