@@ -451,8 +451,86 @@ function revealAllMines() {
   }
 }
 
+let pathFinderMaze = []
+let pathFinderPosition = { row: 0, column: 0 }
+let pathFinderActive = false
+
+function generatePathFinderMaze() {
+  const maze = Array.from({ length: 7 }, () => Array(7).fill(1))
+  const visited = Array.from({ length: 4 }, () => Array(4).fill(false))
+  const stack = [[0, 0]]
+  const directions = [[-2, 0], [2, 0], [0, -2], [0, 2]]
+
+  visited[0][0] = true
+  maze[0][0] = 0
+
+  while (stack.length > 0) {
+    const [row, column] = stack[stack.length - 1]
+    const options = directions.filter(([rowChange, columnChange]) => {
+      const nextRow = row + rowChange
+      const nextColumn = column + columnChange
+      return nextRow >= 0 && nextRow < 7 && nextColumn >= 0 && nextColumn < 7 &&
+        !visited[nextRow / 2][nextColumn / 2]
+    })
+
+    if (options.length === 0) {
+      stack.pop()
+      continue
+    }
+
+    const [rowChange, columnChange] = options[Math.floor(Math.random() * options.length)]
+    const nextRow = row + rowChange
+    const nextColumn = column + columnChange
+    maze[row + rowChange / 2][column + columnChange / 2] = 0
+    maze[nextRow][nextColumn] = 0
+    visited[nextRow / 2][nextColumn / 2] = true
+    stack.push([nextRow, nextColumn])
+  }
+
+  return maze
+}
+
+function createPathFinderGame() {
+  pathFinderMaze = generatePathFinderMaze()
+  pathFinderPosition = { row: 0, column: 0 }
+  pathFinderActive = true
+  renderPathFinderBoard()
+  document.getElementById("pathFinderStatus").textContent = "Find the Fribby target! Use arrow keys or the direction buttons."
+}
+
+function renderPathFinderBoard() {
+  const board = document.getElementById("pathFinderBoard")
+  board.innerHTML = ""
+  pathFinderMaze.forEach((row, rowIndex) => {
+    row.forEach((wall, columnIndex) => {
+      const cell = document.createElement("div")
+      cell.className = "path-cell"
+      if (wall) {
+        cell.classList.add("wall")
+        cell.textContent = ""
+        cell.setAttribute("aria-label", "Wall")
+      } else if (rowIndex === pathFinderPosition.row && columnIndex === pathFinderPosition.column) {
+        cell.classList.add("player")
+                cell.textContent = "🥏"
+        cell.setAttribute("aria-label", "Your flying Fribby")
+      } else if (rowIndex === pathFinderMaze.length - 1 && columnIndex === pathFinderMaze[0].length - 1) {
+        cell.classList.add("goal")
+                cell.textContent = "🎯"
+        cell.setAttribute("aria-label", "Fribby target")
+      } else {
+        cell.setAttribute("aria-label", "Path")
+      }
+      board.appendChild(cell)
+    })
+  })
+}
+
+function movePathFinder(columnChange, rowChange) {
+  if (!pathFinderActive) return
+  const row = pathFinderPosition.row + rowChange
 const row = pathFinderPosition.row + rowChange
   const column = pathFinderPosition.column + columnChange
+  if (row < 0 || row >= pathFinderMaze.length || column < 0 || column >= pathFinderMaze[0].length || pathFinderMaze[row][column]) return
 
   if (
     row < 0 || row >= pathFinderMaze.length ||
@@ -462,11 +540,13 @@ const row = pathFinderPosition.row + rowChange
 
   pathFinderPosition = { row, column }
   renderPathFinderBoard()
+  if (row === pathFinderMaze.length - 1 && column === pathFinderMaze[0].length - 1) {
 
   if (row === pathFinderGoal.row && column === pathFinderGoal.column) {
     pathFinderActive = false
     fribbies += 100
     updateFribby()
+    document.getElementById("pathFinderStatus").textContent = "Bullseye! You guided the Fribby home and earned 100 Fribbies."
     document.getElementById("pathFinderStatus").textContent =
       "Bullseye! You guided the Fribby home and earned 100 Fribbies."
   }
