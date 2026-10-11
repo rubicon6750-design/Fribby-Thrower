@@ -454,45 +454,30 @@ function revealAllMines() {
 
 let pathFinderMaze = []
 let pathFinderPosition = { row: 0, column: 0 }
-let pathFinderGoal = { row: 6, column: 6 }
+let pathFinderGoal = { row: 12, column: 12 }
 let pathFinderActive = false
 
 function generatePathFinderMaze() {
-  const maze = Array.from({ length: 7 }, () => Array(7).fill(1))
-  const visited = Array.from({ length: 4 }, () => Array(4).fill(false))
+  // Build a 13x13 maze from a 7x7 grid of intersections.
+  const mazeSize = 13
+  const intersectionSize = 7
+  const maze = Array.from({ length: mazeSize }, () => Array(mazeSize).fill(1))
+  const visited = Array.from({ length: intersectionSize }, () => Array(intersectionSize).fill(false))
 
-  // Choose random, distinct starting and ending intersections.
-  const startCell = Math.floor(Math.random() * 16)
-  let goalCell
-  do {
-    goalCell = Math.floor(Math.random() * 16)
-  } while (goalCell === startCell)
-
-  const startRow = Math.floor(startCell / 4) * 2
-  const startColumn = (startCell % 4) * 2
-  const goalRow = Math.floor(goalCell / 4) * 2
-  const goalColumn = (goalCell % 4) * 2
-
-  const stack = [[startRow, startColumn]]
+  // Carve a randomized maze using depth-first search.
+  const stack = [[0, 0]]
   const directions = [[-2, 0], [2, 0], [0, -2], [0, 2]]
-
-  visited[startRow / 2][startColumn / 2] = true
-  maze[startRow][startColumn] = 0
+  visited[0][0] = true
+  maze[0][0] = 0
 
   while (stack.length > 0) {
     const [row, column] = stack[stack.length - 1]
-
     const options = directions.filter(([rowChange, columnChange]) => {
       const nextRow = row + rowChange
       const nextColumn = column + columnChange
-
-      return (
-        nextRow >= 0 &&
-        nextRow < 7 &&
-        nextColumn >= 0 &&
-        nextColumn < 7 &&
+      return nextRow >= 0 && nextRow < mazeSize &&
+        nextColumn >= 0 && nextColumn < mazeSize &&
         !visited[nextRow / 2][nextColumn / 2]
-      )
     })
 
     if (options.length === 0) {
@@ -500,23 +485,37 @@ function generatePathFinderMaze() {
       continue
     }
 
-    const [rowChange, columnChange] =
-      options[Math.floor(Math.random() * options.length)]
-
+    const [rowChange, columnChange] = options[Math.floor(Math.random() * options.length)]
     const nextRow = row + rowChange
     const nextColumn = column + columnChange
-
     maze[row + rowChange / 2][column + columnChange / 2] = 0
     maze[nextRow][nextColumn] = 0
     visited[nextRow / 2][nextColumn / 2] = true
     stack.push([nextRow, nextColumn])
   }
 
-  return {
-    maze,
-    start: { row: startRow, column: startColumn },
-    goal: { row: goalRow, column: goalColumn }
+  // Choose random dead ends for both the player and target. A dead end has
+  // exactly one open neighboring cell, so the target is always at the end
+  // of the maze path rather than in the middle of a corridor.
+  const deadEnds = []
+  for (let row = 0; row < mazeSize; row++) {
+    for (let column = 0; column < mazeSize; column++) {
+      if (maze[row][column] !== 0) continue
+      const openNeighbors = [[-1, 0], [1, 0], [0, -1], [0, 1]].filter(([dr, dc]) => {
+        const r = row + dr
+        const c = column + dc
+        return r >= 0 && r < mazeSize && c >= 0 && c < mazeSize && maze[r][c] === 0
+      }).length
+      if (openNeighbors === 1) deadEnds.push({ row, column })
+    }
   }
+
+  const startIndex = Math.floor(Math.random() * deadEnds.length)
+  const start = deadEnds[startIndex]
+  const possibleGoals = deadEnds.filter((_, index) => index !== startIndex)
+  const goal = possibleGoals[Math.floor(Math.random() * possibleGoals.length)]
+
+  return { maze, start, goal }
 }
 
 function createPathFinderGame() {
@@ -593,11 +592,11 @@ function movePathFinder(columnChange, rowChange) {
     column === pathFinderGoal.column
   ) {
     pathFinderActive = false
-    fribbies += 100
+    fribbies += 250
     updateFribby()
 
     document.getElementById("pathFinderStatus").textContent =
-      "Bullseye! You guided the Fribby home and earned 100 Fribbies."
+      "Bullseye! You guided the Fribby home and earned 250 Fribbies."
   }
 }
 
