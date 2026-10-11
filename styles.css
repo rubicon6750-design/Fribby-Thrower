@@ -120,7 +120,7 @@ button:disabled {
 
 #pathFinderBoard {
   display: grid;
-  grid-template-columns: repeat(7, 38px);
+  grid-template-columns: repeat(13, 38px);
   gap: 3px;
   margin: 12px 0;
 }
