@@ -267,3 +267,26 @@ button:disabled {
   overflow-wrap: anywhere;
   color: #405eaa;
 }
+
+
+.lucky-wheel {
+  width: 132px;
+  height: 132px;
+  margin: 14px auto;
+  display: grid;
+  place-items: center;
+  border: 8px solid #405eaa;
+  border-radius: 50%;
+  background: conic-gradient(#ffd45c 0 45deg, #dce7ff 45deg 90deg, #a8c7ff 90deg 135deg, #f5b7b7 135deg 180deg, #ffd45c 180deg 225deg, #dce7ff 225deg 270deg, #a8c7ff 270deg 315deg, #f5b7b7 315deg 360deg);
+  font-size: 2.6rem;
+  box-shadow: 0 4px 12px #24304a30;
+}
+
+.lucky-wheel.spinning {
+  animation: lucky-wheel-spin 1.7s cubic-bezier(.12,.72,.12,1) both;
+}
+
+@keyframes lucky-wheel-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(1800deg); }
+}

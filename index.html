@@ -18,21 +18,21 @@
         <button type="button" onclick="loadGame(true)">Load Save</button>
         <button type="button" onclick="exportSave()">Export Save File</button>
         <button type="button" onclick="document.getElementById('importSaveFile').click()">Import Save File</button>
-        <input id="importSaveFile" type="file" accept=".json,application/json" hidden onchange="importSaveFile(event)">
+        <input id="importSaveFile" type="file" accept=".txt,.json,text/plain,application/json" hidden onchange="importSaveFile(event)">
         <p id="saveStatus" role="status" aria-live="polite">Autosave is ready.</p>
       </div>
 
       <div class="upgrade-list" aria-label="Upgrades">
-        <button id="upgrade0" onclick="buy0()">Extra Hand (0, +1 Fribby per click) - 50 Fribbies</button>
-        <button id="upgrade1" onclick="buy1()">Auto Thrower (0, +1 auto throw/sec) - 200 Fribbies</button>
-        <button id="upgrade2" onclick="buy2()">Intern (0, +1 Fribby per auto throw) - 500</button>
-        <button id="upgrade3" onclick="buy3()">Fribby Cannon (0, +5 Fribbies per click) - 1000 Fribbies</button>
-        <button id="upgrade4" onclick="buy4()">Supervisor (0, +5 Fribbies per auto throw) - 2500 Fribbies</button>
-        <button id="upgrade5" onclick="buy5()">Power Throw (0, +10 Fribbies per click) - 5000 Fribbies</button>
-        <button id="upgrade6" onclick="buy6()">Fribby Factory (0, +10 Fribbies per auto throw) - 10000 Fribbies</button>
-        <button id="upgrade7" onclick="buy7()">Turbo Thrower (0, +5 auto throws/sec) - 25000 Fribbies</button>
-        <button id="upgrade8" onclick="buy8()">Mega Cannon (0, +100 per click) - 50000 Fribbies</button>
-        <button id="minigameUpgrade" type="button" onclick="buyMinigameUnlock()">Unlock Minigame (0/6, lets you play for Fribbies) - 5000 Fribbies</button>
+        <button id="upgrade0" onclick="buy0()">Extra Hand (0, +1 Fribby per click) - 10 Fribbies</button>
+        <button id="upgrade1" onclick="buy1()">Auto Thrower (0, +1 auto throw/sec) - 50 Fribbies</button>
+        <button id="upgrade2" onclick="buy2()">Intern (0, +1 Fribby per auto throw) - 200 Fribbies</button>
+        <button id="upgrade3" onclick="buy3()">Fribby Cannon (0, +5 Fribbies per click) - 500 Fribbies</button>
+        <button id="upgrade4" onclick="buy4()">Supervisor (0, +5 Fribbies per auto throw) - 1000 Fribbies</button>
+        <button id="upgrade5" onclick="buy5()">Power Throw (0, +10 Fribbies per click) - 2500 Fribbies</button>
+        <button id="upgrade6" onclick="buy6()">Fribby Factory (0, +10 Fribbies per auto throw) - 5000 Fribbies</button>
+        <button id="upgrade7" onclick="buy7()">Turbo Thrower (0, +5 auto throws/sec) - 10000 Fribbies</button>
+        <button id="upgrade8" onclick="buy8()">Mega Cannon (0, +100 per click) - 25000 Fribbies</button>
+        <button id="minigameUpgrade" type="button" onclick="buyMinigameUnlock()">Unlock Minigame (0/6, lets you play for Fribbies) - 2500 Fribbies</button>
       </div>
     </main>
 
@@ -55,11 +55,11 @@
         <h2>Minigames</h2>
     <p id="minigameUnlockStatus" aria-live="polite">Unlock minigames with the upgrade above.</p>
     <nav id="minigameSelector" aria-label="Choose a minigame">
-      <button type="button" data-minigame="patternRecall" onclick="showMinigame('patternRecall')" hidden>Pattern Recall</button>
-      <button type="button" data-minigame="luckySpin" onclick="showMinigame('luckySpin')" hidden>Lucky Spin</button>
       <button type="button" data-minigame="numberGuess" onclick="showMinigame('numberGuess')" hidden>Number Guess</button>
-      <button type="button" data-minigame="pathFinder" onclick="showMinigame('pathFinder')" hidden>Path Finder</button>
+      <button type="button" data-minigame="patternRecall" onclick="showMinigame('patternRecall')" hidden>Pattern Recall</button>
+      <button type="button" data-minigame="luckySpin" onclick="showMinigame('luckySpin')" hidden>Roulette</button>
       <button type="button" data-minigame="matching" onclick="showMinigame('matching')" hidden>Fribby Match</button>
+      <button type="button" data-minigame="pathFinder" onclick="showMinigame('pathFinder')" hidden>Path Finder</button>
       <button type="button" data-minigame="minesweeper" onclick="showMinigame('minesweeper')" hidden>Fribbysweeper</button>
     </nav>
 
@@ -89,7 +89,7 @@
 
     <section id="minigame-pathFinder" hidden>
       <h3>Path Finder</h3>
-      <p>Guide your flying Fribby through the course to the target. Use arrow keys or buttons to win 100 Fribbies!</p>
+      <p>Guide your flying Fribby through the course to the target. Use arrow keys or buttons to win 250 Fribbies!</p>
       <p id="pathFinderStatus" aria-live="polite">Start a new maze to play.</p>
       <div id="pathFinderBoard" aria-label="Path Finder maze"></div>
       <div id="pathFinderControls" aria-label="Move through the maze">
@@ -112,9 +112,10 @@
     </section>
 
     <section id="minigame-luckySpin" hidden>
-      <h3>Lucky Spin</h3>
-      <p>Give the Fribby wheel a spin! Each spin costs 50 Fribbies, with prizes from 0 to 200 Fribbies.</p>
-      <button id="luckySpinButton" type="button" onclick="spinLuckyWheel()">🥏 Spin the Fribby Wheel (50 Fribbies)</button>
+      <h3>Roulette</h3>
+      <p>Give the Fribby wheel a spin! Each spin costs 100 Fribbies. There is a 1% chance to win 1,000 Fribbies!</p>
+      <button id="luckySpinButton" type="button" onclick="spinLuckyWheel()">🥏 Spin the Fribby Wheel (100 Fribbies)</button>
+      <div id="luckyWheel" class="lucky-wheel" aria-label="Lucky wheel">🥏</div>
       <p id="luckySpinStatus" aria-live="polite">Ready, set, spin!</p>
     </section>
     </div>

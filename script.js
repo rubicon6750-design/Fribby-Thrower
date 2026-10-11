@@ -1,23 +1,23 @@
 let fribbies = 0
 
 let u0Amount = 0
-let u0Cost = 50
+let u0Cost = 10
 let u1Amount = 0
-let u1Cost = 200
+let u1Cost = 50
 let u2Amount = 0
-let u2Cost = 500
+let u2Cost = 200
 let u3Amount = 0
-let u3Cost = 1000
+let u3Cost = 500
 let u4Amount = 0
-let u4Cost = 2500
+let u4Cost = 1000
 let u5Amount = 0
-let u5Cost = 5000
+let u5Cost = 2500
 let u6Amount = 0
-let u6Cost = 10000
+let u6Cost = 5000
 let u7Amount = 0
-let u7Cost = 25000
+let u7Cost = 10000
 let u8Amount = 0
-let u8Cost = 50000
+let u8Cost = 25000
 
 let autoThrowTimer
 
@@ -50,7 +50,7 @@ function buy1() {
    u1Cost = Math.round(u1Cost * 1.5)
    updateFribby()
    document.getElementById("upgrade1").innerText =
-        "Auto Thrower (" + u1Amount + ", +1 auto throw) - " + u1Cost + " Fribbies"
+        "Auto Thrower (" + u1Amount + ", +1 auto throw/sec) - " + u1Cost + " Fribbies"
    updateAutoThrowInterval()
   }
 }
@@ -143,15 +143,15 @@ function updateAutoThrowInterval() {
 }
 
 const minigameUnlockOrder = [
+  "numberGuess",
   "patternRecall",
   "luckySpin",
-  "numberGuess",
-  "pathFinder",
   "matching",
+  "pathFinder",
   "minesweeper"
 ]
 let unlockedMinigames = 0
-let minigameUnlockCost = 5000
+let minigameUnlockCost = 2500
 
 function buyMinigameUnlock() {
   const status = document.getElementById("minigameUnlockStatus")
@@ -177,7 +177,7 @@ function buyMinigameUnlock() {
 function getMinigameName(game) {
   const names = {
     patternRecall: "Pattern Recall",
-    luckySpin: "Lucky Spin",
+    luckySpin: "Roulette",
     numberGuess: "Number Guess",
     pathFinder: "Path Finder",
     matching: "Fribby Match",
@@ -323,30 +323,51 @@ function createMinesweeper() {
   const mineCount = 12 + Math.floor(Math.random() * 4)
   const board = document.getElementById("minesweeperBoard")
   const status = document.getElementById("minesweeperStatus")
-  const positions = Array.from({ length: minesweeperRows * minesweeperColumns }, (_, i) => i)
+  const total = minesweeperRows * minesweeperColumns
+  let generated = null
 
-  for (let i = positions.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[positions[i], positions[j]] = [positions[j], positions[i]]
-  }
-
-  minesweeperGrid = Array.from({ length: minesweeperRows }, () =>
-    Array.from({ length: minesweeperColumns }, () => ({ mine: false, nearby: 0, revealed: false, flagged: false }))
-  )
-  minesweeperGameOver = false
-
-  for (let i = 0; i < mineCount; i++) {
-    const position = positions[i]
-    minesweeperGrid[Math.floor(position / minesweeperColumns)][position % minesweeperColumns].mine = true
-  }
-
-  for (let row = 0; row < minesweeperRows; row++) {
-    for (let column = 0; column < minesweeperColumns; column++) {
-      if (!minesweeperGrid[row][column].mine) {
-        minesweeperGrid[row][column].nearby = getNearbyMines(row, column)
+  // Generate boards only when a deterministic Minesweeper solver can finish
+  // them from a guaranteed zero tile. This avoids forced guesses.
+  for (let attempt = 0; !generated; attempt++) {
+    const positions = Array.from({ length: total }, (_, i) => i)
+    for (let i = positions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[positions[i], positions[j]] = [positions[j], positions[i]]
+    }
+    const grid = Array.from({ length: minesweeperRows }, () =>
+      Array.from({ length: minesweeperColumns }, () => ({ mine: false, nearby: 0, revealed: false, flagged: false }))
+    )
+    for (let i = 0; i < mineCount; i++) {
+      const position = positions[i]
+      grid[Math.floor(position / minesweeperColumns)][position % minesweeperColumns].mine = true
+    }
+    for (let r = 0; r < minesweeperRows; r++) {
+      for (let c = 0; c < minesweeperColumns; c++) {
+        if (!grid[r][c].mine) grid[r][c].nearby = countNearbyMinesInGrid(grid, r, c)
+      }
+    }
+    const zeroes = []
+    for (let r = 0; r < minesweeperRows; r++) for (let c = 0; c < minesweeperColumns; c++) {
+      if (!grid[r][c].mine && grid[r][c].nearby === 0) zeroes.push({ row: r, column: c })
+    }
+    // Use a random zero as the starting reveal, so the player never has to
+    // guess the opening move either.
+    for (let i = zeroes.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[zeroes[i], zeroes[j]] = [zeroes[j], zeroes[i]]
+    }
+    for (const start of zeroes) {
+      if (isMinesweeperGridSolvable(grid, start.row, start.column)) {
+        generated = { grid, start }
+        break
       }
     }
   }
+
+  // Extremely rare fallback: a deliberately structured, logic-solvable board.
+  if (!generated) generated = createFallbackNoGuessBoard(mineCount)
+  minesweeperGrid = generated.grid
+  minesweeperGameOver = false
 
   board.innerHTML = ""
   for (let row = 0; row < minesweeperRows; row++) {
@@ -363,8 +384,102 @@ function createMinesweeper() {
       board.appendChild(tile)
     }
   }
+  revealSafeTile(generated.start.row, generated.start.column)
+  status.textContent = `${mineCount} rogue Fribbies are hiding! This board is guaranteed solvable without guessing. Reveal every safe tile to win; right-click to flag.`
+}
 
-  status.textContent = `${mineCount} rogue Fribbies are hiding! Reveal every safe tile to win; right-click to flag.`
+function countNearbyMinesInGrid(grid, row, column) {
+  let count = 0
+  for (let r = Math.max(0, row - 1); r <= Math.min(minesweeperRows - 1, row + 1); r++) {
+    for (let c = Math.max(0, column - 1); c <= Math.min(minesweeperColumns - 1, column + 1); c++) {
+      if ((r !== row || c !== column) && grid[r][c].mine) count++
+    }
+  }
+  return count
+}
+
+function cloneMinesweeperGrid(grid) {
+  return grid.map(row => row.map(tile => ({ ...tile })))
+}
+
+function isMinesweeperGridSolvable(sourceGrid, startRow, startColumn) {
+  const grid = cloneMinesweeperGrid(sourceGrid)
+  const reveal = (row, column) => {
+    if (row < 0 || row >= minesweeperRows || column < 0 || column >= minesweeperColumns) return false
+    const tile = grid[row][column]
+    if (tile.revealed || tile.mine || tile.flagged) return false
+    tile.revealed = true
+    if (tile.nearby === 0) {
+      for (let r = Math.max(0, row - 1); r <= Math.min(minesweeperRows - 1, row + 1); r++) {
+        for (let c = Math.max(0, column - 1); c <= Math.min(minesweeperColumns - 1, column + 1); c++) reveal(r, c)
+      }
+    }
+    return true
+  }
+  reveal(startRow, startColumn)
+  let changed = true
+  while (changed) {
+    changed = false
+    const constraints = []
+    for (let r = 0; r < minesweeperRows; r++) for (let c = 0; c < minesweeperColumns; c++) {
+      const clue = grid[r][c]
+      if (!clue.revealed || clue.nearby === 0) continue
+      const unknown = []
+      let flags = 0
+      for (let nr = Math.max(0, r - 1); nr <= Math.min(minesweeperRows - 1, r + 1); nr++) {
+        for (let nc = Math.max(0, c - 1); nc <= Math.min(minesweeperColumns - 1, c + 1); nc++) {
+          if (nr === r && nc === c) continue
+          const neighbor = grid[nr][nc]
+          if (neighbor.flagged) flags++
+          else if (!neighbor.revealed) unknown.push(nr * minesweeperColumns + nc)
+        }
+      }
+      if (unknown.length) constraints.push({ cells: unknown, mines: clue.nearby - flags })
+    }
+    const safe = new Set(), mines = new Set()
+    for (const constraint of constraints) {
+      if (constraint.mines === 0) constraint.cells.forEach(id => safe.add(id))
+      if (constraint.mines === constraint.cells.length) constraint.cells.forEach(id => mines.add(id))
+    }
+    // Subset deduction: if A is a subset of B, B-A has the difference in mines.
+    for (let i = 0; i < constraints.length; i++) for (let j = 0; j < constraints.length; j++) {
+      if (i === j) continue
+      const a = constraints[i], b = constraints[j]
+      if (a.cells.length >= b.cells.length) continue
+      const bSet = new Set(b.cells)
+      if (!a.cells.every(id => bSet.has(id))) continue
+      const diff = b.cells.filter(id => !a.cells.includes(id))
+      const remaining = b.mines - a.mines
+      if (remaining === 0) diff.forEach(id => safe.add(id))
+      if (remaining === diff.length) diff.forEach(id => mines.add(id))
+    }
+    for (const id of mines) {
+      const tile = grid[Math.floor(id / minesweeperColumns)][id % minesweeperColumns]
+      if (!tile.revealed && !tile.flagged) { tile.flagged = true; changed = true }
+    }
+    for (const id of safe) {
+      const r = Math.floor(id / minesweeperColumns), c = id % minesweeperColumns
+      if (reveal(r, c)) changed = true
+    }
+  }
+  return grid.every(row => row.every(tile => tile.mine || tile.revealed))
+}
+
+function createFallbackNoGuessBoard(mineCount) {
+  const grid = Array.from({ length: minesweeperRows }, () =>
+    Array.from({ length: minesweeperColumns }, () => ({ mine: false, nearby: 0, revealed: false, flagged: false }))
+  )
+  // Place mines in a predictable separated pattern, with a guaranteed zero
+  // start and a clue boundary that can be resolved deterministically.
+  const positions = []
+  for (let r = 0; r < minesweeperRows && positions.length < mineCount; r++) {
+    for (let c = 0; c < minesweeperColumns && positions.length < mineCount; c += 2) positions.push([r, c])
+  }
+  for (const [r, c] of positions) grid[r][c].mine = true
+  for (let r = 0; r < minesweeperRows; r++) for (let c = 0; c < minesweeperColumns; c++) {
+    if (!grid[r][c].mine) grid[r][c].nearby = countNearbyMinesInGrid(grid, r, c)
+  }
+  return { grid, start: { row: minesweeperRows - 1, column: minesweeperColumns - 1 } }
 }
 
 function getNearbyMines(row, column) {
@@ -399,9 +514,9 @@ function revealMinesweeperTile(row, column) {
   revealSafeTile(row, column)
   if (hasWonMinesweeper()) {
     minesweeperGameOver = true
-    fribbies += 500
+    fribbies += 1000
     updateFribby()
-    document.getElementById("minesweeperStatus").textContent = "Score! You earned 500 Fribbies."
+    document.getElementById("minesweeperStatus").textContent = "Score! You earned 1,000 Fribbies."
   }
 }
 
@@ -678,12 +793,6 @@ function handlePatternRecallInput(index) {
   const reward = patternRecallStreak * 10
   fribbies += reward
   updateFribby()
-  if (patternRecallSequence.length >= 8) {
-    patternRecallActive = false
-    document.getElementById("patternRecallStatus").textContent = `Amazing memory! You earned ${reward} Fribbies this round.`
-    return
-  }
-
   document.getElementById("patternRecallStatus").textContent = `Correct! You earned ${reward} Fribbies this round. Next round...`
   patternRecallActive = false
   addPatternRecallStep()
@@ -706,19 +815,39 @@ function initializePatternRecallBoard() {
 
 document.addEventListener("DOMContentLoaded", initializePatternRecallBoard)
 
+let luckySpinInProgress = false
 function spinLuckyWheel() {
-  if (fribbies < 50) {
-    document.getElementById("luckySpinStatus").textContent = "You need 50 Fribbies to power the wheel."
+  if (luckySpinInProgress) return
+  const status = document.getElementById("luckySpinStatus")
+  const button = document.getElementById("luckySpinButton")
+  const wheel = document.getElementById("luckyWheel")
+  if (fribbies < 100) {
+    status.textContent = "You need 100 Fribbies to power the wheel."
     return
   }
-  fribbies -= 50
-  const prizes = [0, 25, 50, 100, 200]
-  const prize = prizes[Math.floor(Math.random() * prizes.length)]
-  fribbies += prize
+  fribbies -= 100
   updateFribby()
-    document.getElementById("luckySpinStatus").textContent = prize === 0
-    ? "The Fribby wheel slipped past the prize. Try another spin!"
-    : `🥏 The wheel landed on ${prize} Fribbies!`
+  luckySpinInProgress = true
+  button.disabled = true
+  wheel.classList.remove("spinning")
+  void wheel.offsetWidth
+  wheel.classList.add("spinning")
+  status.textContent = "The wheel is spinning..."
+  window.setTimeout(() => {
+    const jackpot = Math.random() < 0.01
+    const prizes = [0, 25, 50, 100, 200]
+    const prize = jackpot ? 1000 : prizes[Math.floor(Math.random() * prizes.length)]
+    fribbies += prize
+    updateFribby()
+    wheel.classList.remove("spinning")
+    status.textContent = jackpot
+      ? "JACKPOT! The wheel landed on 1,000 Fribbies!"
+      : prize === 0
+        ? "The Fribby wheel slipped past the prize. Try another spin!"
+        : `🥏 The wheel landed on ${prize} Fribbies!`
+    button.disabled = false
+    luckySpinInProgress = false
+  }, 1700)
 }
 
 /* -------------------- COOKIE SAVE SYSTEM --------------------
@@ -741,7 +870,7 @@ function getGameCookie(name) {
 
 function getGameSaveData() {
   return {
-    version: 1,
+    version: 2,
     fribbies,
     upgrades: [
       { amount: u0Amount, cost: u0Cost },
@@ -788,6 +917,19 @@ function saveGame(showMessage = false) {
   return saved
 }
 
+function migrateSaveData(data) {
+  if (Number(data.version) === 1) {
+    const ratios = [0.2, 0.25, 0.4, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5]
+    data.upgrades = data.upgrades.map((upgrade, index) => ({
+      ...upgrade,
+      cost: Math.max(1, Math.round(Number(upgrade.cost) * ratios[index]))
+    }))
+    data.minigameUnlockCost = Math.max(2500, Math.round((Number(data.minigameUnlockCost) || 5000) / 2))
+    data.version = 2
+  }
+  return data
+}
+
 function loadGame(showMessage = true) {
   let rawSave = null
   const status = document.getElementById("saveStatus")
@@ -811,8 +953,8 @@ function loadGame(showMessage = true) {
   }
 
   try {
-    const data = JSON.parse(rawSave)
-    if (data.version !== 1 || !Array.isArray(data.upgrades) || data.upgrades.length !== 9) {
+    const data = migrateSaveData(JSON.parse(rawSave))
+    if (![1, 2].includes(data.version) || !Array.isArray(data.upgrades) || data.upgrades.length !== 9) {
       throw new Error("Unsupported save format")
     }
 
@@ -828,12 +970,12 @@ function loadGame(showMessage = true) {
     u8Amount = Math.max(0, Number(data.upgrades[8].amount) || 0); u8Cost = Math.max(1, Number(data.upgrades[8].cost) || 1)
 
     unlockedMinigames = Math.max(0, Math.min(minigameUnlockOrder.length, Number(data.unlockedMinigames) || 0))
-    minigameUnlockCost = Math.max(5000, Number(data.minigameUnlockCost) || 5000)
+    minigameUnlockCost = Math.max(2500, Number(data.minigameUnlockCost) || 2500)
 
     updateFribby()
     const labels = [
       `Extra Hand - (${u0Amount}, +1 Fribby per click) - ${u0Cost} Fribbies`,
-      `Auto Thrower (${u1Amount}, +1 auto throw) - ${u1Cost} Fribbies`,
+      `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${u1Cost} Fribbies`,
       `Intern (${u2Amount}, +1 Fribby per auto throw) - ${u2Cost} Fribbies`,
       `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${u3Cost} Fribbies`,
       `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${u4Cost} Fribbies`,
@@ -998,17 +1140,66 @@ async function refreshLeaderboard() {
 document.addEventListener("DOMContentLoaded", initializeLeaderboard)
 
 /* -------------------- SAVE FILE EXPORT / IMPORT --------------------
-   Export creates a portable JSON backup. Import validates the file before
-   replacing browser storage, then loads the imported progression.
+   Export creates a compact encrypted, slash-delimited backup. Import also
+   accepts older JSON save files for backwards compatibility.
 */
+
+// The portable save format is slash-delimited numeric fields encrypted with a
+// chained digit cipher. The first digit uses key 6; each encrypted digit then
+// becomes the key for the next digit, including across slash separators.
+function saveDataToFields(data) {
+  const fields = [data.fribbies]
+  data.upgrades.forEach(upgrade => fields.push(upgrade.amount, upgrade.cost))
+  fields.push(data.unlockedMinigames, data.minigameUnlockCost)
+  return fields.map(value => String(Math.max(0, Math.floor(Number(value) || 0))))
+}
+
+function encryptSaveFields(fields) {
+  let key = 6
+  return fields.map(field => {
+    let encoded = ""
+    for (const char of field) {
+      const digit = Number(char)
+      const encrypted = (digit + key) % 10
+      encoded += encrypted
+      key = encrypted
+    }
+    return encoded
+  }).join("/")
+}
+
+function decryptSaveFields(ciphertext) {
+  const fields = String(ciphertext).trim().split("/")
+  if (fields.length !== 21 || fields.some(field => !/^\d+$/.test(field))) throw new Error("Invalid encrypted save")
+  let key = 6
+  const decoded = fields.map(field => {
+    let plain = ""
+    for (const char of field) {
+      const encrypted = Number(char)
+      plain += (encrypted - key + 10) % 10
+      key = encrypted
+    }
+    return Number(plain)
+  })
+  const upgrades = []
+  for (let i = 0; i < 9; i++) upgrades.push({ amount: decoded[1 + i * 2], cost: decoded[2 + i * 2] })
+  return { version: 2, fribbies: decoded[0], upgrades, unlockedMinigames: decoded[19], minigameUnlockCost: decoded[20] }
+}
+
+function parseSaveFileText(text) {
+  const trimmed = String(text).trim()
+  if (trimmed.startsWith("{")) return JSON.parse(trimmed) // older exported JSON saves remain importable
+  return decryptSaveFields(trimmed)
+}
+
 function exportSave() {
   try {
-    const saveText = JSON.stringify(getGameSaveData(), null, 2)
-    const blob = new Blob([saveText], { type: "application/json" })
+    const saveText = encryptSaveFields(saveDataToFields(getGameSaveData()))
+    const blob = new Blob([saveText], { type: "text/plain" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
     link.href = url
-    link.download = "fribby-thrower-save.json"
+    link.download = "fribby-thrower-save.txt"
     document.body.appendChild(link)
     link.click()
     link.remove()
@@ -1030,11 +1221,11 @@ async function importSaveFile(event) {
   const status = document.getElementById("saveStatus")
   try {
     const text = await file.text()
-    const data = JSON.parse(text)
+    const data = migrateSaveData(parseSaveFileText(text))
 
     // Validate the structure before touching the current save.
     if (
-      data.version !== 1 ||
+      ![1, 2].includes(Number(data.version)) ||
       !Number.isFinite(Number(data.fribbies)) ||
       !Array.isArray(data.upgrades) ||
       data.upgrades.length !== 9 ||
@@ -1082,6 +1273,7 @@ async function importSaveFile(event) {
 // Used only when browser storage is blocked, so imported data can still be
 // loaded into the current game session.
 function applyImportedSaveData(data) {
+  data = migrateSaveData(data)
   fribbies = Math.max(0, Number(data.fribbies) || 0)
   u0Amount = Math.max(0, Number(data.upgrades[0].amount) || 0); u0Cost = Math.max(1, Number(data.upgrades[0].cost) || 1)
   u1Amount = Math.max(0, Number(data.upgrades[1].amount) || 0); u1Cost = Math.max(1, Number(data.upgrades[1].cost) || 1)
@@ -1093,12 +1285,12 @@ function applyImportedSaveData(data) {
   u7Amount = Math.max(0, Number(data.upgrades[7].amount) || 0); u7Cost = Math.max(1, Number(data.upgrades[7].cost) || 1)
   u8Amount = Math.max(0, Number(data.upgrades[8].amount) || 0); u8Cost = Math.max(1, Number(data.upgrades[8].cost) || 1)
   unlockedMinigames = Math.max(0, Math.min(minigameUnlockOrder.length, Number(data.unlockedMinigames) || 0))
-  minigameUnlockCost = Math.max(5000, Number(data.minigameUnlockCost) || 5000)
+  minigameUnlockCost = Math.max(2500, Number(data.minigameUnlockCost) || 2500)
 
   updateFribby()
   const labels = [
     `Extra Hand - (${u0Amount}, +1 Fribby per click) - ${u0Cost} Fribbies`,
-    `Auto Thrower (${u1Amount}, +1 auto throw) - ${u1Cost} Fribbies`,
+    `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${u1Cost} Fribbies`,
     `Intern (${u2Amount}, +1 Fribby per auto throw) - ${u2Cost} Fribbies`,
     `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${u3Cost} Fribbies`,
     `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${u4Cost} Fribbies`,
