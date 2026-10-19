@@ -42,6 +42,8 @@ function buy0() {
    updateFribby()
    document.getElementById("upgrade0").innerText =
         "Extra Hand - (" + u0Amount + ", +1 Fribby per click) - " + u0Cost + " Fribbies"
+  } else {
+    playSoundEffect("upgradeFailSound")
   }
 }
 
@@ -55,6 +57,8 @@ function buy1() {
    document.getElementById("upgrade1").innerText =
         "Auto Thrower (" + u1Amount + ", +1 auto throw/sec) - " + u1Cost + " Fribbies"
    updateAutoThrowInterval()
+  } else {
+    playSoundEffect("upgradeFailSound")
   }
 }
 
@@ -67,6 +71,8 @@ function buy2() {
    updateFribby()
    document.getElementById("upgrade2").innerText =
         "Intern (" + u2Amount + ", +1 Fribby per auto throw) - " + u2Cost + " Fribbies"
+  } else {
+    playSoundEffect("upgradeFailSound")
   }
 }
 
@@ -79,6 +85,8 @@ function buy3() {
     updateFribby()
     document.getElementById("upgrade3").innerText =
       "Fribby Cannon (" + u3Amount + ", +5 Fribbies per click) - " + u3Cost + " Fribbies"
+  } else {
+    playSoundEffect("upgradeFailSound")
   }
 }
 
@@ -91,6 +99,8 @@ function buy4() {
     updateFribby()
        document.getElementById("upgrade4").innerText =
         "Supervisor (" + u4Amount + ", +5 Fribbies per auto throw) - " + u4Cost + " Fribbies"
+  } else {
+    playSoundEffect("upgradeFailSound")
   }
 }
 
@@ -103,6 +113,8 @@ function buy5() {
     updateFribby()
     document.getElementById("upgrade5").innerText =
       "Power Throw (" + u5Amount + ", +10 Fribbies per click) - " + u5Cost + " Fribbies"
+  } else {
+    playSoundEffect("upgradeFailSound")
   }
 }
 
@@ -115,6 +127,8 @@ function buy6() {
     updateFribby()
     document.getElementById("upgrade6").innerText =
       "Fribby Factory (" + u6Amount + ", +10 Fribbies per auto throw) - " + u6Cost + " Fribbies"
+  } else {
+    playSoundEffect("upgradeFailSound")
   }
 }
 
@@ -128,6 +142,8 @@ function buy7() {
     document.getElementById("upgrade7").innerText =
       "Turbo Thrower (" + u7Amount + ", +5 auto throws/sec) - " + u7Cost + " Fribbies"
     updateAutoThrowInterval()
+  } else {
+    playSoundEffect("upgradeFailSound")
   }
 }
 
@@ -140,6 +156,8 @@ function buy8() {
     updateFribby()
     document.getElementById("upgrade8").innerText =
       "Mega Cannon (" + u8Amount + ", +100 Fribbies per click) - " + u8Cost + " Fribbies"
+  } else {
+    playSoundEffect("upgradeFailSound")
   }
 }
 
@@ -167,6 +185,7 @@ function buyMinigameUnlock() {
   const status = document.getElementById("minigameUnlockStatus")
   if (unlockedMinigames >= minigameUnlockOrder.length) return
   if (fribbies < minigameUnlockCost) {
+    playSoundEffect("upgradeFailSound")
     status.textContent = `You need ${minigameUnlockCost} Fribbies to unlock the next minigame.`
     return
   }
@@ -899,6 +918,7 @@ function getGameSaveData() {
 }
 
 function saveGame(showMessage = false) {
+  if (showMessage) playSoundEffect("saveSound")
   const serialized = JSON.stringify(getGameSaveData())
   let saved = false
 
@@ -941,6 +961,7 @@ function migrateSaveData(data) {
 }
 
 function loadGame(showMessage = true) {
+  if (showMessage) playSoundEffect("saveSound")
   let rawSave = null
   const status = document.getElementById("saveStatus")
 
@@ -1203,6 +1224,7 @@ function parseSaveFileText(text) {
 }
 
 function exportSave() {
+  playSoundEffect("saveSound")
   try {
     const saveText = encryptSaveFields(saveDataToFields(getGameSaveData()))
     const blob = new Blob([saveText], { type: "text/plain" })
@@ -1229,6 +1251,7 @@ async function importSaveFile(event) {
   if (!file) return
 
   const status = document.getElementById("saveStatus")
+  playSoundEffect("saveSound")
   try {
     const text = await file.text()
     const data = migrateSaveData(parseSaveFileText(text))
@@ -1382,4 +1405,40 @@ document.addEventListener("DOMContentLoaded", () => {
   audio.addEventListener("volumechange", updateMusicButton)
   audio.play().then(updateMusicButton).catch(updateMusicButton)
   updateMusicButton()
+})
+
+
+/* Settings drawer and color theme */
+function toggleSettings() {
+  const dock = document.getElementById("settingsDock")
+  const toggle = document.getElementById("settingsToggle")
+  const panel = document.getElementById("settingsPanel")
+  if (!dock || !toggle || !panel) return
+  const open = !dock.classList.contains("settings-open")
+  dock.classList.toggle("settings-open", open)
+  toggle.classList.toggle("spinning", open)
+  toggle.setAttribute("aria-expanded", String(open))
+  toggle.setAttribute("aria-label", open ? "Close settings" : "Open settings")
+  panel.setAttribute("aria-hidden", String(!open))
+}
+
+function toggleTheme() {
+  const dark = !document.body.classList.contains("dark-mode")
+  document.body.classList.toggle("dark-mode", dark)
+  const button = document.getElementById("themeToggle")
+  if (button) {
+    button.textContent = dark ? "☀️ Light Mode" : "🌙 Dark Mode"
+    button.setAttribute("aria-pressed", String(dark))
+  }
+  try { localStorage.setItem("fribbyTheme", dark ? "dark" : "light") } catch (error) {}
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  let savedTheme = "light"
+  try { savedTheme = localStorage.getItem("fribbyTheme") || "light" } catch (error) {}
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark-mode")
+    const button = document.getElementById("themeToggle")
+    if (button) { button.textContent = "☀️ Light Mode"; button.setAttribute("aria-pressed", "true") }
+  }
 })

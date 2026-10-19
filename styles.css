@@ -292,20 +292,49 @@ button:disabled {
 }
 
 
-/* Background music toggle stays in the top-right corner. */
-#musicToggle {
-  position: fixed;
-  top: 14px;
-  right: 14px;
-  z-index: 1000;
-  box-shadow: 0 3px 10px #24304a30;
-}
 
+
+/* Right-side settings drawer */
+.settings-dock {
+  position: fixed; top: 14px; right: 14px; z-index: 1100;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+#settingsToggle {
+  width: 48px; height: 48px; padding: 0; border-radius: 50%;
+  font-size: 1.55rem; flex: 0 0 auto; box-shadow: 0 3px 12px #24304a35;
+}
+#settingsToggle.spinning { animation: cog-spin .45s ease-in-out; }
+@keyframes cog-spin { from { transform: rotate(0deg); } to { transform: rotate(180deg); } }
+.settings-panel {
+  display: flex; flex-direction: column; gap: 9px; padding-top: 3px;
+  transform: translateX(calc(100% + 90px)); opacity: 0; pointer-events: none;
+  transition: transform .28s ease, opacity .2s ease;
+}
+.settings-open .settings-panel { transform: translateX(0); opacity: 1; pointer-events: auto; }
+.settings-panel button { white-space: nowrap; box-shadow: 0 3px 10px #24304a30; }
+body { transition: background-color .22s ease, color .22s ease; }
+body.dark-mode { background: #151923; color: #e6eaf2; }
+body.dark-mode .clicker-area,
+body.dark-mode #minigamesArea section,
+body.dark-mode .leaderboard-area {
+  background: linear-gradient(135deg, #242a38, #1c2230); color: #e6eaf2;
+  border-color: #46516a; box-shadow: 0 4px 14px #0005;
+}
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3,
+body.dark-mode #fribbyAmount, body.dark-mode #saveStatus,
+body.dark-mode #leaderboardStatus { color: #a9c2ff; }
+body.dark-mode button {
+  color: #edf2ff; background: linear-gradient(145deg, #343d52, #252d3f);
+  border-color: #65769b; box-shadow: 0 3px 7px #0004, inset 0 1px 0 #ffffff12;
+}
+body.dark-mode button:hover:not(:disabled) { background: linear-gradient(145deg, #414d66, #30394e); }
+body.dark-mode input { color: #edf2ff; background: #202636; border-color: #65769b; }
+body.dark-mode #leaderboardList li { border-color: #3a4357; }
 @media (max-width: 480px) {
-  #musicToggle {
-    top: 8px;
-    right: 8px;
-    padding: 7px 10px;
-    font-size: 0.9rem;
-  }
+  .settings-dock { top: 8px; right: 8px; gap: 7px; }
+  #settingsToggle { width: 42px; height: 42px; }
+  .settings-panel button { padding: 7px 9px; font-size: .88rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-panel, #settingsToggle, body { transition: none; animation: none !important; }
 }
