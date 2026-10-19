@@ -1311,3 +1311,54 @@ function applyImportedSaveData(data) {
   if (u1Amount + u7Amount * 5 > 0) updateAutoThrowInterval()
   saveGame(false)
 }
+
+
+/* Background music: loops automatically when allowed by the browser. */
+function updateMusicButton() {
+  const audio = document.getElementById("backgroundMusic")
+  const button = document.getElementById("musicToggle")
+  if (!audio || !button) return
+
+  if (audio.paused) {
+    button.textContent = "▶ Play Music"
+    button.setAttribute("aria-label", "Play background music")
+    button.setAttribute("aria-pressed", "false")
+  } else if (audio.muted) {
+    button.textContent = "🔇 Unmute Music"
+    button.setAttribute("aria-label", "Unmute background music")
+    button.setAttribute("aria-pressed", "true")
+  } else {
+    button.textContent = "🔊 Mute Music"
+    button.setAttribute("aria-label", "Mute background music")
+    button.setAttribute("aria-pressed", "false")
+  }
+}
+
+async function toggleMusic() {
+  const audio = document.getElementById("backgroundMusic")
+  if (!audio) return
+
+  if (audio.paused) {
+    audio.muted = false
+    try {
+      await audio.play()
+    } catch (error) {
+      // The browser may block playback until a user gesture; this button is one.
+    }
+  } else if (audio.muted) {
+    audio.muted = false
+  } else {
+    audio.muted = true
+  }
+  updateMusicButton()
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const audio = document.getElementById("backgroundMusic")
+  if (!audio) return
+  audio.addEventListener("play", updateMusicButton)
+  audio.addEventListener("pause", updateMusicButton)
+  audio.addEventListener("volumechange", updateMusicButton)
+  audio.play().then(updateMusicButton).catch(updateMusicButton)
+  updateMusicButton()
+})

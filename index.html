@@ -9,6 +9,8 @@
     <title>Fribby Thrower</title>
   </head>
     <body>
+    <audio id="backgroundMusic" src="theme.wav" loop preload="auto" autoplay></audio>
+    <button id="musicToggle" type="button" onclick="toggleMusic()" aria-pressed="false" aria-label="Mute background music">🔊 Mute Music</button>
     <main class="clicker-area">
       <h1>Fribby Thrower</h1>
       <button id="fribbyButton" onclick="throwFribby()">Fribby!</button>
