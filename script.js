@@ -28,12 +28,14 @@ function updateFribby() {
 }
 
 function throwFribby() {
+  playSoundEffect("throwSound")
   fribbies += u0Amount + 1 + u3Amount * 5 + u5Amount * 10 + u8Amount * 100
   updateFribby()
 }
 
 function buy0() {
   if (fribbies >= u0Cost) {
+   playSoundEffect("upgradeSound")
    fribbies -= u0Cost
    u0Amount += 1
    u0Cost = u0Cost * 3
@@ -45,6 +47,7 @@ function buy0() {
 
 function buy1() {
   if (fribbies >= u1Cost) {
+   playSoundEffect("upgradeSound")
    fribbies -= u1Cost
       u1Amount += 1
    u1Cost = Math.round(u1Cost * 1.5)
@@ -57,6 +60,7 @@ function buy1() {
 
 function buy2() {
   if (fribbies >= u2Cost) {
+   playSoundEffect("upgradeSound")
    fribbies -= u2Cost
       u2Amount += 1
    u2Cost = Math.round(u2Cost * 1.5)
@@ -68,6 +72,7 @@ function buy2() {
 
 function buy3() {
   if (fribbies >= u3Cost) {
+   playSoundEffect("upgradeSound")
     fribbies -= u3Cost
     u3Amount += 1
     u3Cost = Math.round(u3Cost * 1.5)
@@ -79,6 +84,7 @@ function buy3() {
 
 function buy4() {
   if (fribbies >= u4Cost) {
+   playSoundEffect("upgradeSound")
     fribbies -= u4Cost
     u4Amount += 1
     u4Cost = Math.round(u4Cost * 1.5)
@@ -90,6 +96,7 @@ function buy4() {
 
 function buy5() {
   if (fribbies >= u5Cost) {
+   playSoundEffect("upgradeSound")
     fribbies -= u5Cost
     u5Amount += 1
     u5Cost = Math.round(u5Cost * 1.5)
@@ -101,6 +108,7 @@ function buy5() {
 
 function buy6() {
   if (fribbies >= u6Cost) {
+   playSoundEffect("upgradeSound")
     fribbies -= u6Cost
     u6Amount += 1
     u6Cost = Math.round(u6Cost * 1.5)
@@ -112,6 +120,7 @@ function buy6() {
 
 function buy7() {
   if (fribbies >= u7Cost) {
+   playSoundEffect("upgradeSound")
     fribbies -= u7Cost
     u7Amount += 1
     u7Cost = Math.round(u7Cost * 1.5)
@@ -124,6 +133,7 @@ function buy7() {
 
 function buy8() {
   if (fribbies >= u8Cost) {
+   playSoundEffect("upgradeSound")
     fribbies -= u8Cost
     u8Amount += 1
     u8Cost = Math.round(u8Cost * 1.5)
@@ -1313,6 +1323,16 @@ function applyImportedSaveData(data) {
 }
 
 
+/* Sound effects are separate from the background music mute setting. */
+function playSoundEffect(elementId) {
+  const sound = document.getElementById(elementId)
+  if (!sound) return
+  sound.currentTime = 0
+  sound.play().catch(() => {
+    // Playback may be blocked until the player interacts with the page.
+  })
+}
+
 /* Background music: loops automatically when allowed by the browser. */
 function updateMusicButton() {
   const audio = document.getElementById("backgroundMusic")
@@ -1335,6 +1355,7 @@ function updateMusicButton() {
 }
 
 async function toggleMusic() {
+  playSoundEffect("musicToggleSound")
   const audio = document.getElementById("backgroundMusic")
   if (!audio) return
 
