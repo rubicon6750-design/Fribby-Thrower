@@ -27,9 +27,11 @@ function updateFribby() {
   saveGame()
 }
 
+function getFribbiesPerClick() { return u0Amount + 1 + u3Amount * 5 + u5Amount * 10 + u8Amount * 100 }
+
 function throwFribby() {
   playSoundEffect("throwSound")
-  fribbies += u0Amount + 1 + u3Amount * 5 + u5Amount * 10 + u8Amount * 100
+  fribbies += getFribbiesPerClick()
   updateFribby()
 }
 
@@ -227,6 +229,7 @@ function updateMinigameUnlockButton() {
 
 function showMinigame(game) {
   if (!minigameUnlockOrder.slice(0, unlockedMinigames).includes(game)) return
+  playSoundEffect("minigameStartSound")
   document.getElementById("minigame-minesweeper").hidden = game !== "minesweeper"
   document.getElementById("minigame-numberGuess").hidden = game !== "numberGuess"
   document.getElementById("minigame-matching").hidden = game !== "matching"
@@ -260,7 +263,8 @@ function checkNumberGuess() {
   }
   if (guess === numberGuessTarget) {
     numberGuessActive = false
-    fribbies += 100
+    fribbies += 100 * getFribbiesPerClick()
+    playSoundEffect("minigameCompleteSound")
     updateFribby()
     status.textContent = "Correct! You earned 100 Fribbies."
   } else {
@@ -320,7 +324,8 @@ function revealMatchingCard(index) {
     matchingFirstCard = null
     matchingMatches++
     if (matchingMatches === matchingSymbols.length) {
-      fribbies += 150
+      fribbies += 150 * getFribbiesPerClick()
+      playSoundEffect("minigameCompleteSound")
       updateFribby()
       document.getElementById("matchingStatus").textContent = "You found every pair! You earned 150 Fribbies."
     } else {
@@ -531,6 +536,7 @@ function revealMinesweeperTile(row, column) {
   if (tile.revealed || tile.flagged) return
 
   if (tile.mine) {
+    playSoundEffect("minesweeperFailSound")
     tile.revealed = true
     getMinesweeperTileElement(row, column).textContent = "🥏"
     getMinesweeperTileElement(row, column).classList.add("revealed", "mine")
@@ -540,10 +546,12 @@ function revealMinesweeperTile(row, column) {
     return
   }
 
+  playSoundEffect("minesweeperCorrectSound")
   revealSafeTile(row, column)
   if (hasWonMinesweeper()) {
     minesweeperGameOver = true
-    fribbies += 1000
+    fribbies += 1000 * getFribbiesPerClick()
+    playSoundEffect("minigameCompleteSound")
     updateFribby()
     document.getElementById("minesweeperStatus").textContent = "Score! You earned 1,000 Fribbies."
   }
@@ -736,7 +744,8 @@ function movePathFinder(columnChange, rowChange) {
     column === pathFinderGoal.column
   ) {
     pathFinderActive = false
-    fribbies += 250
+    fribbies += 250 * getFribbiesPerClick()
+    playSoundEffect("minigameCompleteSound")
     updateFribby()
 
     document.getElementById("pathFinderStatus").textContent =
@@ -797,6 +806,7 @@ function showPatternRecallSequence() {
     }
     const button = buttons[patternRecallSequence[step]]
     button.classList.add("pattern-active")
+    playSoundEffect("patternThrowSound")
     patternRecallTimer = setTimeout(() => {
       button.classList.remove("pattern-active")
       step++
@@ -820,7 +830,8 @@ function handlePatternRecallInput(index) {
 
     patternRecallStreak++
   const reward = patternRecallStreak * 10
-  fribbies += reward
+  fribbies += reward * getFribbiesPerClick()
+  playSoundEffect("minigameCompleteSound")
   updateFribby()
   document.getElementById("patternRecallStatus").textContent = `Correct! You earned ${reward} Fribbies this round. Next round...`
   patternRecallActive = false
@@ -866,7 +877,8 @@ function spinLuckyWheel() {
     const jackpot = Math.random() < 0.01
     const prizes = [0, 25, 50, 100, 200]
     const prize = jackpot ? 1000 : prizes[Math.floor(Math.random() * prizes.length)]
-    fribbies += prize
+    fribbies += prize * getFribbiesPerClick()
+    if (prize > 0) playSoundEffect("minigameCompleteSound")
     updateFribby()
     wheel.classList.remove("spinning")
     status.textContent = jackpot
@@ -1347,7 +1359,24 @@ function applyImportedSaveData(data) {
 
 
 /* Sound effects are separate from the background music mute setting. */
+let sfxMuted = false
+function toggleSfxMute() {
+  sfxMuted = !sfxMuted
+  const button = document.getElementById("sfxToggle")
+  button.textContent = sfxMuted ? "🔇 Unmute SFX" : "🔊 Mute SFX"
+  button.setAttribute("aria-pressed", String(sfxMuted))
+  try { localStorage.setItem("fribbySfxMuted", String(sfxMuted)) } catch (error) {}
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  try { sfxMuted = localStorage.getItem("fribbySfxMuted") === "true" } catch (error) {}
+  const button = document.getElementById("sfxToggle")
+  if (button) { button.textContent = sfxMuted ? "🔇 Unmute SFX" : "🔊 Mute SFX"; button.setAttribute("aria-pressed", String(sfxMuted)) }
+  restoreUploadedMusic()
+})
+
 function playSoundEffect(elementId) {
+  if (sfxMuted) return
   const sound = document.getElementById(elementId)
   if (!sound) return
   sound.currentTime = 0
@@ -1442,3 +1471,73 @@ document.addEventListener("DOMContentLoaded", () => {
     if (button) { button.textContent = "☀️ Light Mode"; button.setAttribute("aria-pressed", "true") }
   }
 })
+
+
+/* Persistent custom soundtrack storage (IndexedDB supports larger files than localStorage). */
+const MUSIC_DB = "fribbyCustomMusicDB"
+function openMusicDB() {
+  return new Promise((resolve, reject) => {
+    if (!window.indexedDB) return reject(new Error("IndexedDB unavailable"))
+    const request = indexedDB.open(MUSIC_DB, 1)
+    request.onupgradeneeded = () => request.result.createObjectStore("music")
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
+}
+async function uploadBackgroundMusic(event) {
+  const file = event.target.files && event.target.files[0]
+  if (!file) return
+  const allowed = /\.(mp3|wav|ogg|m4a)$/i.test(file.name)
+  if (!allowed) { alert("Choose an MP3, WAV, OGG, or M4A audio file."); event.target.value = ""; return }
+  try {
+    const db = await openMusicDB()
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction("music", "readwrite")
+      tx.objectStore("music").put(file, "customTrack")
+      tx.oncomplete = resolve; tx.onerror = () => reject(tx.error)
+    })
+    db.close()
+    const audio = document.getElementById("backgroundMusic")
+    audio.src = URL.createObjectURL(file)
+    audio.dataset.customTrack = "true"
+    audio.play().catch(() => {})
+    const status = document.getElementById("saveStatus")
+    if (status) status.textContent = `Custom music saved for future sessions: ${file.name}`
+  } catch (error) {
+    alert("This browser couldn't store the music file. Try a smaller file or enable site storage.")
+  }
+  event.target.value = ""
+}
+async function restoreUploadedMusic() {
+  try {
+    const db = await openMusicDB()
+    const file = await new Promise((resolve, reject) => {
+      const request = db.transaction("music", "readonly").objectStore("music").get("customTrack")
+      request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error)
+    })
+    db.close()
+    if (file) {
+      const audio = document.getElementById("backgroundMusic")
+      audio.src = URL.createObjectURL(file)
+      audio.dataset.customTrack = "true"
+      audio.play().catch(() => {})
+    }
+  } catch (error) { /* Built-in soundtrack remains available. */ }
+}
+function wipeSave() {
+  if (!confirm("Wipe all Fribby Thrower progress from this browser? This cannot be undone unless you exported a save.")) return
+  try { localStorage.removeItem(GAME_SAVE_COOKIE) } catch (error) {}
+  try { document.cookie = `${GAME_SAVE_COOKIE}=; Max-Age=0; path=/; SameSite=Lax` } catch (error) {}
+  fribbies = 0
+  u0Amount=0; u0Cost=10; u1Amount=0; u1Cost=50; u2Amount=0; u2Cost=200
+  u3Amount=0; u3Cost=500; u4Amount=0; u4Cost=1000; u5Amount=0; u5Cost=2500
+  u6Amount=0; u6Cost=5000; u7Amount=0; u7Cost=10000; u8Amount=0; u8Cost=25000
+  clearInterval(autoThrowTimer)
+  unlockedMinigames = 0; minigameUnlockCost = 2500
+  document.querySelectorAll("[data-minigame]").forEach(button => button.hidden = true)
+  document.getElementById("minigamesArea").hidden = true
+  const defaults = ["Extra Hand (0, +1 Fribby per click) - 10 Fribbies","Auto Thrower (0, +1 auto throw/sec) - 50 Fribbies","Intern (0, +1 Fribby per auto throw) - 200 Fribbies","Fribby Cannon (0, +5 Fribbies per click) - 500 Fribbies","Supervisor (0, +5 Fribbies per auto throw) - 1000 Fribbies","Power Throw (0, +10 Fribbies per click) - 2500 Fribbies","Fribby Factory (0, +10 Fribbies per auto throw) - 5000 Fribbies","Foreman (0, +5 auto throws/sec) - 10000 Fribbies","Mega Cannon (0, +100 Fribbies per click) - 25000 Fribbies"]
+  defaults.forEach((label,i) => { const button=document.getElementById(`upgrade${i}`); if(button) button.textContent=label })
+  updateMinigameUnlockButton(); updateFribby()
+  const status = document.getElementById("saveStatus"); if(status) status.textContent = "Save wiped. A fresh game has started."
+}

@@ -9,31 +9,37 @@
     <title>Fribby Thrower</title>
   </head>
     <body>
-    <audio id="backgroundMusic" src="theme.wav" loop preload="auto" autoplay></audio>
-    <audio id="upgradeSound" src="upgrade.ogg" preload="auto"></audio>
-    <audio id="musicToggleSound" src="music%20toggle.ogg" preload="auto"></audio>
-    <audio id="throwSound" src="throw.ogg" preload="auto"></audio>
-    <audio id="saveSound" src="save.ogg" preload="auto"></audio>
-    <audio id="upgradeFailSound" src="upgrade%20fail.ogg" preload="auto"></audio>
+    <audio id="backgroundMusic" src="music/theme.wav" loop preload="auto" autoplay></audio>
+    <audio id="upgradeSound" src="sfx/upgrade.ogg" preload="auto"></audio>
+    <audio id="musicToggleSound" src="sfx/toggle.ogg" preload="auto"></audio>
+    <audio id="throwSound" src="sfx/throw.ogg" preload="auto"></audio>
+    <audio id="saveSound" src="sfx/save.ogg" preload="auto"></audio>
+    <audio id="upgradeFailSound" src="sfx/upgrade%20fail.ogg" preload="auto"></audio>
+    <audio id="patternThrowSound" src="sfx/pattern%20throw.ogg" preload="auto"></audio>
+    <audio id="minigameStartSound" src="sfx/minigame%20start.ogg" preload="auto"></audio>
+    <audio id="minigameCompleteSound" src="sfx/minigame%20complete.ogg" preload="auto"></audio>
+    <audio id="minesweeperCorrectSound" src="sfx/minesweeper%20correct.ogg" preload="auto"></audio>
+    <audio id="minesweeperFailSound" src="sfx/minesweeper%20fail.ogg" preload="auto"></audio>
     <div id="settingsDock" class="settings-dock">
       <button id="settingsToggle" type="button" aria-expanded="false" aria-controls="settingsPanel" onclick="toggleSettings()" aria-label="Open settings">⚙</button>
       <div id="settingsPanel" class="settings-panel" aria-hidden="true">
         <button id="musicToggle" type="button" onclick="toggleMusic()" aria-pressed="false" aria-label="Mute background music">🔊 Mute Music</button>
+        <button id="sfxToggle" type="button" onclick="toggleSfxMute()" aria-pressed="false">🔊 Mute SFX</button>
+        <button type="button" onclick="document.getElementById('musicUpload').click()">🎵 Upload Music</button>
+        <input id="musicUpload" type="file" accept=".mp3,.wav,.ogg,.m4a,audio/mpeg,audio/wav,audio/ogg,audio/mp4" hidden onchange="uploadBackgroundMusic(event)">
         <button id="themeToggle" type="button" onclick="toggleTheme()" aria-pressed="false">🌙 Dark Mode</button>
+        <button type="button" onclick="exportSave()">Export Save</button>
+        <button type="button" onclick="document.getElementById('importSaveFile').click()">Import Save</button>
+        <button type="button" class="wipe-save" onclick="wipeSave()">Wipe Save</button>
+        <input id="importSaveFile" type="file" accept=".txt,.json,text/plain,application/json" hidden onchange="importSaveFile(event)">
+        <p id="saveStatus" role="status" aria-live="polite">Autosave is ready.</p>
       </div>
     </div>
     <main class="clicker-area">
       <h1>Fribby Thrower</h1>
       <button id="fribbyButton" onclick="throwFribby()">Fribby!</button>
       <p id="fribbyAmount">Fribbies Thrown: 0</p>
-      <div class="save-controls" aria-label="Game save controls">
-        <button type="button" onclick="saveGame(true)">Save Game</button>
-        <button type="button" onclick="loadGame(true)">Load Save</button>
-        <button type="button" onclick="exportSave()">Export Save File</button>
-        <button type="button" onclick="document.getElementById('importSaveFile').click()">Import Save File</button>
-        <input id="importSaveFile" type="file" accept=".txt,.json,text/plain,application/json" hidden onchange="importSaveFile(event)">
-        <p id="saveStatus" role="status" aria-live="polite">Autosave is ready.</p>
-      </div>
+
 
       <div class="upgrade-list" aria-label="Upgrades">
         <button id="upgrade0" onclick="buy0()">Extra Hand (0, +1 Fribby per click) - 10 Fribbies</button>
