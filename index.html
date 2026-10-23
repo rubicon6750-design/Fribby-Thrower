@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥏</text></svg>">
     <title>Fribby Thrower</title>
   </head>
     <body>
-    <audio id="backgroundMusic" src="music/theme.wav" loop preload="auto" autoplay></audio>
+    <audio id="backgroundMusic" src="music/theme.flac" loop preload="auto" autoplay></audio>
     <audio id="upgradeSound" src="sfx/upgrade.ogg" preload="auto"></audio>
     <audio id="musicToggleSound" src="sfx/toggle.ogg" preload="auto"></audio>
     <audio id="throwSound" src="sfx/throw.ogg" preload="auto"></audio>

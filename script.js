@@ -1,29 +1,29 @@
-let fribbies = 0
+let fribbies = 0n
 
 let u0Amount = 0
-let u0Cost = 10
+let u0Cost = 10n
 let u1Amount = 0
-let u1Cost = 50
+let u1Cost = 50n
 let u2Amount = 0
-let u2Cost = 200
+let u2Cost = 200n
 let u3Amount = 0
-let u3Cost = 500
+let u3Cost = 500n
 let u4Amount = 0
-let u4Cost = 1000
+let u4Cost = 1000n
 let u5Amount = 0
-let u5Cost = 2500
+let u5Cost = 2500n
 let u6Amount = 0
-let u6Cost = 5000
+let u6Cost = 5000n
 let u7Amount = 0
-let u7Cost = 10000
+let u7Cost = 10000n
 let u8Amount = 0
-let u8Cost = 25000
+let u8Cost = 25000n
 
 let autoThrowTimer
 
 function updateFribby() {
   document.getElementById("fribbyAmount").innerText =
-        "Fribbies Thrown: " + fribbies
+        "Fribbies Thrown: " + formatFribbies(fribbies)
   saveGame()
 }
 
@@ -31,7 +31,7 @@ function getFribbiesPerClick() { return u0Amount + 1 + u3Amount * 5 + u5Amount *
 
 function throwFribby() {
   playSoundEffect("throwSound")
-  fribbies += getFribbiesPerClick()
+  fribbies += BigInt(getFribbiesPerClick())
   updateFribby()
 }
 
@@ -40,7 +40,7 @@ function buy0() {
    playSoundEffect("upgradeSound")
    fribbies -= u0Cost
    u0Amount += 1
-   u0Cost = u0Cost * 3
+   u0Cost = u0Cost * 3n
    updateFribby()
    document.getElementById("upgrade0").innerText =
         "Extra Hand - (" + u0Amount + ", +1 Fribby per click) - " + u0Cost + " Fribbies"
@@ -54,7 +54,7 @@ function buy1() {
    playSoundEffect("upgradeSound")
    fribbies -= u1Cost
       u1Amount += 1
-   u1Cost = Math.round(u1Cost * 1.5)
+   u1Cost = (u1Cost * 3n + 1n) / 2n
    updateFribby()
    document.getElementById("upgrade1").innerText =
         "Auto Thrower (" + u1Amount + ", +1 auto throw/sec) - " + u1Cost + " Fribbies"
@@ -69,7 +69,7 @@ function buy2() {
    playSoundEffect("upgradeSound")
    fribbies -= u2Cost
       u2Amount += 1
-   u2Cost = Math.round(u2Cost * 1.5)
+   u2Cost = (u2Cost * 3n + 1n) / 2n
    updateFribby()
    document.getElementById("upgrade2").innerText =
         "Intern (" + u2Amount + ", +1 Fribby per auto throw) - " + u2Cost + " Fribbies"
@@ -83,7 +83,7 @@ function buy3() {
    playSoundEffect("upgradeSound")
     fribbies -= u3Cost
     u3Amount += 1
-    u3Cost = Math.round(u3Cost * 1.5)
+    u3Cost = (u3Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade3").innerText =
       "Fribby Cannon (" + u3Amount + ", +5 Fribbies per click) - " + u3Cost + " Fribbies"
@@ -97,7 +97,7 @@ function buy4() {
    playSoundEffect("upgradeSound")
     fribbies -= u4Cost
     u4Amount += 1
-    u4Cost = Math.round(u4Cost * 1.5)
+    u4Cost = (u4Cost * 3n + 1n) / 2n
     updateFribby()
        document.getElementById("upgrade4").innerText =
         "Supervisor (" + u4Amount + ", +5 Fribbies per auto throw) - " + u4Cost + " Fribbies"
@@ -111,7 +111,7 @@ function buy5() {
    playSoundEffect("upgradeSound")
     fribbies -= u5Cost
     u5Amount += 1
-    u5Cost = Math.round(u5Cost * 1.5)
+    u5Cost = (u5Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade5").innerText =
       "Power Throw (" + u5Amount + ", +10 Fribbies per click) - " + u5Cost + " Fribbies"
@@ -125,7 +125,7 @@ function buy6() {
    playSoundEffect("upgradeSound")
     fribbies -= u6Cost
     u6Amount += 1
-    u6Cost = Math.round(u6Cost * 1.5)
+    u6Cost = (u6Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade6").innerText =
       "Fribby Factory (" + u6Amount + ", +10 Fribbies per auto throw) - " + u6Cost + " Fribbies"
@@ -139,7 +139,7 @@ function buy7() {
    playSoundEffect("upgradeSound")
     fribbies -= u7Cost
     u7Amount += 1
-    u7Cost = Math.round(u7Cost * 1.5)
+    u7Cost = (u7Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade7").innerText =
       "Turbo Thrower (" + u7Amount + ", +5 auto throws/sec) - " + u7Cost + " Fribbies"
@@ -154,7 +154,7 @@ function buy8() {
    playSoundEffect("upgradeSound")
     fribbies -= u8Cost
     u8Amount += 1
-    u8Cost = Math.round(u8Cost * 1.5)
+    u8Cost = (u8Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade8").innerText =
       "Mega Cannon (" + u8Amount + ", +100 Fribbies per click) - " + u8Cost + " Fribbies"
@@ -167,7 +167,7 @@ function updateAutoThrowInterval() {
   clearInterval(autoThrowTimer)
   const autoThrowsPerSecond = u1Amount + u7Amount * 5
   autoThrowTimer = setInterval(function() {
-        fribbies += 1 + u2Amount + u4Amount * 5 + u6Amount * 10
+        fribbies += BigInt(1 + u2Amount + u4Amount * 5 + u6Amount * 10)
     updateFribby()
   }, 1000 / autoThrowsPerSecond)
 }
@@ -181,7 +181,7 @@ const minigameUnlockOrder = [
   "minesweeper"
 ]
 let unlockedMinigames = 0
-let minigameUnlockCost = 2500
+let minigameUnlockCost = 2500n
 
 function buyMinigameUnlock() {
   const status = document.getElementById("minigameUnlockStatus")
@@ -198,7 +198,7 @@ function buyMinigameUnlock() {
   const game = minigameUnlockOrder[unlockedMinigames]
   unlockedMinigames++
   document.querySelector(`[data-minigame="${game}"]`).hidden = false
-  minigameUnlockCost *= 2
+  minigameUnlockCost *= 2n
   status.textContent = `Unlocked ${getMinigameName(game)}!`
   showMinigame(game)
   updateMinigameUnlockButton()
@@ -263,7 +263,7 @@ function checkNumberGuess() {
   }
   if (guess === numberGuessTarget) {
     numberGuessActive = false
-    fribbies += 100 * getFribbiesPerClick()
+    fribbies += BigInt(100) * BigInt(getFribbiesPerClick())
     playSoundEffect("minigameCompleteSound")
     updateFribby()
     status.textContent = "Correct! You earned 100 Fribbies."
@@ -324,7 +324,7 @@ function revealMatchingCard(index) {
     matchingFirstCard = null
     matchingMatches++
     if (matchingMatches === matchingSymbols.length) {
-      fribbies += 150 * getFribbiesPerClick()
+      fribbies += BigInt(150) * BigInt(getFribbiesPerClick())
       playSoundEffect("minigameCompleteSound")
       updateFribby()
       document.getElementById("matchingStatus").textContent = "You found every pair! You earned 150 Fribbies."
@@ -550,7 +550,7 @@ function revealMinesweeperTile(row, column) {
   revealSafeTile(row, column)
   if (hasWonMinesweeper()) {
     minesweeperGameOver = true
-    fribbies += 1000 * getFribbiesPerClick()
+    fribbies += BigInt(1000) * BigInt(getFribbiesPerClick())
     playSoundEffect("minigameCompleteSound")
     updateFribby()
     document.getElementById("minesweeperStatus").textContent = "Score! You earned 1,000 Fribbies."
@@ -744,7 +744,7 @@ function movePathFinder(columnChange, rowChange) {
     column === pathFinderGoal.column
   ) {
     pathFinderActive = false
-    fribbies += 250 * getFribbiesPerClick()
+    fribbies += BigInt(250) * BigInt(getFribbiesPerClick())
     playSoundEffect("minigameCompleteSound")
     updateFribby()
 
@@ -830,7 +830,7 @@ function handlePatternRecallInput(index) {
 
     patternRecallStreak++
   const reward = patternRecallStreak * 10
-  fribbies += reward * getFribbiesPerClick()
+  fribbies += BigInt(reward) * BigInt(getFribbiesPerClick())
   playSoundEffect("minigameCompleteSound")
   updateFribby()
   document.getElementById("patternRecallStatus").textContent = `Correct! You earned ${reward} Fribbies this round. Next round...`
@@ -861,11 +861,11 @@ function spinLuckyWheel() {
   const status = document.getElementById("luckySpinStatus")
   const button = document.getElementById("luckySpinButton")
   const wheel = document.getElementById("luckyWheel")
-  if (fribbies < 100) {
+  if (fribbies < 100n) {
     status.textContent = "You need 100 Fribbies to power the wheel."
     return
   }
-  fribbies -= 100
+  fribbies -= 100n
   updateFribby()
   luckySpinInProgress = true
   button.disabled = true
@@ -877,7 +877,7 @@ function spinLuckyWheel() {
     const jackpot = Math.random() < 0.01
     const prizes = [0, 25, 50, 100, 200]
     const prize = jackpot ? 1000 : prizes[Math.floor(Math.random() * prizes.length)]
-    fribbies += prize * getFribbiesPerClick()
+    fribbies += BigInt(prize) * BigInt(getFribbiesPerClick())
     if (prize > 0) playSoundEffect("minigameCompleteSound")
     updateFribby()
     wheel.classList.remove("spinning")
@@ -898,6 +898,24 @@ function spinLuckyWheel() {
 const GAME_SAVE_COOKIE = "fribbyThrowerSave"
 const GAME_SAVE_DAYS = 365
 
+// Keep currency and prices as integers of unlimited size. Strings are used
+// at storage boundaries because JSON does not support BigInt values.
+function toBigIntAmount(value, fallback = 0n) {
+  try {
+    if (typeof value === "bigint") return value >= 0n ? value : fallback
+    let text = String(value ?? "").trim()
+    if (/[eE]/.test(text)) text = expandSaveExponent(text)
+    if (!/^\d+$/.test(text)) return fallback
+    return BigInt(text)
+  } catch (error) {
+    return fallback
+  }
+}
+
+function formatFribbies(value) {
+  return toBigIntAmount(value).toString()
+}
+
 function setGameCookie(name, value, days) {
   const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString()
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`
@@ -912,20 +930,20 @@ function getGameCookie(name) {
 function getGameSaveData() {
   return {
     version: 2,
-    fribbies,
+    fribbies: fribbies.toString(),
     upgrades: [
-      { amount: u0Amount, cost: u0Cost },
-      { amount: u1Amount, cost: u1Cost },
-      { amount: u2Amount, cost: u2Cost },
-      { amount: u3Amount, cost: u3Cost },
-      { amount: u4Amount, cost: u4Cost },
-      { amount: u5Amount, cost: u5Cost },
-      { amount: u6Amount, cost: u6Cost },
-      { amount: u7Amount, cost: u7Cost },
-      { amount: u8Amount, cost: u8Cost }
+      { amount: u0Amount, cost: u0Cost.toString() },
+      { amount: u1Amount, cost: u1Cost.toString() },
+      { amount: u2Amount, cost: u2Cost.toString() },
+      { amount: u3Amount, cost: u3Cost.toString() },
+      { amount: u4Amount, cost: u4Cost.toString() },
+      { amount: u5Amount, cost: u5Cost.toString() },
+      { amount: u6Amount, cost: u6Cost.toString() },
+      { amount: u7Amount, cost: u7Cost.toString() },
+      { amount: u8Amount, cost: u8Cost.toString() }
     ],
     unlockedMinigames,
-    minigameUnlockCost
+    minigameUnlockCost: minigameUnlockCost.toString()
   }
 }
 
@@ -961,12 +979,15 @@ function saveGame(showMessage = false) {
 
 function migrateSaveData(data) {
   if (Number(data.version) === 1) {
-    const ratios = [0.2, 0.25, 0.4, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5]
-    data.upgrades = data.upgrades.map((upgrade, index) => ({
-      ...upgrade,
-      cost: Math.max(1, Math.round(Number(upgrade.cost) * ratios[index]))
-    }))
-    data.minigameUnlockCost = Math.max(2500, Math.round((Number(data.minigameUnlockCost) || 5000) / 2))
+    const ratios = [[1n, 5n], [1n, 4n], [2n, 5n], [1n, 2n], [2n, 5n], [1n, 2n], [1n, 2n], [2n, 5n], [1n, 2n]]
+    data.upgrades = data.upgrades.map((upgrade, index) => {
+      const [numerator, denominator] = ratios[index]
+      const oldCost = toBigIntAmount(upgrade.cost, 1n)
+      return { ...upgrade, cost: ((oldCost * numerator + denominator / 2n) / denominator).toString() }
+    })
+    data.minigameUnlockCost = (toBigIntAmount(data.minigameUnlockCost, 5000n) / 2n < 2500n
+      ? 2500n
+      : toBigIntAmount(data.minigameUnlockCost, 5000n) / 2n).toString()
     data.version = 2
   }
   return data
@@ -1001,19 +1022,19 @@ function loadGame(showMessage = true) {
       throw new Error("Unsupported save format")
     }
 
-    fribbies = Math.max(0, Number(data.fribbies) || 0)
-    u0Amount = Math.max(0, Number(data.upgrades[0].amount) || 0); u0Cost = Math.max(1, Number(data.upgrades[0].cost) || 1)
-    u1Amount = Math.max(0, Number(data.upgrades[1].amount) || 0); u1Cost = Math.max(1, Number(data.upgrades[1].cost) || 1)
-    u2Amount = Math.max(0, Number(data.upgrades[2].amount) || 0); u2Cost = Math.max(1, Number(data.upgrades[2].cost) || 1)
-    u3Amount = Math.max(0, Number(data.upgrades[3].amount) || 0); u3Cost = Math.max(1, Number(data.upgrades[3].cost) || 1)
-    u4Amount = Math.max(0, Number(data.upgrades[4].amount) || 0); u4Cost = Math.max(1, Number(data.upgrades[4].cost) || 1)
-    u5Amount = Math.max(0, Number(data.upgrades[5].amount) || 0); u5Cost = Math.max(1, Number(data.upgrades[5].cost) || 1)
-    u6Amount = Math.max(0, Number(data.upgrades[6].amount) || 0); u6Cost = Math.max(1, Number(data.upgrades[6].cost) || 1)
-    u7Amount = Math.max(0, Number(data.upgrades[7].amount) || 0); u7Cost = Math.max(1, Number(data.upgrades[7].cost) || 1)
-    u8Amount = Math.max(0, Number(data.upgrades[8].amount) || 0); u8Cost = Math.max(1, Number(data.upgrades[8].cost) || 1)
+    fribbies = toBigIntAmount(data.fribbies)
+    u0Amount = Math.max(0, Number(data.upgrades[0].amount) || 0); u0Cost = toBigIntAmount(data.upgrades[0].cost, 10n) || 10n
+    u1Amount = Math.max(0, Number(data.upgrades[1].amount) || 0); u1Cost = toBigIntAmount(data.upgrades[1].cost, 50n) || 50n
+    u2Amount = Math.max(0, Number(data.upgrades[2].amount) || 0); u2Cost = toBigIntAmount(data.upgrades[2].cost, 200n) || 200n
+    u3Amount = Math.max(0, Number(data.upgrades[3].amount) || 0); u3Cost = toBigIntAmount(data.upgrades[3].cost, 500n) || 500n
+    u4Amount = Math.max(0, Number(data.upgrades[4].amount) || 0); u4Cost = toBigIntAmount(data.upgrades[4].cost, 1000n) || 1000n
+    u5Amount = Math.max(0, Number(data.upgrades[5].amount) || 0); u5Cost = toBigIntAmount(data.upgrades[5].cost, 2500n) || 2500n
+    u6Amount = Math.max(0, Number(data.upgrades[6].amount) || 0); u6Cost = toBigIntAmount(data.upgrades[6].cost, 5000n) || 5000n
+    u7Amount = Math.max(0, Number(data.upgrades[7].amount) || 0); u7Cost = toBigIntAmount(data.upgrades[7].cost, 10000n) || 10000n
+    u8Amount = Math.max(0, Number(data.upgrades[8].amount) || 0); u8Cost = toBigIntAmount(data.upgrades[8].cost, 25000n) || 25000n
 
     unlockedMinigames = Math.max(0, Math.min(minigameUnlockOrder.length, Number(data.unlockedMinigames) || 0))
-    minigameUnlockCost = Math.max(2500, Number(data.minigameUnlockCost) || 2500)
+    minigameUnlockCost = toBigIntAmount(data.minigameUnlockCost, 2500n) < 2500n ? 2500n : toBigIntAmount(data.minigameUnlockCost, 2500n)
 
     updateFribby()
     const labels = [
@@ -1126,7 +1147,7 @@ async function submitLeaderboardScore() {
       .upsert({
         user_id: leaderboardUserId,
         player_name: playerName,
-        score: Math.max(0, Math.floor(Number(fribbies) || 0)),
+        score: fribbies > BigInt(Number.MAX_SAFE_INTEGER) ? Number.MAX_SAFE_INTEGER : Number(fribbies),
         updated_at: new Date().toISOString()
       }, { onConflict: "user_id" })
     if (error) throw error
@@ -1136,6 +1157,11 @@ async function submitLeaderboardScore() {
     if (status) status.textContent = "Score submission failed. Check the SQL setup and Supabase permissions."
     console.error("Leaderboard submission failed:", error)
   }
+}
+
+function formatLeaderboardScore(value) {
+  const amount = toBigIntAmount(value)
+  return amount.toLocaleString("en-US")
 }
 
 async function refreshLeaderboard() {
@@ -1166,7 +1192,7 @@ async function refreshLeaderboard() {
         const name = document.createElement("span")
         const score = document.createElement("strong")
         name.textContent = safeLeaderboardName(entry.player_name) || "Anonymous Fribby"
-        score.textContent = `${Number(entry.score || 0).toLocaleString()} Fribbies`
+        score.textContent = `${formatLeaderboardScore(entry.score)} Fribbies`
         item.append(name, score)
         item.setAttribute("aria-label", `Rank ${index + 1}: ${name.textContent}, ${score.textContent}`)
         list.appendChild(item)
@@ -1183,39 +1209,82 @@ async function refreshLeaderboard() {
 document.addEventListener("DOMContentLoaded", initializeLeaderboard)
 
 /* -------------------- SAVE FILE EXPORT / IMPORT --------------------
-   Export creates a compact encrypted, slash-delimited backup. Import also
-   accepts older JSON save files for backwards compatibility.
+   Export creates a redundant base-36 backup. Older JSON and numeric saves
+   remain importable for backwards compatibility.
 */
 
-// The portable save format is slash-delimited numeric fields encrypted with a
-// chained digit cipher. The first digit uses key 6; each encrypted digit then
-// becomes the key for the next digit, including across slash separators.
+// New save files store base-36 values in three copies. When importing, each
+// field is recovered by majority vote, so one damaged copy can be corrected.
+// Older decimal save files and JSON exports remain supported.
+const SAVE_BASE36_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz"
+const SAVE_TRIPLE_PREFIX = "FT3|"
+
 function saveDataToFields(data) {
-  const fields = [data.fribbies]
-  data.upgrades.forEach(upgrade => fields.push(upgrade.amount, upgrade.cost))
-  fields.push(data.unlockedMinigames, data.minigameUnlockCost)
-  return fields.map(value => String(Math.max(0, Math.floor(Number(value) || 0))))
+  const values = [data.fribbies]
+  data.upgrades.forEach(upgrade => values.push(upgrade.amount, upgrade.cost))
+  values.push(data.unlockedMinigames, data.minigameUnlockCost)
+
+  return values.map(value => {
+    // Convert directly from decimal strings so huge values never pass through
+    // Number and lose precision.
+    const integer = toBigIntAmount(value, null)
+    if (integer === null) throw new Error("Invalid number in save")
+    return integer.toString(36)
+  })
+}
+
+function expandSaveExponent(value) {
+  if (!/[eE]/.test(value)) return value
+  const [mantissa, exponentText] = value.toLowerCase().split("e")
+  const exponent = Number(exponentText)
+  const negative = mantissa.startsWith("-")
+  const unsigned = negative ? mantissa.slice(1) : mantissa
+  const dot = unsigned.indexOf(".")
+  const digits = unsigned.replace(".", "")
+  const position = (dot < 0 ? unsigned.length : dot) + exponent
+  let expanded
+  if (position <= 0) expanded = "0." + "0".repeat(-position) + digits
+  else if (position >= digits.length) expanded = digits + "0".repeat(position - digits.length)
+  else expanded = digits.slice(0, position) + "." + digits.slice(position)
+  // Save values are integers, but keep this helper safe for decimal input too.
+  if (expanded.includes(".")) expanded = expanded.replace(/0+$/, "").replace(/\.$/, "")
+  return (negative ? "-" : "") + expanded
 }
 
 function encryptSaveFields(fields) {
-  let key = 6
-  return fields.map(field => {
-    let encoded = ""
-    for (const char of field) {
-      const digit = Number(char)
-      const encrypted = (digit + key) % 10
-      encoded += encrypted
-      key = encrypted
-    }
-    return encoded
-  }).join("/")
+  const payload = fields.join("/")
+  return SAVE_TRIPLE_PREFIX + [payload, payload, payload].join("|")
 }
 
 function decryptSaveFields(ciphertext) {
-  const fields = String(ciphertext).trim().split("/")
-  if (fields.length !== 21 || fields.some(field => !/^\d+$/.test(field))) throw new Error("Invalid encrypted save")
+  const text = String(ciphertext).trim()
+  let fields
+
+  if (text.startsWith(SAVE_TRIPLE_PREFIX)) {
+    const copies = text.slice(SAVE_TRIPLE_PREFIX.length).split("|")
+    if (copies.length !== 3) throw new Error("Invalid redundant save")
+    const parsedCopies = copies.map(copy => copy.split("/"))
+    if (parsedCopies.some(copy => copy.length !== 21)) throw new Error("Invalid save field count")
+
+    fields = parsedCopies[0].map((_, index) => {
+      const values = parsedCopies.map(copy => copy[index])
+      if (values[0] === values[1] || values[0] === values[2]) return values[0]
+      if (values[1] === values[2]) return values[1]
+      throw new Error("No majority value for save field")
+    })
+    if (fields.some(field => !/^[0-9a-z]+$/i.test(field))) throw new Error("Invalid base-36 save")
+
+    const decoded = fields.map(field => parseBase36BigInt(field).toString())
+    return fieldsToSaveData(decoded)
+  }
+
+  // Legacy format: chained decimal digit cipher.
+  const legacyFields = text.split("/")
+  if (legacyFields.length !== 21 || legacyFields.some(field => !/^\d+$/.test(field))) {
+    throw new Error("Invalid encrypted save")
+  }
   let key = 6
-  const decoded = fields.map(field => {
+  const decoded = legacyFields.map(field => {
     let plain = ""
     for (const char of field) {
       const encrypted = Number(char)
@@ -1224,9 +1293,31 @@ function decryptSaveFields(ciphertext) {
     }
     return Number(plain)
   })
+  return fieldsToSaveData(decoded.map(String))
+}
+
+function parseBase36BigInt(value) {
+  let result = 0n
+  for (const char of value.toLowerCase()) {
+    const digit = SAVE_BASE36_ALPHABET.indexOf(char)
+    if (digit < 0) throw new Error("Invalid base-36 digit")
+    result = result * 36n + BigInt(digit)
+  }
+  return result
+}
+
+function fieldsToSaveData(decoded) {
   const upgrades = []
-  for (let i = 0; i < 9; i++) upgrades.push({ amount: decoded[1 + i * 2], cost: decoded[2 + i * 2] })
-  return { version: 2, fribbies: decoded[0], upgrades, unlockedMinigames: decoded[19], minigameUnlockCost: decoded[20] }
+  for (let i = 0; i < 9; i++) {
+    upgrades.push({ amount: Number(decoded[1 + i * 2]), cost: String(decoded[2 + i * 2]) })
+  }
+  return {
+    version: 2,
+    fribbies: String(decoded[0]),
+    upgrades,
+    unlockedMinigames: Number(decoded[19]),
+    minigameUnlockCost: String(decoded[20])
+  }
 }
 
 function parseSaveFileText(text) {
@@ -1271,16 +1362,16 @@ async function importSaveFile(event) {
     // Validate the structure before touching the current save.
     if (
       ![1, 2].includes(Number(data.version)) ||
-      !Number.isFinite(Number(data.fribbies)) ||
+      !/^\d+$/.test(String(data.fribbies)) ||
       !Array.isArray(data.upgrades) ||
       data.upgrades.length !== 9 ||
       !data.upgrades.every(item =>
         item &&
         Number.isFinite(Number(item.amount)) &&
-        Number.isFinite(Number(item.cost))
+        /^\d+$/.test(String(item.cost))
       ) ||
       !Number.isFinite(Number(data.unlockedMinigames)) ||
-      !Number.isFinite(Number(data.minigameUnlockCost))
+      !/^\d+$/.test(String(data.minigameUnlockCost))
     ) {
       throw new Error("Invalid save format")
     }
@@ -1319,18 +1410,18 @@ async function importSaveFile(event) {
 // loaded into the current game session.
 function applyImportedSaveData(data) {
   data = migrateSaveData(data)
-  fribbies = Math.max(0, Number(data.fribbies) || 0)
-  u0Amount = Math.max(0, Number(data.upgrades[0].amount) || 0); u0Cost = Math.max(1, Number(data.upgrades[0].cost) || 1)
-  u1Amount = Math.max(0, Number(data.upgrades[1].amount) || 0); u1Cost = Math.max(1, Number(data.upgrades[1].cost) || 1)
-  u2Amount = Math.max(0, Number(data.upgrades[2].amount) || 0); u2Cost = Math.max(1, Number(data.upgrades[2].cost) || 1)
-  u3Amount = Math.max(0, Number(data.upgrades[3].amount) || 0); u3Cost = Math.max(1, Number(data.upgrades[3].cost) || 1)
-  u4Amount = Math.max(0, Number(data.upgrades[4].amount) || 0); u4Cost = Math.max(1, Number(data.upgrades[4].cost) || 1)
-  u5Amount = Math.max(0, Number(data.upgrades[5].amount) || 0); u5Cost = Math.max(1, Number(data.upgrades[5].cost) || 1)
-  u6Amount = Math.max(0, Number(data.upgrades[6].amount) || 0); u6Cost = Math.max(1, Number(data.upgrades[6].cost) || 1)
-  u7Amount = Math.max(0, Number(data.upgrades[7].amount) || 0); u7Cost = Math.max(1, Number(data.upgrades[7].cost) || 1)
-  u8Amount = Math.max(0, Number(data.upgrades[8].amount) || 0); u8Cost = Math.max(1, Number(data.upgrades[8].cost) || 1)
+  fribbies = toBigIntAmount(data.fribbies)
+  u0Amount = Math.max(0, Number(data.upgrades[0].amount) || 0); u0Cost = toBigIntAmount(data.upgrades[0].cost, 10n) || 10n
+  u1Amount = Math.max(0, Number(data.upgrades[1].amount) || 0); u1Cost = toBigIntAmount(data.upgrades[1].cost, 50n) || 50n
+  u2Amount = Math.max(0, Number(data.upgrades[2].amount) || 0); u2Cost = toBigIntAmount(data.upgrades[2].cost, 200n) || 200n
+  u3Amount = Math.max(0, Number(data.upgrades[3].amount) || 0); u3Cost = toBigIntAmount(data.upgrades[3].cost, 500n) || 500n
+  u4Amount = Math.max(0, Number(data.upgrades[4].amount) || 0); u4Cost = toBigIntAmount(data.upgrades[4].cost, 1000n) || 1000n
+  u5Amount = Math.max(0, Number(data.upgrades[5].amount) || 0); u5Cost = toBigIntAmount(data.upgrades[5].cost, 2500n) || 2500n
+  u6Amount = Math.max(0, Number(data.upgrades[6].amount) || 0); u6Cost = toBigIntAmount(data.upgrades[6].cost, 5000n) || 5000n
+  u7Amount = Math.max(0, Number(data.upgrades[7].amount) || 0); u7Cost = toBigIntAmount(data.upgrades[7].cost, 10000n) || 10000n
+  u8Amount = Math.max(0, Number(data.upgrades[8].amount) || 0); u8Cost = toBigIntAmount(data.upgrades[8].cost, 25000n) || 25000n
   unlockedMinigames = Math.max(0, Math.min(minigameUnlockOrder.length, Number(data.unlockedMinigames) || 0))
-  minigameUnlockCost = Math.max(2500, Number(data.minigameUnlockCost) || 2500)
+  minigameUnlockCost = toBigIntAmount(data.minigameUnlockCost, 2500n) < 2500n ? 2500n : toBigIntAmount(data.minigameUnlockCost, 2500n)
 
   updateFribby()
   const labels = [
@@ -1528,12 +1619,12 @@ function wipeSave() {
   if (!confirm("Wipe all Fribby Thrower progress from this browser? This cannot be undone unless you exported a save.")) return
   try { localStorage.removeItem(GAME_SAVE_COOKIE) } catch (error) {}
   try { document.cookie = `${GAME_SAVE_COOKIE}=; Max-Age=0; path=/; SameSite=Lax` } catch (error) {}
-  fribbies = 0
-  u0Amount=0; u0Cost=10; u1Amount=0; u1Cost=50; u2Amount=0; u2Cost=200
-  u3Amount=0; u3Cost=500; u4Amount=0; u4Cost=1000; u5Amount=0; u5Cost=2500
-  u6Amount=0; u6Cost=5000; u7Amount=0; u7Cost=10000; u8Amount=0; u8Cost=25000
+  fribbies = 0n
+  u0Amount=0; u0Cost=10n; u1Amount=0; u1Cost=50n; u2Amount=0; u2Cost=200n
+  u3Amount=0; u3Cost=500n; u4Amount=0; u4Cost=1000n; u5Amount=0; u5Cost=2500n
+  u6Amount=0; u6Cost=5000n; u7Amount=0; u7Cost=10000n; u8Amount=0; u8Cost=25000n
   clearInterval(autoThrowTimer)
-  unlockedMinigames = 0; minigameUnlockCost = 2500
+  unlockedMinigames = 0; minigameUnlockCost = 2500n
   document.querySelectorAll("[data-minigame]").forEach(button => button.hidden = true)
   document.getElementById("minigamesArea").hidden = true
   const defaults = ["Extra Hand (0, +1 Fribby per click) - 10 Fribbies","Auto Thrower (0, +1 auto throw/sec) - 50 Fribbies","Intern (0, +1 Fribby per auto throw) - 200 Fribbies","Fribby Cannon (0, +5 Fribbies per click) - 500 Fribbies","Supervisor (0, +5 Fribbies per auto throw) - 1000 Fribbies","Power Throw (0, +10 Fribbies per click) - 2500 Fribbies","Fribby Factory (0, +10 Fribbies per auto throw) - 5000 Fribbies","Foreman (0, +5 auto throws/sec) - 10000 Fribbies","Mega Cannon (0, +100 Fribbies per click) - 25000 Fribbies"]
