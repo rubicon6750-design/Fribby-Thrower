@@ -375,25 +375,340 @@ body.dark-mode .minesweeper-tile.revealed:nth-child(10n + 1) { color: #1d4ed8; }
 }
 
 
-/* Ascension and permanent Mega Fribby skill tree */
+/* Ascension and a connected, tiered Mega Fribby skill tree */
 .ascension-panel, .skill-tree-panel {
-  max-width: 900px; margin: 18px 0; padding: 16px;
-  border: 2px solid #b8a7ef; border-radius: 14px;
+  max-width: 1100px;
+  margin: 18px 0;
+  padding: 18px;
+  border: 2px solid #b8a7ef;
+  border-radius: 16px;
   background: linear-gradient(135deg, #fff, #f2edff);
-  box-shadow: 0 4px 12px #35245a18;
+  box-shadow: 0 5px 16px #35245a18;
 }
 .ascension-panel h2, .skill-tree-panel h2 { margin-top: 0; color: #7252b5; }
 #megaFribbyAmount { font-size: 1.2rem; font-weight: 800; color: #7252b5; }
 #ascendButton { background: linear-gradient(135deg, #a78bfa, #7c3aed); color: white; border-color: #6d28d9; font-size: 1.15rem; padding: 12px 28px; }
-.skill-tree { display: grid; grid-template-columns: repeat(4, minmax(190px, 1fr)); gap: 12px; align-items: start; }
-.skill-branch { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.skill-branch h3 { margin: 6px 0 0; color: #7252b5; }
-.skill-branch p { min-height: 60px; margin: 0 0 4px; font-size: .9rem; }
-.skill-node { min-height: 64px; white-space: pre-line; text-align: left; font-size: .82rem; line-height: 1.3; }
-.skill-node.locked { opacity: .55; }
-.skill-node.purchased { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-color: #059669; color: #064e3b; }
+#skillTree { overflow-x: auto; padding: 6px 2px 18px; }
+.skill-tree-map {
+  --tree-line: #b4a1e9;
+  --tree-node: #fff;
+  --tree-text: #2e2450;
+  --tree-effect: #645b7a;
+  min-width: 980px;
+  padding: 6px 10px 24px;
+  color: var(--tree-text);
+  position: relative;
+}
+.skill-tree-origin {
+  width: 200px;
+  min-height: 70px;
+  margin: 0 0 20px calc(37.5% - 100px);
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  box-sizing: border-box;
+  border: 2px solid #8b5cf6;
+  border-radius: 24px;
+  background: radial-gradient(circle at 50% 10%, #f5eaff, #e2d7ff 72%);
+  box-shadow: 0 0 0 6px #8b5cf61a, 0 7px 15px #35245a20;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+.skill-tree-origin strong { font-size: .92rem; letter-spacing: .13em; }
+.skill-tree-origin span:last-child { font-size: .78rem; color: #635480; }
+.origin-star { color: #7c3aed; font-size: 1.1rem; line-height: 1; }
+.skill-tree-origin::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -22px;
+  height: 22px;
+  border-left: 2px solid var(--tree-line);
+}
+.skill-tree-headings {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  padding-top: 18px;
+}
+.skill-tree-headings::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 12.5%;
+  right: 12.5%;
+  border-top: 2px solid var(--tree-line);
+}
+.skill-lane-heading {
+  min-height: 82px;
+  padding: 12px 10px 10px;
+  border: 1px solid #d6cafa;
+  border-radius: 12px;
+  background: #ffffffd9;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+.skill-lane-heading::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -20px;
+  height: 19px;
+  border-left: 2px solid var(--tree-line);
+}
+.skill-lane-heading strong { color: #6d45bb; font-size: .94rem; }
+.skill-lane-heading span { color: var(--tree-effect); font-size: .75rem; line-height: 1.35; }
+.skill-lane-heading.lane-path { border: 2px solid #8b5cf6; background: #f4edff; }
+.skill-lane-heading.lane-strong { border-top: 3px solid #d97706; }
+.skill-lane-heading.lane-click { border-top: 3px solid #0d9488; }
+.skill-lane-heading.lane-mega { border-top: 3px solid #ca8a04; }
+.skill-cell.lane-path .skill-node { border-width: 2px; border-color: #9a7ce0; }
+.skill-cell.lane-strong .skill-node { border-color: #e7c38e; }
+.skill-cell.lane-click .skill-node { border-color: #99d5ce; }
+.skill-cell.lane-mega .skill-node { border-color: #e8d28d; }
+.skill-tree-grid { position: relative; }
+.skill-rung {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 17px;
+  position: relative;
+}
+.skill-rung::before {
+  content: "";
+  position: absolute;
+  left: 12.5%;
+  right: 12.5%;
+  top: 50%;
+  border-top: 2px solid var(--tree-line);
+  opacity: .8;
+}
+.skill-cell { min-width: 0; display: flex; position: relative; }
+.skill-cell::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  height: 18px;
+  border-left: 2px solid var(--tree-line);
+}
+.skill-node {
+  width: 100%;
+  min-height: 126px;
+  padding: 10px 9px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  position: relative;
+  z-index: 1;
+  border: 1px solid #c9b9ef;
+  border-radius: 14px;
+  background: var(--tree-node);
+  color: var(--tree-text);
+  box-shadow: 0 3px 8px #35245a12;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.28;
+  cursor: pointer;
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+.skill-node:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 7px 15px #35245a20; border-color: #8b5cf6; }
+.skill-node-name { font-weight: 800; font-size: .88rem; }
+.skill-node-effect { color: var(--tree-effect); font-size: .76rem; font-weight: 500; }
+.skill-node-footer { font-size: .72rem; font-weight: 800; color: #6d45bb; }
+.skill-node.locked { opacity: .6; background: #f0edf6; cursor: not-allowed; box-shadow: none; }
+.skill-node.available { border-color: #9b83dd; background: linear-gradient(145deg, #fff, #f4efff); }
+.skill-node.purchased { background: linear-gradient(145deg, #d1fae5, #a7f3d0); border-color: #059669; color: #064e3b; }
+.skill-node.purchased .skill-node-effect, .skill-node.purchased .skill-node-footer { color: #166534; }
+.skill-node.repeatable { border: 2px solid #d97706; background: linear-gradient(145deg, #fff7d6, #ffedd5); }
+.skill-node.repeatable .skill-node-name, .skill-node.repeatable .skill-node-footer { color: #92400e; }
+.skill-node.repeatable:disabled { opacity: .66; cursor: not-allowed; }
+.skill-tree-endcap { width: 100%; position: relative; margin-top: 30px; }
+.skill-endcap-line { position: absolute; left: 37.5%; top: -30px; height: 30px; border-left: 2px solid var(--tree-line); }
+.skill-endcap-intro { margin-left: calc(37.5% - 170px); width: 340px; margin-bottom: 10px; color: var(--tree-effect); font-size: .84rem; text-align: center; }
+.skill-tree-endcap .skill-node { width: 280px; min-height: 112px; margin-left: calc(37.5% - 140px); }
 body.dark-mode .ascension-panel, body.dark-mode .skill-tree-panel { background: linear-gradient(135deg, #29253b, #211d31); border-color: #65518f; color: #e6eaf2; }
-body.dark-mode .ascension-panel h2, body.dark-mode .skill-tree-panel h2, body.dark-mode .skill-branch h3, body.dark-mode #megaFribbyAmount { color: #c4b5fd; }
-body.dark-mode .skill-node.purchased { background: linear-gradient(135deg, #14532d, #166534); color: #dcfce7; border-color: #34d399; }
-@media (max-width: 850px) { .skill-tree { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 520px) { .skill-tree { grid-template-columns: 1fr; } .skill-branch p { min-height: 0; } }
+body.dark-mode .ascension-panel h2, body.dark-mode .skill-tree-panel h2, body.dark-mode #megaFribbyAmount { color: #c4b5fd; }
+body.dark-mode .skill-tree-map { --tree-line: #7563a4; --tree-node: #2b263c; --tree-text: #eee9ff; --tree-effect: #c7bddc; }
+body.dark-mode .skill-tree-origin { background: radial-gradient(circle at 50% 10%, #4b3772, #29203e 72%); }
+body.dark-mode .skill-tree-origin span:last-child { color: #d1c4ee; }
+body.dark-mode .skill-lane-heading { background: #29243a; border-color: #57467b; }
+body.dark-mode .skill-lane-heading strong, body.dark-mode .skill-node-footer { color: #c4b5fd; }
+body.dark-mode .skill-lane-heading.lane-path { background: #38294f; border-color: #8b5cf6; }
+body.dark-mode .skill-lane-heading.lane-strong { border-top-color: #f59e0b; }
+body.dark-mode .skill-lane-heading.lane-click { border-top-color: #2dd4bf; }
+body.dark-mode .skill-lane-heading.lane-mega { border-top-color: #facc15; }
+body.dark-mode .skill-node.locked { background: #262235; }
+body.dark-mode .skill-node.available { background: linear-gradient(145deg, #342b49, #292238); }
+body.dark-mode .skill-node.purchased { background: linear-gradient(145deg, #14532d, #166534); color: #dcfce7; border-color: #34d399; }
+body.dark-mode .skill-node.purchased .skill-node-effect, body.dark-mode .skill-node.purchased .skill-node-footer { color: #bbf7d0; }
+body.dark-mode .skill-node.repeatable { background: linear-gradient(145deg, #553c15, #392a15); border-color: #f59e0b; }
+body.dark-mode .skill-node.repeatable .skill-node-name, body.dark-mode .skill-node.repeatable .skill-node-footer { color: #fde68a; }
+@media (max-width: 650px) {
+  .skill-tree-panel { padding: 12px; }
+  #skillTree { margin-right: -4px; }
+}
+
+/* Ascension celebrations, skill unlock sparks, and Eternal Echo mastery feedback. */
+.ascension-fx-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+  background: radial-gradient(circle at 50% 47%, #5b36a9d9 0%, #271747eF 38%, #100e20f7 100%);
+  opacity: 0;
+  transition: opacity .28s ease;
+}
+.ascension-fx-overlay.is-live { opacity: 1; }
+.ascension-fx-overlay.is-exiting { opacity: 0; transition-duration: .65s; }
+.ascension-fx-stars { position: absolute; inset: 0; overflow: hidden; }
+.ascension-fx-star {
+  position: absolute;
+  width: var(--size, 4px); height: var(--size, 4px);
+  border-radius: 50%; background: #fff7c2;
+  box-shadow: 0 0 9px 2px #d9c5ffb8;
+  opacity: 0;
+}
+.ascension-fx-overlay.is-live .ascension-fx-star { animation: ascension-star-flight 1.5s ease-out var(--delay, 0ms) both; }
+@keyframes ascension-star-flight {
+  0% { opacity: 0; transform: translate(0, 0) scale(.2); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--drift-x), var(--drift-y)) scale(1.8); }
+}
+.ascension-fx-vortex {
+  position: absolute;
+  left: 50%; top: 43%; width: min(55vw, 420px); aspect-ratio: 1;
+  transform: translate(-50%, -50%) scale(.22); opacity: 0;
+}
+.ascension-fx-overlay.is-live .ascension-fx-vortex { animation: ascension-vortex-arrive 1.2s cubic-bezier(.12,.82,.18,1) both; }
+@keyframes ascension-vortex-arrive {
+  0% { transform: translate(-50%, -50%) scale(.22) rotate(-28deg); opacity: 0; }
+  48% { opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1) rotate(15deg); opacity: 1; }
+}
+.ascension-fx-ring {
+  position: absolute; inset: 8%; border-radius: 50%; border: 2px solid #e7ddff;
+  box-shadow: 0 0 28px #b8a0ff73, inset 0 0 26px #ad89ff52;
+}
+.ring-one { border-style: solid; }
+.ring-two { inset: 19%; border-color: #fce7a3; border-style: dashed; }
+.ring-three { inset: 30%; border-color: #bffcf1; border-width: 3px; }
+.ascension-fx-overlay.is-live .ring-one { animation: portal-spin 4s linear infinite; }
+.ascension-fx-overlay.is-live .ring-two { animation: portal-spin 2.8s linear infinite reverse; }
+.ascension-fx-overlay.is-live .ring-three { animation: portal-spin 1.8s linear infinite; }
+@keyframes portal-spin { to { rotate: 360deg; } }
+.ascension-fx-core {
+  position: absolute; inset: 37%; display: grid; place-items: center; border-radius: 50%;
+  color: #fffbd7; font-size: clamp(2rem, 7vw, 4.4rem);
+  background: radial-gradient(circle, #fff 0%, #fce7a3 17%, #bb9cff 42%, #7c3aed 75%, #432075 100%);
+  box-shadow: 0 0 30px #f7e7a8, 0 0 85px #af8aff, 0 0 145px #8b5cf6a8;
+}
+.ascension-fx-overlay.is-live .ascension-fx-core { animation: ascension-core-throb .72s ease-in-out infinite alternate; }
+@keyframes ascension-core-throb { from { transform: scale(.85); filter: brightness(1); } to { transform: scale(1.12); filter: brightness(1.45); } }
+.ascension-fx-copy {
+  position: absolute; top: min(69%, 560px); left: 5%; right: 5%;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  text-align: center; color: #fff; text-shadow: 0 2px 14px #0b0615;
+  opacity: 0; transform: translateY(18px);
+}
+.ascension-fx-overlay.is-live .ascension-fx-copy { animation: ascension-copy-arrive .68s .32s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes ascension-copy-arrive { to { opacity: 1; transform: translateY(0); } }
+.ascension-fx-title { font-size: clamp(1.4rem, 4.8vw, 2.7rem); letter-spacing: .14em; font-weight: 900; }
+.ascension-fx-reward { color: #fce7a3; font-size: clamp(1.05rem, 3vw, 1.55rem); font-weight: 900; }
+.ascension-fx-count { color: #e8defe; font-size: .92rem; }
+
+.skill-node { isolation: isolate; }
+.skill-fx-particles { position: absolute; inset: 0; z-index: 5; pointer-events: none; overflow: visible; }
+.skill-fx-particle {
+  position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; border-radius: 2px;
+  background: hsl(var(--hue, 150) 96% 69%); box-shadow: 0 0 9px hsl(var(--hue, 150) 95% 65% / .85);
+  opacity: 0; animation: skill-particle-burst .72s cubic-bezier(.15,.8,.2,1) var(--delay, 0ms) both;
+}
+@keyframes skill-particle-burst {
+  0% { opacity: 0; transform: rotate(var(--angle)) translateX(0) scale(.1); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--angle)) translateX(var(--distance)) scale(.15); }
+}
+.skill-node.skill-unlock-flash {
+  z-index: 4; border-color: #10b981 !important;
+  box-shadow: 0 0 0 3px #6ee7b788, 0 0 26px #34d399b8, 0 0 52px #a7f3d080 !important;
+  animation: skill-unlock-pop .72s cubic-bezier(.16,1.2,.3,1) both;
+}
+.skill-node.skill-unlock-flash::after,
+.skill-node.skill-rung-reveal::after,
+.skill-node.eternal-echo-purchase::after {
+  content: ""; position: absolute; inset: -5px; border: 2px solid #6ee7b7; border-radius: inherit;
+  pointer-events: none; opacity: 0; animation: skill-unlock-ring .82s ease-out both;
+}
+@keyframes skill-unlock-pop {
+  0% { transform: scale(.9); filter: brightness(1); }
+  36% { transform: scale(1.08); filter: brightness(1.35); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+@keyframes skill-unlock-ring { 0% { inset: 0; opacity: .95; } 100% { inset: -23px; opacity: 0; } }
+.skill-node.skill-rung-reveal {
+  z-index: 3; animation: rung-reveal .9s ease-out both;
+  box-shadow: 0 0 0 2px #a5f3fcaa, 0 0 24px #67e8f9a6 !important;
+}
+.skill-node.skill-rung-reveal::after { border-color: #67e8f9; }
+@keyframes rung-reveal {
+  0% { transform: scale(.92); filter: brightness(.9); }
+  42% { transform: scale(1.055); filter: brightness(1.35); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+.skill-node.eternal-echo-purchase {
+  z-index: 5; border-color: #fbbf24 !important;
+  box-shadow: 0 0 0 3px #fcd34d94, 0 0 32px #f59e0bbd, 0 0 65px #fef3c766 !important;
+  animation: echo-mastery-pulse 1.05s cubic-bezier(.15,.8,.2,1) both;
+}
+.skill-node.eternal-echo-purchase::after { border-color: #fcd34d; animation-duration: 1s; }
+@keyframes echo-mastery-pulse {
+  0% { transform: scale(1) rotate(0); filter: brightness(1); }
+  25% { transform: scale(1.09) rotate(-1deg); filter: brightness(1.6); }
+  48% { transform: scale(1.045) rotate(1deg); }
+  100% { transform: scale(1) rotate(0); filter: brightness(1); }
+}
+.eternal-echo-toast {
+  position: fixed; z-index: 5100; top: 24px; left: 50%; transform: translate(-50%, -22px) scale(.92);
+  display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 14px 22px;
+  border: 1px solid #facc15; border-radius: 16px; color: #fff7d6;
+  background: linear-gradient(135deg, #5b3511f5, #31204df5); box-shadow: 0 0 24px #f59e0b70, 0 10px 35px #0005;
+  opacity: 0; pointer-events: none; text-align: center; white-space: nowrap;
+}
+.eternal-echo-toast strong { font-size: 1rem; letter-spacing: .12em; }
+.eternal-echo-toast span { font-size: .86rem; color: #fde68a; }
+.eternal-echo-toast.is-live { animation: echo-toast-in 1.65s ease both; }
+@keyframes echo-toast-in {
+  0% { opacity: 0; transform: translate(-50%, -22px) scale(.92); }
+  13%, 78% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -8px) scale(.98); }
+}
+body.dark-mode .skill-node.skill-unlock-flash { box-shadow: 0 0 0 3px #6ee7b788, 0 0 26px #34d399c7, 0 0 52px #a7f3d080 !important; }
+@media (max-width: 600px) {
+  .ascension-fx-vortex { width: min(78vw, 360px); top: 38%; }
+  .ascension-fx-copy { top: 66%; }
+  .ascension-fx-title { letter-spacing: .08em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ascension-fx-overlay, .ascension-fx-overlay *, .skill-fx-particle,
+  .skill-node.skill-unlock-flash, .skill-node.skill-rung-reveal,
+  .skill-node.eternal-echo-purchase, .skill-node::after, .eternal-echo-toast {
+    animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important;
+  }
+}
