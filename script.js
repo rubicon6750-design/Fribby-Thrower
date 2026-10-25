@@ -1,4 +1,20 @@
 let fribbies = 0n
+let megaFribbies = 0n
+let ascensionCount = 0
+let purchasedSkills = new Set()
+const ASCENSION_THRESHOLD = 1000000n
+const skillBranches = [
+  { id: "path", name: "Ascension Path", description: "Unlocks the outer branches and boosts all gains.", count: 13 },
+  { id: "strong", name: "Stronger Upgrades", description: "Improves regular upgrade power.", count: 12 },
+  { id: "click", name: "Clicking Power", description: "Makes each manual throw more powerful.", count: 12 },
+  { id: "mega", name: "More Mega Fribbies", description: "Earn more Mega Fribbies when ascending.", count: 12 }
+]
+const skillNames = {
+  path: ["First Steps", "Astral Compass", "Branching Fate", "Open the Canopy", "Fribby Resonance", "Deep Roots", "Starbound Route", "Ancient Knowledge", "Cosmic Rhythm", "Beyond the Veil", "Infinite Trail", "Ascendant Heart", "Master of Paths"],
+  strong: ["Reinforced Hands", "Sturdier Tools", "Better Training", "Polished Parts", "Efficient Crew", "Power Blueprint", "Improved Machinery", "Prime Materials", "Masterwork", "Supercharged Gear", "Perfected Upgrades", "Ultimate Engineering"],
+  click: ["Quick Tap", "Firm Grip", "Focused Throw", "Double Motion", "Heavy Disc", "Rapid Rhythm", "Charged Toss", "Precision Aim", "Forceful Flick", "Hyper Throw", "Meteor Strike", "Cosmic Launch"],
+  mega: ["Mega Spark", "Shiny Core", "Rich Harvest", "Cosmic Interest", "Resonant Soul", "Golden Orbit", "Star Collector", "Mega Magnet", "Astral Dividend", "Singularity", "Infinite Bounty", "Mega Mastery"]
+}
 
 let u0Amount = 0
 let u0Cost = 10n
@@ -22,12 +38,22 @@ let u8Cost = 25000n
 let autoThrowTimer
 
 function updateFribby() {
-  document.getElementById("fribbyAmount").innerText =
-        "Fribbies Thrown: " + formatFribbies(fribbies)
+  document.getElementById("fribbyAmount").innerText = "Fribbies: " + formatFribbies(fribbies)
+  updateAscensionUI()
   saveGame()
 }
-
-function getFribbiesPerClick() { return u0Amount + 1 + u3Amount * 5 + u5Amount * 10 + u8Amount * 100 }
+function countSkills(branch) { return [...purchasedSkills].filter(id => id.startsWith(branch + "-")).length }
+function getPathBonusPercent() { return 100 + countSkills("path") * 10 }
+function getUpgradeBonusPercent() { return 100 + countSkills("strong") * 25 }
+function getClickBonusPercent() { return 100 + countSkills("click") * 50 }
+function getFribbiesPerClick() {
+  const base = u0Amount + 1 + u3Amount * 5 + u5Amount * 10 + u8Amount * 100
+  return Math.max(1, Math.floor(base * getUpgradeBonusPercent() * getClickBonusPercent() * getPathBonusPercent() / 1000000))
+}
+function getAutoThrowReward() {
+  const base = 1 + u2Amount + u4Amount * 5 + u6Amount * 10
+  return Math.max(1, Math.floor(base * getUpgradeBonusPercent() * getPathBonusPercent() / 10000))
+}
 
 function throwFribby() {
   playSoundEffect("throwSound")
@@ -167,9 +193,105 @@ function updateAutoThrowInterval() {
   clearInterval(autoThrowTimer)
   const autoThrowsPerSecond = u1Amount + u7Amount * 5
   autoThrowTimer = setInterval(function() {
-        fribbies += BigInt(1 + u2Amount + u4Amount * 5 + u6Amount * 10)
+        fribbies += BigInt(getAutoThrowReward())
     updateFribby()
   }, 1000 / autoThrowsPerSecond)
+}
+
+function skillIndexToId(index) {
+  if (index < 13) return `path-${index}`
+  if (index < 25) return `strong-${index - 13}`
+  if (index < 37) return `click-${index - 25}`
+  if (index < 49) return `mega-${index - 37}`
+  return null
+}
+function skillIdToIndex(id) {
+  const match = /^(path|strong|click|mega)-(\d+)$/.exec(id)
+  if (!match) return -1
+  const offset = { path: 0, strong: 13, click: 25, mega: 37 }[match[1]]
+  const number = Number(match[2])
+  const limit = match[1] === "path" ? 13 : 12
+  return number >= 0 && number < limit ? offset + number : -1
+}
+function updateAscensionUI() {
+  const label = document.getElementById("megaFribbyAmount")
+  const button = document.getElementById("ascendButton")
+  if (label) label.textContent = `Mega Fribbies: ${formatFribbies(megaFribbies)} · Ascensions: ${ascensionCount}`
+  if (button) button.hidden = fribbies < ASCENSION_THRESHOLD
+  updateSkillTreeButtons()
+}
+function ascend() {
+  if (fribbies < ASCENSION_THRESHOLD) return
+  const baseReward = fribbies / ASCENSION_THRESHOLD
+  const multiplierPercent = 100 + countSkills("mega") * 25 + countSkills("path") * 10
+  let reward = baseReward * BigInt(multiplierPercent) / 100n
+  if (reward < 1n) reward = 1n
+  if (!confirm(`Ascend and gain ${formatFribbies(reward)} Mega Fribbies? This resets your Fribbies, regular upgrades, and minigame unlocks.`)) return
+  megaFribbies += reward
+  ascensionCount++
+  fribbies = 0n
+  u0Amount=0; u0Cost=10n; u1Amount=0; u1Cost=50n; u2Amount=0; u2Cost=200n
+  u3Amount=0; u3Cost=500n; u4Amount=0; u4Cost=1000n; u5Amount=0; u5Cost=2500n
+  u6Amount=0; u6Cost=5000n; u7Amount=0; u7Cost=10000n; u8Amount=0; u8Cost=25000n
+  clearInterval(autoThrowTimer)
+  unlockedMinigames = 0; minigameUnlockCost = 2500n
+  document.querySelectorAll("[data-minigame]").forEach(button => button.hidden = true)
+  document.getElementById("minigamesArea").hidden = true
+  const defaults = ["Extra Hand (0, +1 Fribby per click) - 10 Fribbies", "Auto Thrower (0, +1 auto throw/sec) - 50 Fribbies", "Intern (0, +1 Fribby per auto throw) - 200 Fribbies", "Fribby Cannon (0, +5 Fribbies per click) - 500 Fribbies", "Supervisor (0, +5 Fribbies per auto throw) - 1000 Fribbies", "Power Throw (0, +10 Fribbies per click) - 2500 Fribbies", "Fribby Factory (0, +10 Fribbies per auto throw) - 5000 Fribbies", "Turbo Thrower (0, +5 auto throws/sec) - 10000 Fribbies", "Mega Cannon (0, +100 Fribbies per click) - 25000 Fribbies"]
+  defaults.forEach((label, i) => document.getElementById(`upgrade${i}`).textContent = label)
+  updateMinigameUnlockButton()
+  const status = document.getElementById("ascensionStatus")
+  if (status) status.textContent = `Ascended! You gained ${formatFribbies(reward)} Mega Fribbies.`
+  playSoundEffect("minigameCompleteSound")
+  updateFribby()
+  saveGame()
+}
+function renderSkillTree() {
+  const tree = document.getElementById("skillTree")
+  if (!tree) return
+  tree.innerHTML = ""
+  skillBranches.forEach(branch => {
+    const column = document.createElement("section")
+    column.className = `skill-branch branch-${branch.id}`
+    const heading = document.createElement("h3"); heading.textContent = branch.name; column.appendChild(heading)
+    const description = document.createElement("p"); description.textContent = branch.description; column.appendChild(description)
+    for (let i = 0; i < branch.count; i++) {
+      const id = `${branch.id}-${i}`
+      const button = document.createElement("button")
+      button.type = "button"; button.className = "skill-node"; button.dataset.skillId = id
+      button.onclick = () => buySkill(id)
+      column.appendChild(button)
+    }
+    tree.appendChild(column)
+  })
+  updateSkillTreeButtons()
+}
+function isSkillAvailable(id) {
+  const [branch, rawIndex] = id.split("-"); const index = Number(rawIndex)
+  if (purchasedSkills.has(id)) return false
+  if (branch === "path") return index === 0 || purchasedSkills.has(`path-${index - 1}`)
+  if (countSkills("path") < 3) return false
+  return index === 0 || purchasedSkills.has(`${branch}-${index - 1}`)
+}
+function skillCost(id) {
+  const [branch, rawIndex] = id.split("-"); const index = Number(rawIndex)
+  return BigInt(1 + Math.floor(index / 3) + (branch === "path" ? 0 : 1))
+}
+function updateSkillTreeButtons() {
+  document.querySelectorAll(".skill-node").forEach(button => {
+    const id = button.dataset.skillId; const [branch, rawIndex] = id.split("-"); const index = Number(rawIndex)
+    const purchased = purchasedSkills.has(id); const cost = skillCost(id)
+    const effect = branch === "path" ? "+10% all gains" : branch === "strong" ? "+25% regular upgrade power" : branch === "click" ? "+50% click power" : "+25% Mega Fribbies on ascension"
+    button.textContent = `${purchased ? "✓ " : ""}${skillNames[branch][index]}${purchased ? " · Owned" : ` · ${cost} Mega Fribbies`}\n${effect}`
+    button.disabled = !purchased && (!isSkillAvailable(id) || megaFribbies < cost)
+    button.classList.toggle("purchased", purchased); button.classList.toggle("locked", !purchased && !isSkillAvailable(id))
+  })
+}
+function buySkill(id) {
+  if (purchasedSkills.has(id) || !isSkillAvailable(id)) return
+  const cost = skillCost(id); if (megaFribbies < cost) return
+  megaFribbies -= cost; purchasedSkills.add(id); playSoundEffect("upgradeSound")
+  updateAscensionUI(); saveGame()
 }
 
 const minigameUnlockOrder = [
@@ -929,7 +1051,7 @@ function getGameCookie(name) {
 
 function getGameSaveData() {
   return {
-    version: 2,
+    version: 3,
     fribbies: fribbies.toString(),
     upgrades: [
       { amount: u0Amount, cost: u0Cost.toString() },
@@ -943,7 +1065,10 @@ function getGameSaveData() {
       { amount: u8Amount, cost: u8Cost.toString() }
     ],
     unlockedMinigames,
-    minigameUnlockCost: minigameUnlockCost.toString()
+    minigameUnlockCost: minigameUnlockCost.toString(),
+    megaFribbies: megaFribbies.toString(),
+    ascensionCount,
+    purchasedSkills: [...purchasedSkills]
   }
 }
 
@@ -990,6 +1115,12 @@ function migrateSaveData(data) {
       : toBigIntAmount(data.minigameUnlockCost, 5000n) / 2n).toString()
     data.version = 2
   }
+  if (Number(data.version) < 3) {
+    data.megaFribbies = "0"
+    data.ascensionCount = 0
+    data.purchasedSkills = []
+    data.version = 3
+  }
   return data
 }
 
@@ -1018,7 +1149,7 @@ function loadGame(showMessage = true) {
 
   try {
     const data = migrateSaveData(JSON.parse(rawSave))
-    if (![1, 2].includes(data.version) || !Array.isArray(data.upgrades) || data.upgrades.length !== 9) {
+    if (![1, 2, 3].includes(data.version) || !Array.isArray(data.upgrades) || data.upgrades.length !== 9) {
       throw new Error("Unsupported save format")
     }
 
@@ -1035,8 +1166,12 @@ function loadGame(showMessage = true) {
 
     unlockedMinigames = Math.max(0, Math.min(minigameUnlockOrder.length, Number(data.unlockedMinigames) || 0))
     minigameUnlockCost = toBigIntAmount(data.minigameUnlockCost, 2500n) < 2500n ? 2500n : toBigIntAmount(data.minigameUnlockCost, 2500n)
+    megaFribbies = toBigIntAmount(data.megaFribbies)
+    ascensionCount = Math.max(0, Number(data.ascensionCount) || 0)
+    purchasedSkills = new Set(Array.isArray(data.purchasedSkills) ? data.purchasedSkills.filter(id => skillIdToIndex(id) >= 0) : [])
 
     updateFribby()
+    renderSkillTree()
     const labels = [
       `Extra Hand - (${u0Amount}, +1 Fribby per click) - ${u0Cost} Fribbies`,
       `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${u1Cost} Fribbies`,
@@ -1069,6 +1204,8 @@ function loadGame(showMessage = true) {
 
 document.addEventListener("DOMContentLoaded", () => {
   const loaded = loadGame(false)
+  renderSkillTree()
+  updateAscensionUI()
   const status = document.getElementById("saveStatus")
   if (status) status.textContent = loaded ? "Save loaded automatically." : "Autosave is ready. Progress will be stored in this browser."
   // Keep the cookie's expiration fresh while the game is open.
@@ -1231,7 +1368,10 @@ const SAVE_TRIPLE_PREFIX = "FT3|"
 function saveDataToFields(data) {
   const values = [data.fribbies]
   data.upgrades.forEach(upgrade => values.push(upgrade.amount, upgrade.cost))
-  values.push(data.unlockedMinigames, data.minigameUnlockCost)
+  values.push(data.unlockedMinigames, data.minigameUnlockCost, data.megaFribbies || "0", data.ascensionCount || 0)
+  let skillMask = 0n
+  ;(data.purchasedSkills || []).forEach(id => { const index = skillIdToIndex(id); if (index >= 0) skillMask |= (1n << BigInt(index)) })
+  values.push(skillMask.toString())
 
   return values.map(value => {
     // Convert directly from decimal strings so huge values never pass through
@@ -1273,7 +1413,7 @@ function decryptSaveFields(ciphertext) {
     const copies = text.slice(SAVE_TRIPLE_PREFIX.length).split("|")
     if (copies.length !== 3) throw new Error("Invalid redundant save")
     const parsedCopies = copies.map(copy => copy.split("/"))
-    if (parsedCopies.some(copy => copy.length !== 21)) throw new Error("Invalid save field count")
+    if (parsedCopies.some(copy => ![21, 24].includes(copy.length)) || parsedCopies.some(copy => copy.length !== parsedCopies[0].length)) throw new Error("Invalid save field count")
 
     fields = parsedCopies[0].map((_, index) => {
       const values = parsedCopies.map(copy => copy[index])
@@ -1289,7 +1429,7 @@ function decryptSaveFields(ciphertext) {
 
   // Legacy format: chained decimal digit cipher.
   const legacyFields = text.split("/")
-  if (legacyFields.length !== 21 || legacyFields.some(field => !/^\d+$/.test(field))) {
+  if (!([21, 24].includes(legacyFields.length)) || legacyFields.some(field => !/^\d+$/.test(field))) {
     throw new Error("Invalid encrypted save")
   }
   let key = 6
@@ -1320,12 +1460,14 @@ function fieldsToSaveData(decoded) {
   for (let i = 0; i < 9; i++) {
     upgrades.push({ amount: Number(decoded[1 + i * 2]), cost: String(decoded[2 + i * 2]) })
   }
+  const mask = decoded.length >= 24 ? toBigIntAmount(decoded[23]) : 0n
   return {
-    version: 2,
-    fribbies: String(decoded[0]),
-    upgrades,
-    unlockedMinigames: Number(decoded[19]),
-    minigameUnlockCost: String(decoded[20])
+    version: decoded.length >= 24 ? 3 : 2,
+    fribbies: String(decoded[0]), upgrades,
+    unlockedMinigames: Number(decoded[19]), minigameUnlockCost: String(decoded[20]),
+    megaFribbies: decoded.length >= 24 ? String(decoded[21]) : "0",
+    ascensionCount: decoded.length >= 24 ? Number(decoded[22]) : 0,
+    purchasedSkills: decoded.length >= 24 ? Array.from({ length: 49 }, (_, index) => (mask & (1n << BigInt(index))) ? skillIndexToId(index) : null).filter(Boolean) : []
   }
 }
 
@@ -1370,7 +1512,7 @@ async function importSaveFile(event) {
 
     // Validate the structure before touching the current save.
     if (
-      ![1, 2].includes(Number(data.version)) ||
+      ![1, 2, 3].includes(Number(data.version)) ||
       !/^\d+$/.test(String(data.fribbies)) ||
       !Array.isArray(data.upgrades) ||
       data.upgrades.length !== 9 ||
@@ -1431,8 +1573,12 @@ function applyImportedSaveData(data) {
   u8Amount = Math.max(0, Number(data.upgrades[8].amount) || 0); u8Cost = toBigIntAmount(data.upgrades[8].cost, 25000n) || 25000n
   unlockedMinigames = Math.max(0, Math.min(minigameUnlockOrder.length, Number(data.unlockedMinigames) || 0))
   minigameUnlockCost = toBigIntAmount(data.minigameUnlockCost, 2500n) < 2500n ? 2500n : toBigIntAmount(data.minigameUnlockCost, 2500n)
+  megaFribbies = toBigIntAmount(data.megaFribbies)
+  ascensionCount = Math.max(0, Number(data.ascensionCount) || 0)
+  purchasedSkills = new Set(Array.isArray(data.purchasedSkills) ? data.purchasedSkills.filter(id => skillIdToIndex(id) >= 0) : [])
 
   updateFribby()
+  renderSkillTree()
   const labels = [
     `Extra Hand - (${u0Amount}, +1 Fribby per click) - ${u0Cost} Fribbies`,
     `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${u1Cost} Fribbies`,
@@ -1634,10 +1780,11 @@ function wipeSave() {
   u6Amount=0; u6Cost=5000n; u7Amount=0; u7Cost=10000n; u8Amount=0; u8Cost=25000n
   clearInterval(autoThrowTimer)
   unlockedMinigames = 0; minigameUnlockCost = 2500n
+  megaFribbies = 0n; ascensionCount = 0; purchasedSkills = new Set()
   document.querySelectorAll("[data-minigame]").forEach(button => button.hidden = true)
   document.getElementById("minigamesArea").hidden = true
   const defaults = ["Extra Hand (0, +1 Fribby per click) - 10 Fribbies","Auto Thrower (0, +1 auto throw/sec) - 50 Fribbies","Intern (0, +1 Fribby per auto throw) - 200 Fribbies","Fribby Cannon (0, +5 Fribbies per click) - 500 Fribbies","Supervisor (0, +5 Fribbies per auto throw) - 1000 Fribbies","Power Throw (0, +10 Fribbies per click) - 2500 Fribbies","Fribby Factory (0, +10 Fribbies per auto throw) - 5000 Fribbies","Foreman (0, +5 auto throws/sec) - 10000 Fribbies","Mega Cannon (0, +100 Fribbies per click) - 25000 Fribbies"]
   defaults.forEach((label,i) => { const button=document.getElementById(`upgrade${i}`); if(button) button.textContent=label })
-  updateMinigameUnlockButton(); updateFribby()
+  updateMinigameUnlockButton(); updateFribby(); renderSkillTree(); updateAscensionUI()
   const status = document.getElementById("saveStatus"); if(status) status.textContent = "Save wiped. A fresh game has started."
 }

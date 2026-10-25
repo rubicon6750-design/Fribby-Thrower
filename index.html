@@ -42,6 +42,13 @@
       <p id="fribbyAmount">Fribbies Thrown: 0</p>
 
 
+      <section id="ascensionPanel" class="ascension-panel" aria-labelledby="ascensionTitle">
+        <h2 id="ascensionTitle">Ascension</h2>
+        <p id="megaFribbyAmount">Mega Fribbies: 0</p>
+        <p id="ascensionDescription">Reach 1,000,000 Fribbies to ascend. Ascending resets your Fribbies, upgrades, and minigame unlocks in exchange for Mega Fribbies.</p>
+        <button id="ascendButton" type="button" onclick="ascend()" hidden>Ascend</button>
+        <p id="ascensionStatus" role="status" aria-live="polite"></p>
+      </section>
       <div class="upgrade-list" aria-label="Upgrades">
         <button id="upgrade0" onclick="buy0()">Extra Hand (0, +1 Fribby per click) - 10 Fribbies</button>
         <button id="upgrade1" onclick="buy1()">Auto Thrower (0, +1 auto throw/sec) - 50 Fribbies</button>
@@ -55,6 +62,12 @@
         <button id="minigameUpgrade" type="button" onclick="buyMinigameUnlock()">Unlock Minigame (0/6, lets you play for Fribbies) - 2500 Fribbies</button>
       </div>
     </main>
+
+      <section id="skillTreePanel" class="skill-tree-panel" aria-labelledby="skillTreeTitle">
+        <h2 id="skillTreeTitle">Mega Fribby Skill Tree</h2>
+        <p>Spend Mega Fribbies on permanent upgrades. The central path unlocks the three outer branches after its third skill.</p>
+        <div id="skillTree" class="skill-tree" aria-label="Ascension skill tree"></div>
+      </section>
 
     <section id="leaderboardArea" class="leaderboard-area">
       <h2>Global Leaderboard</h2>

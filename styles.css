@@ -373,3 +373,27 @@ body.dark-mode .minesweeper-tile.revealed:nth-child(10n + 1) { color: #1d4ed8; }
   border-radius: 6px;
   cursor: pointer;
 }
+
+
+/* Ascension and permanent Mega Fribby skill tree */
+.ascension-panel, .skill-tree-panel {
+  max-width: 900px; margin: 18px 0; padding: 16px;
+  border: 2px solid #b8a7ef; border-radius: 14px;
+  background: linear-gradient(135deg, #fff, #f2edff);
+  box-shadow: 0 4px 12px #35245a18;
+}
+.ascension-panel h2, .skill-tree-panel h2 { margin-top: 0; color: #7252b5; }
+#megaFribbyAmount { font-size: 1.2rem; font-weight: 800; color: #7252b5; }
+#ascendButton { background: linear-gradient(135deg, #a78bfa, #7c3aed); color: white; border-color: #6d28d9; font-size: 1.15rem; padding: 12px 28px; }
+.skill-tree { display: grid; grid-template-columns: repeat(4, minmax(190px, 1fr)); gap: 12px; align-items: start; }
+.skill-branch { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.skill-branch h3 { margin: 6px 0 0; color: #7252b5; }
+.skill-branch p { min-height: 60px; margin: 0 0 4px; font-size: .9rem; }
+.skill-node { min-height: 64px; white-space: pre-line; text-align: left; font-size: .82rem; line-height: 1.3; }
+.skill-node.locked { opacity: .55; }
+.skill-node.purchased { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-color: #059669; color: #064e3b; }
+body.dark-mode .ascension-panel, body.dark-mode .skill-tree-panel { background: linear-gradient(135deg, #29253b, #211d31); border-color: #65518f; color: #e6eaf2; }
+body.dark-mode .ascension-panel h2, body.dark-mode .skill-tree-panel h2, body.dark-mode .skill-branch h3, body.dark-mode #megaFribbyAmount { color: #c4b5fd; }
+body.dark-mode .skill-node.purchased { background: linear-gradient(135deg, #14532d, #166534); color: #dcfce7; border-color: #34d399; }
+@media (max-width: 850px) { .skill-tree { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .skill-tree { grid-template-columns: 1fr; } .skill-branch p { min-height: 0; } }
