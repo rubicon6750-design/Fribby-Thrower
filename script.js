@@ -1101,7 +1101,10 @@ async function initializeLeaderboard() {
   try {
     leaderboardClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
     const savedName = localStorage.getItem("fribbyLeaderboardName") || ""
+    const colorInput = document.getElementById("leaderboardNameColor")
+    const savedColor = localStorage.getItem("fribbyLeaderboardNameColor") || "#8b5cf6"
     if (nameInput) nameInput.value = savedName
+    if (colorInput) colorInput.value = /^#[0-9a-fA-F]{6}$/.test(savedColor) ? savedColor : "#8b5cf6"
 
     let { data: sessionData, error: sessionError } = await leaderboardClient.auth.getSession()
     if (sessionError) throw sessionError
@@ -1134,6 +1137,8 @@ async function submitLeaderboardScore() {
 
   const nameInput = document.getElementById("leaderboardName")
   const playerName = safeLeaderboardName(nameInput?.value)
+  const colorInput = document.getElementById("leaderboardNameColor")
+  const nameColor = /^#[0-9a-fA-F]{6}$/.test(colorInput?.value || "") ? colorInput.value : "#8b5cf6"
   if (playerName.length < 2) {
     if (status) status.textContent = "Please enter a player name with at least 2 characters."
     nameInput?.focus()
@@ -1142,11 +1147,13 @@ async function submitLeaderboardScore() {
 
   try {
     localStorage.setItem("fribbyLeaderboardName", playerName)
+    localStorage.setItem("fribbyLeaderboardNameColor", nameColor)
     const { error } = await leaderboardClient
       .from(LEADERBOARD_TABLE)
       .upsert({
         user_id: leaderboardUserId,
         player_name: playerName,
+        name_color: nameColor,
         score: fribbies > BigInt(Number.MAX_SAFE_INTEGER) ? Number.MAX_SAFE_INTEGER : Number(fribbies),
         updated_at: new Date().toISOString()
       }, { onConflict: "user_id" })
@@ -1175,7 +1182,7 @@ async function refreshLeaderboard() {
   try {
     const { data, error } = await leaderboardClient
       .from(LEADERBOARD_TABLE)
-      .select("player_name, score, updated_at")
+      .select("player_name, name_color, score, updated_at")
       .order("score", { ascending: false })
       .order("updated_at", { ascending: true })
       .limit(100)
@@ -1192,6 +1199,8 @@ async function refreshLeaderboard() {
         const name = document.createElement("span")
         const score = document.createElement("strong")
         name.textContent = safeLeaderboardName(entry.player_name) || "Anonymous Fribby"
+        const entryColor = /^#[0-9a-fA-F]{6}$/.test(entry.name_color || "") ? entry.name_color : "#8b5cf6"
+        name.style.color = entryColor
         score.textContent = `${formatLeaderboardScore(entry.score)} Fribbies`
         item.append(name, score)
         item.setAttribute("aria-label", `Rank ${index + 1}: ${name.textContent}, ${score.textContent}`)
