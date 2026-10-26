@@ -8,20 +8,26 @@ const MAX_REPEATABLE_ECHOES = 1000
 // Keep the original skill IDs so existing saves remain compatible. The 49th
 // node (path-12) is now the single repeatable endgame upgrade.
 const skillBranches = [
-  { id: "strong", name: "Stronger Upgrades", description: "Refine the workshop: cheaper upgrades, better crews, and stronger machinery.", count: 12 },
-  { id: "path", name: "Ascension Path", description: "The central spine. Every rung unlocks the next rung in all three outer branches.", count: 13 },
-  { id: "click", name: "Clicking Power", description: "Specialize your throws with stronger discs, critical throws, and hand-made power.", count: 12 },
-  { id: "mega", name: "More Mega Fribbies", description: "Discover different ways to get more from each ascension.", count: 12 }
+  { id: "auto", name: "Automation", description: "More throws, faster cycles, and machinery that feeds itself.", count: 10 },
+  { id: "cheap", name: "Cheaper Upgrades", description: "Lower regular-upgrade costs and keep each run efficient.", count: 12 },
+  { id: "strong", name: "Stronger Upgrades", description: "Improve the strength and scaling of your regular upgrades.", count: 12 },
+  { id: "path", name: "Ascension Path", description: "The central path opens deeper branches of the web.", count: 12 },
+  { id: "click", name: "Clicking Power", description: "Sharper throws, critical hits, and powerful manual clicks.", count: 12 },
+  { id: "mega", name: "Mega Fribbies", description: "Get more from each ascension and previous runs.", count: 12 },
+  { id: "mini", name: "Minigame Lore", description: "Improve minigame rewards and make challenges pay off.", count: 10 }
 ]
 const skillNames = {
   path: ["First Spark", "Pocketed Pouch", "Lucky Compass", "Branching Fate", "Runner's Rhythm", "Discount Glyph", "Minigame Lore", "Starbound Route", "Astral Focus", "Frugal Passage", "Ancient Knowledge", "Ascendant Heart", "Eternal Echo"],
   strong: ["Reinforced Grip", "Automation Manual", "Budget Blueprint", "Spare Gear", "Compound Crew", "Double Shift", "Cannon Lathing", "Idle Logistics", "Minigame Playbook", "Torque Calibration", "Factory Foreman", "Grand Foundry"],
   click: ["Quick Tap", "Steady Aim", "Split-Second", "Heavy Disc", "Double Grip", "Charged Toss", "Cannon Synergy", "Bullseye", "Muscle Memory", "Meteor Arm", "Quick Release", "Cosmic Launch"],
-  mega: ["Packed Satchel", "Lucky Star", "Deep Reserve", "Overflowing Core", "Past Lives", "Golden Harvest", "Early Ascender", "Relic Pockets", "Singular Offering", "Echo Chamber", "Infinite Bounty", "Mega Mastery"]
+  mega: ["Packed Satchel", "Lucky Star", "Deep Reserve", "Overflowing Core", "Past Lives", "Golden Harvest", "Early Ascender", "Relic Pockets", "Singular Offering", "Echo Chamber", "Infinite Bounty", "Mega Mastery"],
+  cheap: ["Bulk Order", "Coupon Cache", "Lean Workshop", "Second-Hand Tools", "Supplier Pact", "Careful Spending", "Guild Discount", "Bargain Engine", "Frugal Foundry", "Wholesale Network", "Perfect Ledger", "Cost Collapse"],
+  auto: ["Clockwork Wrist", "Oiled Bearings", "Double Pendulum", "Overtime Circuit", "Self-Feeding Line", "Rapid Relay", "Unattended Shift", "Assembly Swarm", "Chrono Engine", "Infinite Conveyor"],
+  mini: ["Practice Round", "Prize Pouch", "Pattern Sense", "Lucky Streak", "Sweep Expert", "Bonus Round", "Arcade Scholar", "Risk Assessment", "Master Player", "Grand Champion"]
 }
 const skillEffects = {
   path: [
-    "+1 base Fribby per click", "Start each new run with 100 Fribbies", "+10% minigame payouts", "Opens this rung across every outer branch", "+1 auto throw per second", "Regular upgrade costs -5%", "+15% minigame payouts", "+15% auto-throw payout", "+15% click payout", "Minigame unlocks cost -20%", "+1 base Fribby per auto throw", "+10% to click and auto gains", "+5% to all Fribby gains per level; repeatable"
+    "+1 base Fribby per click", "Start each new run with 100 Fribbies", "+10% minigame payouts", "Opens the next depth of the web", "+1 auto throw per second", "Regular upgrade costs -5%", "+15% minigame payouts", "+15% auto-throw payout", "+15% click payout", "Minigame unlocks cost -20%", "+1 base Fribby per auto throw", "+10% to click and auto gains", "+5% click and automatic gains per level; repeatable"
   ],
   strong: [
     "+15% power to regular upgrades", "+20% auto-throw payout", "Regular upgrade costs -10%", "+1 auto throw per second", "Auto payout grows by +2% per Auto Thrower", "+20% auto-throw payout", "Mega Cannon gives 50% extra click power", "+2 auto throws per second", "+20% minigame payouts", "+20% click payout", "+30% auto-throw payout", "+20% to all produced Fribbies"
@@ -30,10 +36,23 @@ const skillEffects = {
     "+1 base Fribby per click", "+15% click payout", "5% chance for a triple-value throw", "+5 base Fribbies per click", "Each Extra Hand adds another click Fribby", "+25% click payout", "Each Fribby Cannon adds +2 click Fribbies", "10% chance for a triple-value throw", "Up to +100% click power from Extra Hands", "+50 base Fribbies per click", "+30% click payout", "+50% click payout"
   ],
   mega: [
-    "+1 Mega Fribby on every ascension", "+10% ascension reward", "+1 Mega Fribby for every 5 million Fribbies converted", "+1 Mega Fribby when at least 750,000 Fribbies carry toward the next million", "+2% reward per previous ascension", "+15% ascension reward", "+1 Mega Fribby per 5 previous ascensions", "+2 Mega Fribbies on every ascension", "+25% reward when converting at least 10 million Fribbies", "+5% reward per other purchased Mega branch skill", "+3 Mega Fribbies on every ascension", "+30% ascension reward"
-  ]
+    "+1 Mega Fribby on every ascension", "+10% ascension reward", "+1 Mega Fribby per 5 million Fribbies converted", "+1 Mega Fribby near the next million", "+2% reward per previous ascension", "+15% ascension reward", "+1 Mega Fribby per 5 previous ascensions", "+2 Mega Fribbies on every ascension", "+25% reward for large ascensions", "+5% reward per other Mega Fribby skill", "+3 Mega Fribbies on every ascension", "+30% ascension reward"
+  ],
+  cheap: ["Regular upgrade costs -4%", "Regular upgrade costs -5%", "Regular upgrade costs -6%", "Regular upgrade costs -7%", "Regular upgrade costs -8%", "Regular upgrade costs -9%", "Regular upgrade costs -10%", "Regular upgrade costs -11%", "Regular upgrade costs -12%", "Regular upgrade costs -13%", "Regular upgrade costs -14%", "Regular upgrade costs -15%"],
+  auto: ["+1 auto throw per second", "+10% auto-throw payout", "+2 auto throws per second", "Auto throwers gain +5% payout each", "+15% auto-throw payout", "Auto Throwers add +1 Fribby to each automatic throw", "+2 auto throws per second", "Each Turbo Thrower adds +2 Fribbies to automatic throws", "+25% auto-throw payout", "+40% auto payout, +5 base Fribbies, and +5 throws/sec"],
+  mini: ["Minigame rewards +10%", "Minigame unlock costs -10%", "+5% minigame rewards per unlocked game", "Minigame rewards +15%", "Minigame rewards +25%", "Minigame rewards +20%", "Ascension reward +2% per unlocked minigame", "Minigame rewards +25%", "Minigame rewards +30%", "All minigame rewards +40%"]
 }
-const skillLaneOrder = ["strong", "path", "click", "mega"]
+const skillBranchOrder = ["auto", "cheap", "strong", "path", "click", "mega", "mini"]
+const skillNodeIcons = { path: "✦", strong: "⚒", click: "➤", mega: "✧", cheap: "¤", auto: "⚙", mini: "✹" }
+const skillNodeIconSets = {
+  path: ["✦", "✧", "⟡", "✥", "⌁", "✶", "⟁", "☼", "✺", "◇", "✴", "❖", "✴"],
+  strong: ["⚒", "⚙", "▦", "⬢", "⌘", "♜", "⛭", "▣", "⚑", "⚗", "◈", "✹"],
+  click: ["➤", "➶", "⌖", "◉", "≫", "⚡", "✸", "◎", "➳", "✹", "➷", "✴"],
+  mega: ["✧", "◇", "◈", "✥", "☼", "✴", "⟡", "❖", "✹", "⬡", "✺", "✦"],
+  cheap: ["¤", "↓", "◉", "⌗", "▱", "⊖", "⌁", "⌘", "▣", "◌", "⟐", "✧"],
+  auto: ["⚙", "⟳", "≫", "⌛", "⤳", "⇢", "⏩", "♻", "⌬", "✴"],
+  mini: ["✹", "▣", "⌘", "♧", "▦", "✷", "🎮", "♜", "✴", "🏆"]
+}
 
 let u0Amount = 0
 let u0Cost = 10n
@@ -59,6 +78,7 @@ let autoThrowTimer
 function updateFribby() {
   document.getElementById("fribbyAmount").innerText = "Fribbies: " + formatFribbies(fribbies)
   updateAscensionUI()
+  updateTabVisibility()
   saveGame()
 }
 function hasSkill(id) { return purchasedSkills.has(id) }
@@ -69,21 +89,31 @@ function pathSkillCount() {
   return [...purchasedSkills].filter(id => /^path-(?:[0-9]|1[01])$/.test(id)).length
 }
 function getRegularUpgradeCost(cost) {
+  const cheapDiscounts = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
   let discount = (hasSkill("path-5") ? 5 : 0) + (hasSkill("strong-2") ? 10 : 0)
-  return BigInt(Math.max(1, 100 - discount)) * cost / 100n || 1n
+  cheapDiscounts.forEach((amount, index) => { if (hasSkill(`cheap-${index}`)) discount += amount })
+  discount = Math.min(80, discount)
+  const price = BigInt(100 - discount) * cost / 100n
+  return price > 0n ? price : 1n
 }
 function getMinigameUnlockPrice() {
-  const percent = hasSkill("path-9") ? 80 : 100
-  return (minigameUnlockCost * BigInt(percent) / 100n) || 1n
+  let discount = hasSkill("path-9") ? 20 : 0
+  if (hasSkill("mini-1")) discount += 10
+  return (minigameUnlockCost * BigInt(100 - discount) / 100n) || 1n
 }
 function getMinigameRewardMultiplierPercent() {
-  return 100 + (hasSkill("path-2") ? 10 : 0) + (hasSkill("path-6") ? 15 : 0) + (hasSkill("strong-8") ? 20 : 0)
+  let bonus = (hasSkill("path-2") ? 10 : 0) + (hasSkill("path-6") ? 15 : 0) + (hasSkill("strong-8") ? 20 : 0)
+  const miniBonuses = [10, 0, 0, 15, 25, 20, 0, 25, 30, 40]
+  miniBonuses.forEach((amount, index) => { if (hasSkill(`mini-${index}`)) bonus += amount })
+  if (hasSkill("mini-2")) bonus += unlockedMinigames * 5
+  return 100 + bonus
 }
 function getMinigamePayout(baseReward) {
   return BigInt(baseReward) * BigInt(getFribbiesPerClick()) * BigInt(getMinigameRewardMultiplierPercent()) / 100n
 }
 function getAutoThrowsPerSecond() {
   return u1Amount + u7Amount * 5 + (hasSkill("path-4") ? 1 : 0) + (hasSkill("strong-3") ? 1 : 0) + (hasSkill("strong-7") ? 2 : 0)
+    + (hasSkill("auto-0") ? 1 : 0) + (hasSkill("auto-2") ? 2 : 0) + (hasSkill("auto-6") ? 2 : 0) + (hasSkill("auto-9") ? 5 : 0)
 }
 function getClickBonusPercent() {
   return 100
@@ -109,6 +139,11 @@ function getAutoBonusPercent() {
     + (hasSkill("path-7") ? 15 : 0)
     + (hasSkill("path-11") ? 10 : 0)
     + (hasSkill("strong-4") ? Math.min(50, u1Amount * 2) : 0)
+    + (hasSkill("auto-1") ? 10 : 0)
+    + (hasSkill("auto-3") ? Math.min(50, u1Amount * 5) : 0)
+    + (hasSkill("auto-4") ? 15 : 0)
+    + (hasSkill("auto-8") ? 25 : 0)
+    + (hasSkill("auto-9") ? 40 : 0)
     + (repeatableEchoes * 5)
 }
 function refreshUpgradeLabels() {
@@ -143,6 +178,9 @@ function getAutoThrowReward() {
   let base = 1 + u2Amount + u4Amount * 5 + u6Amount * 10
   if (hasSkill("path-1")) base += 1
   if (hasSkill("path-10")) base += 1
+  if (hasSkill("auto-5")) base += u1Amount
+  if (hasSkill("auto-7")) base += u7Amount * 2
+  if (hasSkill("auto-9")) base += 5
   return Math.max(1, Math.floor(base * getAutoBonusPercent() / 100))
 }
 
@@ -316,25 +354,26 @@ function skillIndexToId(index) {
   if (index < 25) return `strong-${index - 13}`
   if (index < 37) return `click-${index - 25}`
   if (index < 49) return `mega-${index - 37}`
+  if (index < 61) return `cheap-${index - 49}`
+  if (index < 71) return `auto-${index - 61}`
+  if (index < 81) return `mini-${index - 71}`
   return null
 }
 function skillIdToIndex(id) {
-  const match = /^(path|strong|click|mega)-(\d+)$/.exec(id)
+  const match = /^(path|strong|click|mega|cheap|auto|mini)-(\d+)$/.exec(id)
   if (!match) return -1
-  const offset = { path: 0, strong: 13, click: 25, mega: 37 }[match[1]]
+  const offset = { path: 0, strong: 13, click: 25, mega: 37, cheap: 49, auto: 61, mini: 71 }[match[1]]
   const number = Number(match[2])
-  const limit = match[1] === "path" ? 13 : 12
+  const limit = { path: 13, strong: 12, click: 12, mega: 12, cheap: 12, auto: 10, mini: 10 }[match[1]]
   return number >= 0 && number < limit ? offset + number : -1
 }
 function isRepeatableSkillId(id) { return id === "path-12" }
 function hasAllCoreSkills() {
   return pathSkillCount() === 12
-    && ["strong", "click", "mega"].every(branch => countSkills(branch) === 12)
+    && skillBranches.filter(branch => branch.id !== "path").every(branch => countSkills(branch.id) === branch.count)
 }
 function repeatableEchoCost() {
-  let cost = 10n
-  for (let i = 0; i < repeatableEchoes; i++) cost = (cost * 3n + 1n) / 2n
-  return cost
+  return 10n * (3n ** BigInt(repeatableEchoes))
 }
 function updateAscensionUI() {
   const label = document.getElementById("megaFribbyAmount")
@@ -489,101 +528,162 @@ function triggerEternalEchoEffect(level) {
   requestAnimationFrame(() => toast.classList.add("is-live"))
   window.setTimeout(() => toast.remove(), motionIsReduced() ? 600 : 1900)
 }
-function createSkillNode(id) {
+let cachedSkillGraph = null
+let cachedSkillGraphById = null
+function getSkillGraph() {
+  if (cachedSkillGraph) return cachedSkillGraph
+  const graph = []
+  const coreX = 905
+  const rowGap = 112
+  const pathY = index => 125 + index * rowGap
+  const zig = index => index % 2 ? 28 : -18
+  graph.push({ id: "core", x: coreX, y: 42, parents: [], core: true })
+  for (let i = 0; i < 12; i++) {
+    graph.push({ id: `path-${i}`, branch: "path", index: i, x: coreX + zig(i) * .35, y: pathY(i), parents: [i === 0 ? "core" : `path-${i - 1}`] })
+  }
+  graph.push({ id: "workshop-hub", hub: true, x: 580, y: 230, parents: ["path-0"] })
+  for (let i = 0; i < 12; i++) {
+    graph.push({ id: `strong-${i}`, branch: "strong", index: i, x: 690 + zig(i), y: pathY(i) + (i === 0 ? 95 : 32), parents: [ ...(i ? [`path-${i}`, `strong-${i - 1}`] : ["workshop-hub"]) ] })
+    graph.push({ id: `click-${i}`, branch: "click", index: i, x: 1120 - zig(i), y: pathY(i) + 38 + (i % 3 === 0 ? 12 : 0), parents: [ `path-${i}`, ...(i ? [`click-${i - 1}`] : []) ] })
+    graph.push({ id: `mega-${i}`, branch: "mega", index: i, x: 1335 + zig(i), y: pathY(i) + 52 + (i % 2 ? 20 : 0), parents: [ `path-${i}`, ...(i ? [`mega-${i - 1}`] : []) ] })
+    graph.push({ id: `cheap-${i}`, branch: "cheap", index: i, x: 475 - zig(i), y: pathY(i) + 180 + (i % 2 ? 18 : 0), parents: [ ...(i ? [`path-${i}`, `cheap-${i - 1}`, `strong-${Math.min(11, i + 1)}`] : ["workshop-hub"]) ] })
+    if (i < 10) {
+      graph.push({ id: `auto-${i}`, branch: "auto", index: i, x: 260 + zig(i), y: pathY(i) + 270 + (i % 2 ? 15 : 0), parents: [ `strong-${Math.min(11, i + 2)}`, ...(i ? [`auto-${i - 1}`] : []) ] })
+      graph.push({ id: `mini-${i}`, branch: "mini", index: i, x: 1550 - zig(i), y: pathY(i) + 260 + (i % 3 === 0 ? 23 : 0), parents: [ `path-${Math.min(11, i + 2)}`, ...(i ? [`mini-${i - 1}`] : []) ] })
+    }
+  }
+  graph.push({ id: "path-12", branch: "path", index: 12, x: coreX + 20, y: pathY(11) + 380, parents: ["path-11", "strong-11", "click-11", "mega-11", "cheap-11", "auto-9", "mini-9"] })
+  cachedSkillGraph = graph
+  cachedSkillGraphById = new Map(graph.map(node => [node.id, node]))
+  return graph
+}
+function skillNodeLabel(id) {
+  const [branch, rawIndex] = id.split("-")
+  const index = Number(rawIndex)
+  const name = skillNames[branch]?.[index] || "Unknown skill"
+  const effect = skillEffects[branch]?.[index] || ""
+  return `${name}. ${effect}.`
+}
+function createSkillNode(nodeData) {
+  const id = typeof nodeData === "string" ? nodeData : nodeData.id
+  const [branch, rawIndex] = id.split("-")
+  const index = Number(rawIndex)
+  const wrapper = document.createElement("div")
+  wrapper.className = `skill-node-wrap branch-${branch}`
+  wrapper.dataset.skillId = id
+  const graphNode = typeof nodeData === "string" ? getSkillGraph().find(node => node.id === id) : nodeData
+  if (graphNode) {
+    wrapper.style.left = `${graphNode.x - 75}px`
+    wrapper.style.top = `${graphNode.y - 34}px`
+  }
   const button = document.createElement("button")
   button.type = "button"
   button.className = "skill-node"
   button.dataset.skillId = id
   button.setAttribute("aria-label", skillNodeLabel(id))
   button.onclick = () => buySkill(id)
+  const icon = document.createElement("span")
+  icon.className = "skill-node-icon"
+  icon.setAttribute("aria-hidden", "true")
+  icon.textContent = skillNodeIconSets[branch]?.[index] || skillNodeIcons[branch] || "✦"
   const name = document.createElement("span")
   name.className = "skill-node-name"
+  name.hidden = true
   const effect = document.createElement("span")
   effect.className = "skill-node-effect"
+  effect.hidden = true
   const footer = document.createElement("span")
   footer.className = "skill-node-footer"
-  button.append(name, effect, footer)
-  return button
-}
-function skillNodeLabel(id) {
-  const [branch, rawIndex] = id.split("-")
-  const index = Number(rawIndex)
-  const name = skillNames[branch][index]
-  const effect = skillEffects[branch][index]
-  return `${name}. ${effect}.`
+  footer.hidden = true
+  button.append(icon, name, effect, footer)
+  const caption = document.createElement("div")
+  caption.className = "skill-node-caption"
+  const captionName = document.createElement("strong")
+  captionName.className = "skill-node-caption-name"
+  const captionCost = document.createElement("span")
+  captionCost.className = "skill-node-caption-cost"
+  caption.append(captionName, captionCost)
+  const tooltip = document.createElement("span")
+  tooltip.className = "skill-node-tooltip"
+  tooltip.textContent = skillNodeLabel(id)
+  caption.appendChild(tooltip)
+  wrapper.append(button, caption)
+  return wrapper
 }
 function renderSkillTree() {
   const tree = document.getElementById("skillTree")
   if (!tree) return
   tree.innerHTML = ""
+  const graph = getSkillGraph()
   const map = document.createElement("div")
-  map.className = "skill-tree-map"
-  const origin = document.createElement("div")
-  origin.className = "skill-tree-origin"
-  origin.innerHTML = '<span class="origin-star" aria-hidden="true">✦</span><strong>FRIBBY CORE</strong><span>Choose your ascension</span>'
-  map.appendChild(origin)
-
-  const headings = document.createElement("div")
-  headings.className = "skill-tree-headings"
-  skillLaneOrder.forEach(branchId => {
-    const branch = skillBranches.find(item => item.id === branchId)
-    const heading = document.createElement("div")
-    heading.className = `skill-lane-heading lane-${branchId}`
-    const title = document.createElement("strong")
-    title.textContent = branch.name
-    const description = document.createElement("span")
-    description.textContent = branch.description
-    heading.append(title, description)
-    headings.appendChild(heading)
-  })
-  map.appendChild(headings)
-
-  const grid = document.createElement("div")
-  grid.className = "skill-tree-grid"
-  for (let tier = 0; tier < 12; tier++) {
-    const rung = document.createElement("div")
-    rung.className = "skill-rung"
-    rung.dataset.rung = String(tier + 1)
-    skillLaneOrder.forEach(branchId => {
-      const cell = document.createElement("div")
-      cell.className = `skill-cell lane-${branchId}`
-      const id = `${branchId}-${tier}`
-      cell.appendChild(createSkillNode(id))
-      rung.appendChild(cell)
+  map.className = "skill-tree-map skill-web-map"
+  map.setAttribute("aria-label", "Branching ascension upgrade web")
+  const svgNS = "http://www.w3.org/2000/svg"
+  const edges = document.createElementNS(svgNS, "svg")
+  edges.classList.add("skill-tree-edges")
+  edges.setAttribute("viewBox", "0 0 1850 2000")
+  edges.setAttribute("preserveAspectRatio", "xMinYMin meet")
+  const graphById = new Map(graph.map(node => [node.id, node]))
+  graph.forEach(node => {
+    node.parents.forEach(parentId => {
+      const parent = graphById.get(parentId)
+      if (!parent) return
+      const path = document.createElementNS(svgNS, "path")
+      const startX = parent.x, startY = parent.y + (parent.core ? 22 : parent.hub ? 27 : 34)
+      const endX = node.x, endY = node.y - (node.hub ? 27 : 34)
+      const midY = (startY + endY) / 2
+      path.setAttribute("d", `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`)
+      path.setAttribute("class", `skill-edge edge-${node.branch || "core"}`)
+      path.dataset.to = node.id
+      path.dataset.from = parentId
+      edges.appendChild(path)
     })
-    grid.appendChild(rung)
+  })
+  map.appendChild(edges)
+  const origin = document.createElement("div")
+  origin.className = "skill-tree-origin skill-web-origin"
+  origin.innerHTML = '<span class="origin-star" aria-hidden="true">✦</span><strong>FRIBBY CORE</strong><span>Start the web</span>'
+  origin.style.left = `${graph[0].x}px`
+  origin.style.top = `${graph[0].y}px`
+  map.appendChild(origin)
+  const hub = graph.find(node => node.hub)
+  if (hub) {
+    const hubEl = document.createElement("div")
+    hubEl.className = "skill-web-hub"
+    hubEl.style.left = `${hub.x}px`
+    hubEl.style.top = `${hub.y}px`
+    hubEl.innerHTML = '<span>⚒</span><strong>UPGRADE WORKSHOP</strong><small>Choose a specialization</small>'
+    map.appendChild(hubEl)
   }
-  map.appendChild(grid)
-
-  const endcap = document.createElement("div")
-  endcap.className = "skill-tree-endcap"
-  const endcapLine = document.createElement("div")
-  endcapLine.className = "skill-endcap-line"
-  const endcapIntro = document.createElement("div")
-  endcapIntro.className = "skill-endcap-intro"
-  endcapIntro.textContent = "Complete every path to reach the final, repeatable mastery upgrade."
-  endcap.append(endcapLine, endcapIntro, createSkillNode("path-12"))
-  map.appendChild(endcap)
-  tree.appendChild(map)
+  graph.filter(node => !node.core && !node.hub).forEach(node => map.appendChild(createSkillNode(node)))
+  const legends = document.createElement("div")
+  legends.className = "skill-web-legend"
+  skillBranches.forEach(branch => {
+    const item = document.createElement("span")
+    item.className = `web-legend-item branch-${branch.id}`
+    item.innerHTML = `<i>${skillNodeIcons[branch.id]}</i><strong>${branch.name}</strong>`
+    legends.appendChild(item)
+  })
+  tree.append(legends, map)
   updateSkillTreeButtons()
 }
 function isSkillAvailable(id) {
   if (isRepeatableSkillId(id)) return hasAllCoreSkills() && repeatableEchoes < MAX_REPEATABLE_ECHOES
-  const [branch, rawIndex] = id.split("-")
-  const index = Number(rawIndex)
   if (purchasedSkills.has(id)) return false
-  if (branch === "path") return index === 0 || purchasedSkills.has(`path-${index - 1}`)
-  // Each central-path purchase opens exactly one new rung in every outer branch.
-  return index < pathSkillCount()
+  getSkillGraph()
+  const node = cachedSkillGraphById.get(id)
+  if (!node || node.core) return false
+  return node.parents.every(parentId => parentId === "core"
+    || (parentId === "workshop-hub" ? purchasedSkills.has("path-0") : false)
+    || (parentId === "path-12" ? repeatableEchoes > 0 : purchasedSkills.has(parentId)))
 }
 function skillCost(id) {
   if (isRepeatableSkillId(id)) return repeatableEchoCost()
   const [branch, rawIndex] = id.split("-")
   const index = Number(rawIndex)
-  // Exponential prices make each deeper node a meaningful long-term choice.
-  const tier = Math.floor(index / 3)
-  const branchBase = branch === "path" ? 3n : 5n
-  return branchBase ** BigInt(tier + 1) * BigInt(index % 3 + 1)
+  const base = { path: 2n, strong: 3n, click: 3n, mega: 2n, cheap: 4n, auto: 4n, mini: 4n }[branch] || 3n
+  // Each node multiplies the next cost; later subdivisions quickly become long-term goals.
+  return base ** BigInt(index)
 }
 function updateSkillTreeButtons() {
   document.querySelectorAll(".skill-node").forEach(button => {
@@ -616,8 +716,23 @@ function updateSkillTreeButtons() {
     button.classList.toggle("repeatable", repeatable)
     button.classList.toggle("locked", !purchased && !available)
     button.classList.toggle("available", !purchased && available)
+    const wrapper = button.closest(".skill-node-wrap")
+    if (wrapper) {
+      const captionName = wrapper.querySelector(".skill-node-caption-name")
+      const captionCost = wrapper.querySelector(".skill-node-caption-cost")
+      if (captionName) captionName.textContent = name
+      if (captionCost) captionCost.textContent = repeatable
+        ? `Lv ${repeatableEchoes} · ${formatFribbies(cost)} MF`
+        : purchased ? "Purchased" : `${formatFribbies(cost)} MF`
+    }
   })
-}
+  document.querySelectorAll(".skill-edge[data-to]").forEach(edge => {
+    const target = edge.dataset.to
+    const bought = target === "path-12" ? repeatableEchoes > 0 : purchasedSkills.has(target)
+    edge.classList.toggle("purchased", bought)
+    edge.classList.toggle("available", !bought && isSkillAvailable(target))
+  })
+} 
 function buySkill(id) {
   if (isRepeatableSkillId(id)) {
     if (!isSkillAvailable(id)) return
@@ -682,6 +797,7 @@ function buyMinigameUnlock() {
   status.textContent = `Unlocked ${getMinigameName(game)}!`
   showMinigame(game)
   updateMinigameUnlockButton()
+  updateTabVisibility()
   saveGame()
 }
 
@@ -1587,7 +1703,9 @@ const SUPABASE_URL = "https://soofisuqqwszdhqxiqzw.supabase.co"
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_r68LSwAd5IFOdsI9sm31Gg_cx2-DmSe"
 const LEADERBOARD_TABLE = "fribby_leaderboard"
 let leaderboardClient = null
+let leaderboardAdminClient = null
 let leaderboardUserId = null
+let leaderboardIsAdmin = false
 
 function isLeaderboardConfigured() {
   return window.supabase &&
@@ -1607,6 +1725,9 @@ async function initializeLeaderboard() {
 
   try {
     leaderboardClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+    leaderboardAdminClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+      auth: { storageKey: "fribby-leaderboard-admin-auth", persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+    })
     const savedName = localStorage.getItem("fribbyLeaderboardName") || ""
     const colorInput = document.getElementById("leaderboardNameColor")
     const savedColor = localStorage.getItem("fribbyLeaderboardNameColor") || "#8b5cf6"
@@ -1624,6 +1745,7 @@ async function initializeLeaderboard() {
     if (!leaderboardUserId) throw new Error("Could not create a player session.")
 
     if (status) status.textContent = "Connected! Choose a player name and submit your score."
+    await checkLeaderboardAdmin()
     await refreshLeaderboard()
   } catch (error) {
     if (status) status.textContent = "Couldn't connect to the leaderboard. Check Supabase settings and anonymous sign-ins."
@@ -1689,7 +1811,7 @@ async function refreshLeaderboard() {
   try {
     const { data, error } = await leaderboardClient
       .from(LEADERBOARD_TABLE)
-      .select("player_name, name_color, score, updated_at")
+      .select("user_id, player_name, name_color, score, updated_at, is_crowned")
       .order("score", { ascending: false })
       .order("updated_at", { ascending: true })
       .limit(100)
@@ -1703,13 +1825,43 @@ async function refreshLeaderboard() {
     } else {
       data.forEach((entry, index) => {
         const item = document.createElement("li")
+        const player = document.createElement("span")
+        player.className = "leaderboard-player"
         const name = document.createElement("span")
-        const score = document.createElement("strong")
+        name.className = "leaderboard-player-name"
         name.textContent = safeLeaderboardName(entry.player_name) || "Anonymous Fribby"
         const entryColor = /^#[0-9a-fA-F]{6}$/.test(entry.name_color || "") ? entry.name_color : "#8b5cf6"
         name.style.color = entryColor
+        if (entry.is_crowned) {
+          const crown = document.createElement("span")
+          crown.className = "leaderboard-crown"
+          crown.textContent = "👑"
+          crown.title = "Crowned player"
+          crown.setAttribute("aria-label", "Crowned player")
+          player.appendChild(crown)
+        }
+        player.appendChild(name)
+        const score = document.createElement("strong")
         score.textContent = `${formatLeaderboardScore(entry.score)} Fribbies`
-        item.append(name, score)
+        item.append(player, score)
+        if (leaderboardIsAdmin) {
+          const actions = document.createElement("span")
+          actions.className = "leaderboard-admin-actions"
+          const crownButton = document.createElement("button")
+          crownButton.type = "button"
+          crownButton.className = "leaderboard-admin-button"
+          crownButton.textContent = entry.is_crowned ? "Remove crown" : "Crown"
+          crownButton.setAttribute("aria-label", `${entry.is_crowned ? "Remove crown from" : "Crown"} ${safeLeaderboardName(entry.player_name)}`)
+          crownButton.addEventListener("click", () => setLeaderboardCrown(entry.user_id, !entry.is_crowned, safeLeaderboardName(entry.player_name)))
+          const removeButton = document.createElement("button")
+          removeButton.type = "button"
+          removeButton.className = "leaderboard-admin-button danger"
+          removeButton.textContent = "Remove"
+          removeButton.setAttribute("aria-label", `Remove ${safeLeaderboardName(entry.player_name)} from leaderboard`)
+          removeButton.addEventListener("click", () => removeLeaderboardPlayer(entry.user_id, safeLeaderboardName(entry.player_name)))
+          actions.append(crownButton, removeButton)
+          item.appendChild(actions)
+        }
         item.setAttribute("aria-label", `Rank ${index + 1}: ${name.textContent}, ${score.textContent}`)
         list.appendChild(item)
       })
@@ -1719,6 +1871,97 @@ async function refreshLeaderboard() {
   } catch (error) {
     if (status) status.textContent = "Couldn't load rankings. Check that the SQL setup has been completed."
     console.error("Leaderboard refresh failed:", error)
+  }
+}
+
+async function checkLeaderboardAdmin() {
+  const adminStatus = document.getElementById("leaderboardAdminStatus")
+  const signOut = document.getElementById("leaderboardAdminSignOut")
+  if (!leaderboardAdminClient) return
+  try {
+    const { data: sessionData } = await leaderboardAdminClient.auth.getSession()
+    if (!sessionData.session) {
+      leaderboardIsAdmin = false
+      if (adminStatus) adminStatus.textContent = "Admin controls are hidden until an authorized account signs in."
+      if (signOut) signOut.hidden = true
+      return
+    }
+    const { data, error } = await leaderboardAdminClient.rpc("is_fribby_leaderboard_admin")
+    if (error) throw error
+    leaderboardIsAdmin = data === true
+    if (adminStatus) adminStatus.textContent = leaderboardIsAdmin
+      ? "Administrator verified. Crown and remove controls are enabled globally."
+      : "Signed-in account is not an administrator."
+    if (signOut) signOut.hidden = !leaderboardIsAdmin
+  } catch (error) {
+    leaderboardIsAdmin = false
+    if (adminStatus) adminStatus.textContent = "Admin verification is not configured. Apply leaderboard-admin.sql in Supabase."
+    if (signOut) signOut.hidden = true
+    console.error("Leaderboard admin verification failed:", error)
+  }
+}
+
+async function signInLeaderboardAdmin() {
+  const email = document.getElementById("leaderboardAdminEmail")?.value.trim()
+  const password = document.getElementById("leaderboardAdminPassword")?.value
+  const output = document.getElementById("leaderboardAdminStatus")
+  if (!leaderboardAdminClient || !email || !password) {
+    if (output) output.textContent = "Enter the administrator email and password."
+    return
+  }
+  try {
+    const { error } = await leaderboardAdminClient.auth.signInWithPassword({ email, password })
+    if (error) throw error
+    await checkLeaderboardAdmin()
+    await refreshLeaderboard()
+    if (!leaderboardIsAdmin && output) output.textContent = "This account is not on the administrator allowlist."
+  } catch (error) {
+    if (output) output.textContent = "Admin sign-in failed. Check the account and password."
+    console.error("Leaderboard admin sign-in failed:", error)
+  }
+}
+
+async function signOutLeaderboardAdmin() {
+  if (!leaderboardAdminClient) return
+  try {
+    await leaderboardAdminClient.auth.signOut()
+    leaderboardIsAdmin = false
+    await refreshLeaderboard()
+  } catch (error) {
+    const output = document.getElementById("leaderboardAdminStatus")
+    if (output) output.textContent = "Sign out failed. Please try again."
+  }
+}
+
+async function setLeaderboardCrown(userId, crowned, playerName) {
+  if (!leaderboardIsAdmin) return
+  const status = document.getElementById("leaderboardStatus")
+  try {
+    const { error } = await leaderboardAdminClient.rpc("set_fribby_leaderboard_crown", {
+      target_user_id: userId,
+      should_crown: crowned
+    })
+    if (error) throw error
+    if (status) status.textContent = crowned ? `${playerName} has been crowned for everyone.` : `${playerName}'s crown was removed.`
+    await refreshLeaderboard()
+  } catch (error) {
+    if (status) status.textContent = "Couldn't change the crown. Check the admin SQL setup and permissions."
+    console.error("Crown update failed:", error)
+  }
+}
+
+async function removeLeaderboardPlayer(userId, playerName) {
+  if (!leaderboardIsAdmin) return
+  if (!window.confirm(`Remove ${playerName} from the global leaderboard? This cannot be undone.`)) return
+  const status = document.getElementById("leaderboardStatus")
+  try {
+    const { error } = await leaderboardAdminClient.rpc("remove_fribby_leaderboard_player", { target_user_id: userId })
+    if (error) throw error
+    if (status) status.textContent = `${playerName} was removed from the global leaderboard.`
+    await refreshLeaderboard()
+  } catch (error) {
+    if (status) status.textContent = "Couldn't remove this player. Check the admin SQL setup and permissions."
+    console.error("Leaderboard removal failed:", error)
   }
 }
 
@@ -1833,7 +2076,7 @@ function fieldsToSaveData(decoded) {
   }
   const mask = decoded.length >= 24 ? toBigIntAmount(decoded[23]) : 0n
   const skillIds = decoded.length >= 24
-    ? Array.from({ length: 49 }, (_, index) => (mask & (1n << BigInt(index))) ? skillIndexToId(index) : null).filter(Boolean)
+    ? Array.from({ length: 81 }, (_, index) => (mask & (1n << BigInt(index))) ? skillIndexToId(index) : null).filter(Boolean)
     : []
   const legacyEchoLevel = skillIds.includes("path-12") ? 1 : 0
   return {
@@ -1888,7 +2131,7 @@ async function importSaveFile(event) {
 
     // Validate the structure before touching the current save.
     if (
-      ![1, 2, 3].includes(Number(data.version)) ||
+      ![1, 2, 3, 4].includes(Number(data.version)) ||
       !/^\d+$/.test(String(data.fribbies)) ||
       !Array.isArray(data.upgrades) ||
       data.upgrades.length !== 9 ||
@@ -1977,6 +2220,7 @@ function applyImportedSaveData(data) {
     if (selector) selector.hidden = index >= unlockedMinigames
   })
   updateMinigameUnlockButton()
+  updateTabVisibility()
   if (getAutoThrowsPerSecond() > 0) updateAutoThrowInterval()
   saveGame(false)
 }
@@ -2168,6 +2412,17 @@ function wipeSave() {
 }
 
 
+function updateTabVisibility() {
+  const ascensionButton = document.querySelector('#topTabs [data-tab="ascension"]')
+  const minigamesButton = document.querySelector('#topTabs [data-tab="minigames"]')
+  const canAscend = fribbies >= ASCENSION_THRESHOLD || ascensionCount > 0 || megaFribbies > 0n
+  if (ascensionButton) ascensionButton.hidden = !canAscend
+  if (minigamesButton) minigamesButton.hidden = unlockedMinigames <= 0
+
+  const activeButton = document.querySelector('#topTabs [data-tab].active')
+  if (activeButton?.hidden) switchTab('game')
+}
+
 function switchTab(tab) {
   document.querySelectorAll("#tabPanels .tab-page").forEach(page => {
     page.hidden = page.dataset.page !== tab
@@ -2218,6 +2473,7 @@ function setupGameTabs() {
     panel.setAttribute("aria-hidden", "false")
   }
   switchTab("game")
+  updateTabVisibility()
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setupGameTabs)
 else setupGameTabs()

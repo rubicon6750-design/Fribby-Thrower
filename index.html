@@ -73,7 +73,7 @@
 
       <section id="skillTreePanel" class="skill-tree-panel" aria-labelledby="skillTreeTitle">
         <h2 id="skillTreeTitle">Mega Fribby Skill Tree</h2>
-        <p>Start at the Fribby Core and follow the connected paths. Every Ascension Path rung unlocks the matching rung in all three outer branches. Complete the whole tree to reach the single repeatable mastery upgrade.</p>
+        <p>Explore a connected web of ascension nodes. The central path opens new depths while stronger upgrades split into cheaper upgrades and automation; clicking, Mega Fribby, and minigame branches grow alongside them. Hover over a node to inspect its effect, and follow the glowing paths to discover what you can unlock next. Eternal Echo waits at the far end of the entire web.</p>
         <div id="skillTree" class="skill-tree" aria-label="Connected ascension skill tree"></div>
       </section>
 
@@ -88,6 +88,19 @@
         <button type="button" onclick="submitLeaderboardScore()">Submit Score</button>
         <button type="button" onclick="refreshLeaderboard()">Refresh Rankings</button>
       </div>
+      <details id="leaderboardAdminLogin" class="leaderboard-admin-login">
+        <summary>Administrator sign in</summary>
+        <p>Sign in with the administrator account configured in Supabase.</p>
+        <div class="leaderboard-controls">
+          <label for="leaderboardAdminEmail">Admin email</label>
+          <input id="leaderboardAdminEmail" type="email" autocomplete="username" placeholder="Admin email">
+          <label for="leaderboardAdminPassword">Password</label>
+          <input id="leaderboardAdminPassword" type="password" autocomplete="current-password" placeholder="Password">
+          <button type="button" onclick="signInLeaderboardAdmin()">Sign in</button>
+          <button type="button" id="leaderboardAdminSignOut" onclick="signOutLeaderboardAdmin()" hidden>Sign out</button>
+        </div>
+        <p id="leaderboardAdminStatus" role="status" aria-live="polite">Admin controls are hidden until an authorized account signs in.</p>
+      </details>
       <p id="leaderboardStatus" role="status" aria-live="polite">Leaderboard setup required. See README-LEADERBOARD.txt.</p>
       <ol id="leaderboardList" aria-label="Global leaderboard rankings">
         <li>Connect Supabase to load global rankings.</li>
