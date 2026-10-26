@@ -580,7 +580,10 @@ function skillCost(id) {
   if (isRepeatableSkillId(id)) return repeatableEchoCost()
   const [branch, rawIndex] = id.split("-")
   const index = Number(rawIndex)
-  return BigInt(1 + Math.floor(index / 3) + (branch === "path" ? 0 : 1))
+  // Exponential prices make each deeper node a meaningful long-term choice.
+  const tier = Math.floor(index / 3)
+  const branchBase = branch === "path" ? 3n : 5n
+  return branchBase ** BigInt(tier + 1) * BigInt(index % 3 + 1)
 }
 function updateSkillTreeButtons() {
   document.querySelectorAll(".skill-node").forEach(button => {
@@ -2163,3 +2166,58 @@ function wipeSave() {
   updateMinigameUnlockButton(); updateFribby(); renderSkillTree(); updateAscensionUI()
   const status = document.getElementById("saveStatus"); if(status) status.textContent = "Save wiped. A fresh game has started."
 }
+
+
+function switchTab(tab) {
+  document.querySelectorAll("#tabPanels .tab-page").forEach(page => {
+    page.hidden = page.dataset.page !== tab
+  })
+  document.querySelectorAll("#topTabs [data-tab]").forEach(button => {
+    const active = button.dataset.tab === tab
+    button.classList.toggle("active", active)
+    button.setAttribute("aria-current", active ? "page" : "false")
+  })
+  if (tab === "ascension") {
+    updateAscensionUI()
+    renderSkillTree()
+  }
+}
+function setupGameTabs() {
+  const panels = document.getElementById("tabPanels")
+  if (!panels) return
+  const makePage = (id, title) => {
+    const page = document.createElement("section")
+    page.className = "tab-page"
+    page.dataset.page = id
+    page.setAttribute("aria-label", title)
+    panels.appendChild(page)
+    return page
+  }
+  const game = makePage("game", "Main Game")
+  const ascension = makePage("ascension", "Ascension")
+  const minigames = makePage("minigames", "Minigames")
+  const leaderboard = makePage("leaderboard", "Leaderboard")
+  const settings = makePage("settings", "Settings")
+  const clicker = document.querySelector(".clicker-area")
+  const ascensionPanel = document.getElementById("ascensionPanel")
+  const skillTree = document.getElementById("skillTreePanel")
+  const mini = document.getElementById("minigamesArea")
+  const board = document.getElementById("leaderboardArea")
+  const dock = document.getElementById("settingsDock")
+  if (ascensionPanel) ascensionPanel.remove()
+  if (clicker) game.appendChild(clicker)
+  if (ascensionPanel) ascension.appendChild(ascensionPanel)
+  if (skillTree) ascension.appendChild(skillTree)
+  if (mini) minigames.appendChild(mini)
+  if (board) leaderboard.appendChild(board)
+  if (dock) settings.appendChild(dock)
+  // Make settings immediately usable in its dedicated tab.
+  const panel = document.getElementById("settingsPanel")
+  if (panel) {
+    panel.classList.add("settings-tab-open")
+    panel.setAttribute("aria-hidden", "false")
+  }
+  switchTab("game")
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setupGameTabs)
+else setupGameTabs()

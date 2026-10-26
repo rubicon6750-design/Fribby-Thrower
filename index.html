@@ -10,6 +10,14 @@
     <title>Fribby Thrower</title>
   </head>
     <body>
+    <nav id="topTabs" class="top-tabs" aria-label="Game sections">
+      <button type="button" data-tab="game" class="active" onclick="switchTab('game')">Main Game</button>
+      <button type="button" data-tab="ascension" onclick="switchTab('ascension')">Ascension</button>
+      <button type="button" data-tab="minigames" onclick="switchTab('minigames')">Minigames</button>
+      <button type="button" data-tab="leaderboard" onclick="switchTab('leaderboard')">Leaderboard</button>
+      <button type="button" data-tab="settings" onclick="switchTab('settings')">Settings</button>
+    </nav>
+    <div id="tabPanels"></div>
     <audio id="backgroundMusic" src="music/theme.flac" loop preload="auto" autoplay></audio>
     <audio id="upgradeSound" src="sfx/upgrade.ogg" preload="auto"></audio>
     <audio id="musicToggleSound" src="sfx/toggle.ogg" preload="auto"></audio>
