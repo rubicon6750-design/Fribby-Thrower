@@ -53,7 +53,7 @@
       <section id="ascensionPanel" class="ascension-panel" aria-labelledby="ascensionTitle">
         <h2 id="ascensionTitle">Ascension</h2>
         <p id="megaFribbyAmount">Mega Fribbies: 0</p>
-        <p id="ascensionDescription">Reach 1,000,000 Fribbies to ascend. Ascending resets your Fribbies, upgrades, and minigame unlocks in exchange for Mega Fribbies.</p>
+        <p id="ascensionDescription">Every full 1,000,000 Fribbies earns 1 base Mega Fribby when you ascend: 1,000,000 = 1 MF, 2,000,000 = 2 MF, and so on. Ascension bonuses can increase this reward. Ascending resets your Fribbies, regular upgrades, and minigame unlocks.</p>
         <button id="ascendButton" type="button" onclick="ascend()" hidden>Ascend</button>
         <p id="ascensionStatus" role="status" aria-live="polite"></p>
       </section>
@@ -73,7 +73,7 @@
 
       <section id="skillTreePanel" class="skill-tree-panel" aria-labelledby="skillTreeTitle">
         <h2 id="skillTreeTitle">Mega Fribby Skill Tree</h2>
-        <p>The Fribby Core sits at the center of a radial upgrade web, with six branches growing outward from it. Each Ascension Path rung opens the matching rung across every outer branch, so the web expands as you progress. Hover over or focus any node to inspect its effect and cost. Eternal Echo waits beyond the final rung.</p>
+        <p>The Fribby Core sits at the center of a radial upgrade web, with six branches growing outward from it. Each upgrade you buy on the central Ascension Path unlocks the next tier of upgrades across every outer branch. To access stronger ascension upgrades, buy the Ascension Path nodes first; outer-branch upgrades stay locked until their matching path rung is unlocked. Hover over or focus any node to inspect its effect and cost. Eternal Echo waits beyond the final rung.</p>
         <div id="skillTree" class="skill-tree" aria-label="Connected ascension skill tree"></div>
       </section>
 
@@ -100,6 +100,27 @@
           <button type="button" id="leaderboardAdminSignOut" onclick="signOutLeaderboardAdmin()" hidden>Sign out</button>
         </div>
         <p id="leaderboardAdminStatus" role="status" aria-live="polite">Admin controls are hidden until an authorized account signs in.</p>
+        <section id="adminGameEditor" class="admin-game-editor" hidden aria-labelledby="adminGameEditorTitle">
+          <h3 id="adminGameEditorTitle">Edit your game</h3>
+          <p>Changes apply to this browser's save only. Enter non-negative whole numbers.</p>
+          <div class="admin-game-fields">
+            <label for="adminFribbies">Fribbies</label>
+            <input id="adminFribbies" type="text" inputmode="numeric" value="0" autocomplete="off">
+            <label for="adminMegaFribbies">Mega Fribbies</label>
+            <input id="adminMegaFribbies" type="text" inputmode="numeric" value="0" autocomplete="off">
+            <label for="adminUpgrade0">Extra Hand amount</label><input id="adminUpgrade0" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade1">Auto Thrower amount</label><input id="adminUpgrade1" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade2">Intern amount</label><input id="adminUpgrade2" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade3">Fribby Cannon amount</label><input id="adminUpgrade3" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade4">Supervisor amount</label><input id="adminUpgrade4" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade5">Power Throw amount</label><input id="adminUpgrade5" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade6">Fribby Factory amount</label><input id="adminUpgrade6" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade7">Turbo Thrower amount</label><input id="adminUpgrade7" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade8">Mega Cannon amount</label><input id="adminUpgrade8" type="number" min="0" step="1" value="0">
+          </div>
+          <button type="button" onclick="applyAdminGameEdits()">Apply game edits</button>
+          <p id="adminGameEditStatus" role="status" aria-live="polite"></p>
+        </section>
       </details>
       <p id="leaderboardStatus" role="status" aria-live="polite">Leaderboard setup required. See README-LEADERBOARD.txt.</p>
       <ol id="leaderboardList" aria-label="Global leaderboard rankings">

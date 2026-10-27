@@ -1012,3 +1012,9 @@ body.dark-mode .skill-tree-origin.skill-web-origin { background: radial-gradient
 .leaderboard-admin-actions { display: inline-flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
 .leaderboard-admin-button { font: inherit; font-size: .82rem; padding: 5px 8px; border: 1px solid #8b9ab5; border-radius: 7px; cursor: pointer; }
 .leaderboard-admin-button.danger { border-color: #d45a5a; color: #b42323; }
+
+.admin-game-editor { margin-top: 14px; padding: 12px; border: 1px solid var(--border-color, #cbd5e1); border-radius: 10px; }
+.admin-game-editor h3 { margin-top: 0; }
+.admin-game-fields { display: grid; grid-template-columns: minmax(130px, 1fr) minmax(100px, 1fr); gap: 8px 12px; align-items: center; margin: 12px 0; }
+.admin-game-fields input { width: 100%; min-width: 0; box-sizing: border-box; }
+@media (max-width: 480px) { .admin-game-fields { grid-template-columns: 1fr; gap: 4px; } }

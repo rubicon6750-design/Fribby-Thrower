@@ -1578,7 +1578,7 @@ function toBigIntAmount(value, fallback = 0n) {
 }
 
 function formatFribbies(value) {
-  return toBigIntAmount(value).toString()
+  return toBigIntAmount(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
 function setGameCookie(name, value, days) {
@@ -1952,6 +1952,8 @@ async function checkLeaderboardAdmin() {
       leaderboardIsAdmin = false
       if (adminStatus) adminStatus.textContent = "Admin controls are hidden until an authorized account signs in."
       if (signOut) signOut.hidden = true
+      const editor = document.getElementById("adminGameEditor")
+      if (editor) editor.hidden = true
       return
     }
     const { data, error } = await leaderboardAdminClient.rpc("is_fribby_leaderboard_admin")
@@ -1961,10 +1963,15 @@ async function checkLeaderboardAdmin() {
       ? "Administrator verified. Crown and remove controls are enabled globally."
       : "Signed-in account is not an administrator."
     if (signOut) signOut.hidden = !leaderboardIsAdmin
+    const editor = document.getElementById("adminGameEditor")
+    if (editor) editor.hidden = !leaderboardIsAdmin
+    if (leaderboardIsAdmin) populateAdminGameEditor()
   } catch (error) {
     leaderboardIsAdmin = false
     if (adminStatus) adminStatus.textContent = "Admin verification is not configured. Apply leaderboard-admin.sql in Supabase."
     if (signOut) signOut.hidden = true
+    const editor = document.getElementById("adminGameEditor")
+    if (editor) editor.hidden = true
     console.error("Leaderboard admin verification failed:", error)
   }
 }
@@ -1989,11 +1996,55 @@ async function signInLeaderboardAdmin() {
   }
 }
 
+function populateAdminGameEditor() {
+  const setValue = (id, value) => {
+    const input = document.getElementById(id)
+    if (input) input.value = String(value)
+  }
+  setValue("adminFribbies", fribbies)
+  setValue("adminMegaFribbies", megaFribbies)
+  ;[u0Amount, u1Amount, u2Amount, u3Amount, u4Amount, u5Amount, u6Amount, u7Amount, u8Amount]
+    .forEach((amount, index) => setValue(`adminUpgrade${index}`, amount))
+}
+
+function applyAdminGameEdits() {
+  if (!leaderboardIsAdmin) return
+  const fribbyInput = document.getElementById("adminFribbies")
+  const megaInput = document.getElementById("adminMegaFribbies")
+  const status = document.getElementById("adminGameEditStatus")
+  const amountInputs = Array.from({ length: 9 }, (_, index) => document.getElementById(`adminUpgrade${index}`))
+  const parseAmount = input => {
+    const value = input?.value.trim() ?? ""
+    return /^\d+$/.test(value) ? BigInt(value) : null
+  }
+  const nextFribbies = parseAmount(fribbyInput)
+  const nextMegaFribbies = parseAmount(megaInput)
+  const nextUpgrades = amountInputs.map(input => {
+    const value = input?.value.trim() ?? ""
+    return /^\d+$/.test(value) && Number.isSafeInteger(Number(value)) ? Number(value) : null
+  })
+  if (nextFribbies === null || nextMegaFribbies === null || nextUpgrades.some(value => value === null)) {
+    if (status) status.textContent = "Enter non-negative whole numbers for every field. Upgrade counts must be within JavaScript's safe integer range."
+    return
+  }
+  fribbies = nextFribbies
+  megaFribbies = nextMegaFribbies
+  ;[u0Amount, u1Amount, u2Amount, u3Amount, u4Amount, u5Amount, u6Amount, u7Amount, u8Amount] = nextUpgrades
+  updateFribby()
+  refreshUpgradeLabels()
+  updateAscensionUI()
+  renderSkillTree()
+  saveGame()
+  if (status) status.textContent = "Your game values were updated and saved in this browser. Upgrade prices were left unchanged."
+}
+
 async function signOutLeaderboardAdmin() {
   if (!leaderboardAdminClient) return
   try {
     await leaderboardAdminClient.auth.signOut()
     leaderboardIsAdmin = false
+    const editor = document.getElementById("adminGameEditor")
+    if (editor) editor.hidden = true
     await refreshLeaderboard()
   } catch (error) {
     const output = document.getElementById("leaderboardAdminStatus")
