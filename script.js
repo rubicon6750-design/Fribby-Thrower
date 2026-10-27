@@ -559,7 +559,8 @@ function getSkillGraph() {
   if (cachedSkillGraph) return cachedSkillGraph
   const graph = []
   const cx = 1100, cy = 1100
-  const branchAngles = { path: -Math.PI / 2, strong: -Math.PI / 3, click: 0, mega: Math.PI / 3, mini: Math.PI * 2 / 3, auto: Math.PI, cheap: Math.PI * 4 / 3 }
+  const branchStep = (Math.PI * 2) / 7
+  const branchAngles = { path: -Math.PI / 2, strong: -Math.PI / 2 + branchStep, click: -Math.PI / 2 + branchStep * 2, mega: -Math.PI / 2 + branchStep * 3, mini: -Math.PI / 2 + branchStep * 4, auto: -Math.PI / 2 + branchStep * 5, cheap: -Math.PI / 2 + branchStep * 6 }
   const point = (branch, index) => {
     if (branch === "path" && index === 12) {
       return { x: Math.round(cx + Math.cos(branchAngles.path) * 990), y: Math.round(cy + Math.sin(branchAngles.path) * 990) }
@@ -675,8 +676,8 @@ function renderSkillTree() {
     node.parents.forEach(parentId => {
       const parent = graphById.get(parentId)
       if (!parent) return
-      // Draw only the core spokes and links within each branch. Unlock gates
-      // still work, but do not draw cross-branch lines that clutter the web.
+      // Keep radial spokes and within-branch links. Neighboring branches are
+      // connected separately below, rung-to-rung, to form a spiderweb.
       if (parentId !== "core" && parent.branch !== node.branch) return
       const start = edgeAnchor(parent, node)
       const end = edgeAnchor(node, parent)
@@ -698,6 +699,27 @@ function renderSkillTree() {
       edges.appendChild(path)
     })
   })
+  // Join each rung to the matching rung in the two neighboring outer branches.
+  // Drawing each pair once avoids doubled lines where the web closes into a ring.
+  const webBranches = ["path", "strong", "click", "mega", "mini", "auto", "cheap"]
+  const addWebEdge = (from, to) => {
+    if (!from || !to) return
+    const start = edgeAnchor(from, to)
+    const end = edgeAnchor(to, from)
+    const path = document.createElementNS(svgNS, "path")
+    path.setAttribute("d", `M ${start.x} ${start.y} L ${end.x} ${end.y}`)
+    path.setAttribute("class", `skill-edge edge-web edge-${from.branch}`)
+    path.dataset.from = from.id
+    path.dataset.to = to.id
+    edges.appendChild(path)
+  }
+  for (let i = 0; i < 12; i++) {
+    for (let branchIndex = 0; branchIndex < webBranches.length; branchIndex++) {
+      const branch = webBranches[branchIndex]
+      const nextBranch = webBranches[(branchIndex + 1) % webBranches.length]
+      addWebEdge(graphById.get(`${branch}-${i}`), graphById.get(`${nextBranch}-${i}`))
+    }
+  }
   map.appendChild(edges)
   const origin = document.createElement("div")
   origin.className = "skill-tree-origin skill-web-origin"
@@ -2573,6 +2595,7 @@ function setupGameTabs() {
   const leaderboard = makePage("leaderboard", "Leaderboard")
   const settings = makePage("settings", "Settings")
   const clicker = document.querySelector(".clicker-area")
+  const adminGameEditor = document.getElementById("adminGameEditor")
   const ascensionPanel = document.getElementById("ascensionPanel")
   const skillTree = document.getElementById("skillTreePanel")
   const mini = document.getElementById("minigamesArea")
@@ -2580,6 +2603,7 @@ function setupGameTabs() {
   const dock = document.getElementById("settingsDock")
   if (ascensionPanel) ascensionPanel.remove()
   if (clicker) game.appendChild(clicker)
+  if (adminGameEditor) game.appendChild(adminGameEditor)
   if (ascensionPanel) ascension.appendChild(ascensionPanel)
   if (skillTree) ascension.appendChild(skillTree)
   if (mini) minigames.appendChild(mini)
