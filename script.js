@@ -165,15 +165,15 @@ function getAutoBonusPercent() {
 }
 function refreshUpgradeLabels() {
   const labels = [
-    `Extra Hand (${u0Amount}, +1 Fribby per click) - ${getRegularUpgradeCost(u0Cost, 0)} Fribbies`,
-    `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${getRegularUpgradeCost(u1Cost, 1)} Fribbies`,
-    `Intern (${u2Amount}, +1 Fribby per auto throw) - ${getRegularUpgradeCost(u2Cost, 2)} Fribbies`,
-    `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${getRegularUpgradeCost(u3Cost, 3)} Fribbies`,
-    `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${getRegularUpgradeCost(u4Cost, 4)} Fribbies`,
-    `Power Throw (${u5Amount}, +10 Fribbies per click) - ${getRegularUpgradeCost(u5Cost, 5)} Fribbies`,
-    `Fribby Factory (${u6Amount}, +10 Fribbies per auto throw) - ${getRegularUpgradeCost(u6Cost, 6)} Fribbies`,
-    `Turbo Thrower (${u7Amount}, +5 auto throws/sec) - ${getRegularUpgradeCost(u7Cost, 7)} Fribbies`,
-    `Mega Cannon (${u8Amount}, +${hasSkill("strong-6") ? 150 : 100} Fribbies per click) - ${getRegularUpgradeCost(u8Cost, 8)} Fribbies`
+    `Extra Hand (${u0Amount}, +1 Fribby per click) - ${formatFribbies(getRegularUpgradeCost(u0Cost, 0))} Fribbies`,
+    `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${formatFribbies(getRegularUpgradeCost(u1Cost, 1))} Fribbies`,
+    `Intern (${u2Amount}, +1 Fribby per auto throw) - ${formatFribbies(getRegularUpgradeCost(u2Cost, 2))} Fribbies`,
+    `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u3Cost, 3))} Fribbies`,
+    `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u4Cost, 4))} Fribbies`,
+    `Power Throw (${u5Amount}, +10 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u5Cost, 5))} Fribbies`,
+    `Fribby Factory (${u6Amount}, +10 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u6Cost, 6))} Fribbies`,
+    `Turbo Thrower (${u7Amount}, +5 auto throws/sec) - ${formatFribbies(getRegularUpgradeCost(u7Cost, 7))} Fribbies`,
+    `Mega Cannon (${u8Amount}, +${hasSkill("strong-6") ? 150 : 100} Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u8Cost, 8))} Fribbies`
   ]
   labels.forEach((label, index) => {
     const button = document.getElementById(`upgrade${index}`)
@@ -219,7 +219,7 @@ function buy0() {
    u0Cost = u0Cost * 3n
    updateFribby()
    document.getElementById("upgrade0").innerText =
-        "Extra Hand - (" + u0Amount + ", +1 Fribby per click) - " + u0Cost + " Fribbies"
+        "Extra Hand - (" + u0Amount + ", +1 Fribby per click) - " + formatFribbies(u0Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -235,7 +235,7 @@ function buy1() {
    u1Cost = (u1Cost * 3n + 1n) / 2n
    updateFribby()
    document.getElementById("upgrade1").innerText =
-        "Auto Thrower (" + u1Amount + ", +1 auto throw/sec) - " + u1Cost + " Fribbies"
+        "Auto Thrower (" + u1Amount + ", +1 auto throw/sec) - " + formatFribbies(u1Cost) + " Fribbies"
    refreshUpgradeLabels()
    updateAutoThrowInterval()
   } else {
@@ -252,7 +252,7 @@ function buy2() {
    u2Cost = (u2Cost * 3n + 1n) / 2n
    updateFribby()
    document.getElementById("upgrade2").innerText =
-        "Intern (" + u2Amount + ", +1 Fribby per auto throw) - " + u2Cost + " Fribbies"
+        "Intern (" + u2Amount + ", +1 Fribby per auto throw) - " + formatFribbies(u2Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -268,7 +268,7 @@ function buy3() {
     u3Cost = (u3Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade3").innerText =
-      "Fribby Cannon (" + u3Amount + ", +5 Fribbies per click) - " + u3Cost + " Fribbies"
+      "Fribby Cannon (" + u3Amount + ", +5 Fribbies per click) - " + formatFribbies(u3Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -284,7 +284,7 @@ function buy4() {
     u4Cost = (u4Cost * 3n + 1n) / 2n
     updateFribby()
        document.getElementById("upgrade4").innerText =
-        "Supervisor (" + u4Amount + ", +5 Fribbies per auto throw) - " + u4Cost + " Fribbies"
+        "Supervisor (" + u4Amount + ", +5 Fribbies per auto throw) - " + formatFribbies(u4Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -300,7 +300,7 @@ function buy5() {
     u5Cost = (u5Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade5").innerText =
-      "Power Throw (" + u5Amount + ", +10 Fribbies per click) - " + u5Cost + " Fribbies"
+      "Power Throw (" + u5Amount + ", +10 Fribbies per click) - " + formatFribbies(u5Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -316,7 +316,7 @@ function buy6() {
     u6Cost = (u6Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade6").innerText =
-      "Fribby Factory (" + u6Amount + ", +10 Fribbies per auto throw) - " + u6Cost + " Fribbies"
+      "Fribby Factory (" + u6Amount + ", +10 Fribbies per auto throw) - " + formatFribbies(u6Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -332,7 +332,7 @@ function buy7() {
     u7Cost = (u7Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade7").innerText =
-      "Turbo Thrower (" + u7Amount + ", +5 auto throws/sec) - " + u7Cost + " Fribbies"
+      "Turbo Thrower (" + u7Amount + ", +5 auto throws/sec) - " + formatFribbies(u7Cost) + " Fribbies"
    refreshUpgradeLabels()
     updateAutoThrowInterval()
   } else {
@@ -349,7 +349,7 @@ function buy8() {
     u8Cost = (u8Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade8").innerText =
-      "Mega Cannon (" + u8Amount + ", +100 Fribbies per click) - " + u8Cost + " Fribbies"
+      "Mega Cannon (" + u8Amount + ", +100 Fribbies per click) - " + formatFribbies(u8Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -873,7 +873,7 @@ function buyMinigameUnlock() {
   const unlockPrice = getMinigameUnlockPrice()
   if (fribbies < unlockPrice) {
     playSoundEffect("upgradeFailSound")
-    status.textContent = `You need ${unlockPrice} Fribbies to unlock the next minigame.`
+    status.textContent = `You need ${formatFribbies(unlockPrice)} Fribbies to unlock the next minigame.`
     return
   }
 
@@ -911,7 +911,7 @@ function updateMinigameUnlockButton() {
     return
   }
   button.disabled = false
-  button.textContent = `Unlock Minigame (${unlockedMinigames}/6) - ${getMinigameUnlockPrice()} Fribbies`
+  button.textContent = `Unlock Minigame (${unlockedMinigames}/6) - ${formatFribbies(getMinigameUnlockPrice())} Fribbies`
 }
 
 function showMinigame(game) {
@@ -1748,15 +1748,15 @@ function loadGame(showMessage = true) {
     updateFribby()
     renderSkillTree()
     const labels = [
-      `Extra Hand - (${u0Amount}, +1 Fribby per click) - ${u0Cost} Fribbies`,
-      `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${u1Cost} Fribbies`,
-      `Intern (${u2Amount}, +1 Fribby per auto throw) - ${u2Cost} Fribbies`,
-      `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${u3Cost} Fribbies`,
-      `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${u4Cost} Fribbies`,
-      `Power Throw (${u5Amount}, +10 Fribbies per click) - ${u5Cost} Fribbies`,
-      `Fribby Factory (${u6Amount}, +10 Fribbies per auto throw) - ${u6Cost} Fribbies`,
-      `Turbo Thrower (${u7Amount}, +5 auto throws/sec) - ${u7Cost} Fribbies`,
-      `Mega Cannon (${u8Amount}, +100 Fribbies per click) - ${u8Cost} Fribbies`
+      `Extra Hand - (${u0Amount}, +1 Fribby per click) - ${formatFribbies(u0Cost)} Fribbies`,
+      `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${formatFribbies(u1Cost)} Fribbies`,
+      `Intern (${u2Amount}, +1 Fribby per auto throw) - ${formatFribbies(u2Cost)} Fribbies`,
+      `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${formatFribbies(u3Cost)} Fribbies`,
+      `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${formatFribbies(u4Cost)} Fribbies`,
+      `Power Throw (${u5Amount}, +10 Fribbies per click) - ${formatFribbies(u5Cost)} Fribbies`,
+      `Fribby Factory (${u6Amount}, +10 Fribbies per auto throw) - ${formatFribbies(u6Cost)} Fribbies`,
+      `Turbo Thrower (${u7Amount}, +5 auto throws/sec) - ${formatFribbies(u7Cost)} Fribbies`,
+      `Mega Cannon (${u8Amount}, +100 Fribbies per click) - ${formatFribbies(u8Cost)} Fribbies`
     ]
     labels.forEach((label, index) => {
       document.getElementById(`upgrade${index}`).textContent = label
@@ -2341,15 +2341,15 @@ function applyImportedSaveData(data) {
   updateFribby()
   renderSkillTree()
   const labels = [
-    `Extra Hand - (${u0Amount}, +1 Fribby per click) - ${u0Cost} Fribbies`,
-    `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${u1Cost} Fribbies`,
-    `Intern (${u2Amount}, +1 Fribby per auto throw) - ${u2Cost} Fribbies`,
-    `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${u3Cost} Fribbies`,
-    `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${u4Cost} Fribbies`,
-    `Power Throw (${u5Amount}, +10 Fribbies per click) - ${u5Cost} Fribbies`,
-    `Fribby Factory (${u6Amount}, +10 Fribbies per auto throw) - ${u6Cost} Fribbies`,
-    `Turbo Thrower (${u7Amount}, +5 auto throws/sec) - ${u7Cost} Fribbies`,
-    `Mega Cannon (${u8Amount}, +100 Fribbies per click) - ${u8Cost} Fribbies`
+    `Extra Hand - (${u0Amount}, +1 Fribby per click) - ${formatFribbies(u0Cost)} Fribbies`,
+    `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${formatFribbies(u1Cost)} Fribbies`,
+    `Intern (${u2Amount}, +1 Fribby per auto throw) - ${formatFribbies(u2Cost)} Fribbies`,
+    `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${formatFribbies(u3Cost)} Fribbies`,
+    `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${formatFribbies(u4Cost)} Fribbies`,
+    `Power Throw (${u5Amount}, +10 Fribbies per click) - ${formatFribbies(u5Cost)} Fribbies`,
+    `Fribby Factory (${u6Amount}, +10 Fribbies per auto throw) - ${formatFribbies(u6Cost)} Fribbies`,
+    `Turbo Thrower (${u7Amount}, +5 auto throws/sec) - ${formatFribbies(u7Cost)} Fribbies`,
+    `Mega Cannon (${u8Amount}, +100 Fribbies per click) - ${formatFribbies(u8Cost)} Fribbies`
   ]
   labels.forEach((label, index) => {
     document.getElementById(`upgrade${index}`).textContent = label
@@ -2620,3 +2620,90 @@ function setupGameTabs() {
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", setupGameTabs)
 else setupGameTabs()
+
+
+/* Hidden Uwu Mode: type "uwu" anywhere to unlock and enable it. */
+let uwuModeUnlocked = false
+let uwuModeEnabled = false
+const uwuOriginalText = new WeakMap()
+const uwuTextNodes = new Set()
+let uwuApplyingText = false
+function uwuify(text) { return text.replace(/[rl]/gi, letter => letter === "R" ? "W" : letter === "L" ? "W" : letter === "r" ? "w" : "w") }
+function isUwuExcluded(node) {
+  const parent = node.parentElement
+  return !parent || !!parent.closest("script, style, noscript, textarea, input, select, option, code, pre")
+}
+function applyUwuToNode(node) {
+  if (node.nodeType !== Node.TEXT_NODE || isUwuExcluded(node)) return
+  if (!uwuOriginalText.has(node)) uwuOriginalText.set(node, node.nodeValue)
+  uwuTextNodes.add(node)
+  if (uwuModeEnabled) {
+    const original = uwuOriginalText.get(node)
+    const transformed = uwuify(original)
+    if (node.nodeValue !== transformed) {
+      uwuApplyingText = true
+      node.nodeValue = transformed
+      uwuApplyingText = false
+    }
+  }
+}
+function scanUwuText(root = document.body) {
+  if (!root) return
+  if (root.nodeType === Node.TEXT_NODE) { applyUwuToNode(root); return }
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+  let node
+  while ((node = walker.nextNode())) applyUwuToNode(node)
+}
+function setUwuMode(enabled) {
+  uwuModeEnabled = Boolean(enabled && uwuModeUnlocked)
+  uwuApplyingText = true
+  for (const node of uwuTextNodes) {
+    if (!node.isConnected) { uwuTextNodes.delete(node); continue }
+    const original = uwuOriginalText.get(node)
+    if (original == null) continue
+    node.nodeValue = uwuModeEnabled ? uwuify(original) : original
+  }
+  uwuApplyingText = false
+  const button = document.getElementById("uwuToggle")
+  if (button) {
+    button.hidden = !uwuModeUnlocked
+    button.textContent = `Uwu Mode: ${uwuModeEnabled ? "On" : "Off"}`
+    button.setAttribute("aria-pressed", String(uwuModeEnabled))
+  }
+  try { localStorage.setItem("fribbyUwuUnlocked", String(uwuModeUnlocked)); localStorage.setItem("fribbyUwuEnabled", String(uwuModeEnabled)) } catch (error) {}
+}
+function toggleUwuMode() { setUwuMode(!uwuModeEnabled) }
+function unlockUwuMode() {
+  if (uwuModeUnlocked) return
+  uwuModeUnlocked = true
+  setUwuMode(true)
+  const button = document.getElementById("uwuToggle")
+  if (button) button.title = 'Secret found! Toggle the r/l-to-w text effect here.'
+}
+document.addEventListener("keydown", event => {
+  if (event.key.length !== 1) return
+  window.__fribbyUwuBuffer = ((window.__fribbyUwuBuffer || "") + event.key.toLowerCase()).slice(-3)
+  if (window.__fribbyUwuBuffer === "uwu") unlockUwuMode()
+})
+document.addEventListener("DOMContentLoaded", () => {
+  try {
+    uwuModeUnlocked = localStorage.getItem("fribbyUwuUnlocked") === "true"
+    uwuModeEnabled = uwuModeUnlocked && localStorage.getItem("fribbyUwuEnabled") === "true"
+  } catch (error) {}
+  scanUwuText()
+  setUwuMode(uwuModeEnabled)
+  const observer = new MutationObserver(records => {
+    if (uwuApplyingText) return
+    for (const record of records) {
+      if (record.type === "childList") record.addedNodes.forEach(node => scanUwuText(node))
+      else if (record.type === "characterData" && uwuModeEnabled) {
+        const node = record.target
+        const current = node.nodeValue
+        const original = uwuOriginalText.get(node)
+        if (original != null && current !== uwuify(original)) uwuOriginalText.set(node, current)
+        applyUwuToNode(node)
+      }
+    }
+  })
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true })
+})
