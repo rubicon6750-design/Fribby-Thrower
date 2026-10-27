@@ -818,9 +818,9 @@ body.dark-mode .skill-node.skill-unlock-flash { box-shadow: 0 0 0 3px #6ee7b788,
 .branch-mini { --branch-color: #7eaa4f; --branch-glow: #bef264; }
 .skill-web-map {
   position: relative;
-  width: 1850px;
-  height: 2000px;
-  min-width: 1850px;
+  width: 2200px;
+  height: 2200px;
+  min-width: 2200px;
   padding: 0;
   box-sizing: border-box;
   background-image: radial-gradient(#9d8acb35 1px, transparent 1px);
@@ -872,21 +872,19 @@ body.dark-mode .skill-node.skill-unlock-flash { box-shadow: 0 0 0 3px #6ee7b788,
   --branch-glow: #c4b5fd;
   position: absolute;
   z-index: 2;
-  width: 150px;
-  min-height: 116px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  gap: 6px;
+  width: 58px;
+  height: 58px;
+  min-height: 58px;
+  display: block;
   text-align: center;
   color: #302b3f;
 }
 .skill-node-wrap .skill-node {
-  width: 68px;
-  min-width: 68px;
-  height: 68px;
-  min-height: 68px;
-  flex: 0 0 68px;
+  width: 58px;
+  min-width: 58px;
+  height: 58px;
+  min-height: 58px;
+  flex: 0 0 58px;
   padding: 0;
   display: grid;
   place-items: center;
@@ -899,7 +897,7 @@ body.dark-mode .skill-node.skill-unlock-flash { box-shadow: 0 0 0 3px #6ee7b788,
   transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease, opacity .18s ease;
   z-index: 2;
 }
-.skill-node-icon { display: block; font-size: 1.65rem; line-height: 1; font-weight: 900; }
+.skill-node-icon { display: block; font-size: 1.45rem; line-height: 1; font-weight: 900; }
 .skill-node-wrap .skill-node:not(:disabled):hover {
   transform: scale(1.09);
   border-color: var(--branch-color);
@@ -929,15 +927,7 @@ body.dark-mode .skill-node.skill-unlock-flash { box-shadow: 0 0 0 3px #6ee7b788,
   border-color: #f59e0b;
   background: radial-gradient(circle, #fff7d6, #fcd34d);
 }
-.skill-node-caption {
-  width: 150px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  line-height: 1.2;
-  pointer-events: none;
-}
+.skill-node-caption { display: none; }
 .skill-node-caption-name {
   max-width: 100%;
   font-size: .72rem;
@@ -978,10 +968,9 @@ body.dark-mode .skill-node.skill-unlock-flash { box-shadow: 0 0 0 3px #6ee7b788,
   transform: translate(-50%, 0);
 }
 .skill-web-map .skill-node-wrap.branch-path .skill-node { border-width: 3px; }
-.skill-web-map .skill-node-wrap.branch-path .skill-node-icon { font-size: 1.8rem; }
-.skill-web-map .skill-node-wrap.branch-path[data-skill-id="path-12"] .skill-node { width: 78px; height: 78px; min-width: 78px; min-height: 78px; flex-basis: 78px; }
-.skill-web-map .skill-node-wrap.branch-path[data-skill-id="path-12"] { width: 170px; }
-.skill-web-map .skill-node-wrap.branch-path[data-skill-id="path-12"] .skill-node-caption { width: 170px; }
+.skill-web-map .skill-node-wrap.branch-path .skill-node-icon { font-size: 1.55rem; }
+.skill-web-map .skill-node-wrap.branch-path[data-skill-id="path-12"] .skill-node { width: 72px; height: 72px; min-width: 72px; min-height: 72px; flex-basis: 72px; }
+.skill-web-map .skill-node-wrap.branch-path[data-skill-id="path-12"] { width: 72px; height: 72px; min-height: 72px; }
 body.dark-mode #skillTree { background: radial-gradient(ellipse at 50% 4%, #28223b 0, #211d30 55%, #1b1926 100%); }
 body.dark-mode .skill-web-map { background-image: radial-gradient(#c9b5ff24 1px, transparent 1px); border-color: #4e426c; }
 body.dark-mode .web-legend-item { background: #29243b; color: #e7defa; border-color: #584a76; }
@@ -1000,32 +989,6 @@ body.dark-mode .skill-tree-origin.skill-web-origin { background: radial-gradient
 @media (prefers-reduced-motion: reduce) {
   .skill-node-wrap .skill-node.available { animation: none; }
 }
-.skill-web-hub {
-  position: absolute;
-  z-index: 2;
-  transform: translate(-50%, -50%);
-  width: 160px;
-  min-height: 54px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  padding: 6px 9px;
-  border: 2px solid #b58b57;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #fff4df, #f6dfb9);
-  color: #7a4d1f;
-  box-shadow: 0 3px 12px #6d43151e;
-  text-align: center;
-  font-size: .76rem;
-}
-.skill-web-hub span { font-size: 1.15rem; line-height: 1; }
-.skill-web-hub strong { font-size: .72rem; letter-spacing: .05em; }
-.skill-web-hub small { font-size: .63rem; }
-body.dark-mode .skill-web-hub { background: linear-gradient(135deg, #55402b, #382d26); color: #fce5bd; border-color: #b58b57; }
-
 /* Global leaderboard moderation */
 .leaderboard-admin-login {
   margin: 12px 0;

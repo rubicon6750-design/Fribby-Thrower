@@ -5,53 +5,52 @@ let purchasedSkills = new Set()
 let repeatableEchoes = 0
 const ASCENSION_THRESHOLD = 1000000n
 const MAX_REPEATABLE_ECHOES = 1000
-// Keep the original skill IDs so existing saves remain compatible. The 49th
-// node (path-12) is now the single repeatable endgame upgrade.
+// Preserve existing skill IDs for save compatibility; Eternal Echo remains the repeatable endgame upgrade.
 const skillBranches = [
-  { id: "auto", name: "Automation", description: "More throws, faster cycles, and machinery that feeds itself.", count: 10 },
+  { id: "auto", name: "Automation", description: "More throws, faster cycles, and machinery that feeds itself.", count: 12 },
   { id: "cheap", name: "Cheaper Upgrades", description: "Lower regular-upgrade costs and keep each run efficient.", count: 12 },
   { id: "strong", name: "Stronger Upgrades", description: "Improve the strength and scaling of your regular upgrades.", count: 12 },
   { id: "path", name: "Ascension Path", description: "The central path opens deeper branches of the web.", count: 12 },
   { id: "click", name: "Clicking Power", description: "Sharper throws, critical hits, and powerful manual clicks.", count: 12 },
   { id: "mega", name: "Mega Fribbies", description: "Get more from each ascension and previous runs.", count: 12 },
-  { id: "mini", name: "Minigame Lore", description: "Improve minigame rewards and make challenges pay off.", count: 10 }
+  { id: "mini", name: "Minigame Lore", description: "Improve minigame rewards and make challenges pay off.", count: 12 }
 ]
 const skillNames = {
   path: ["First Spark", "Pocketed Pouch", "Lucky Compass", "Branching Fate", "Runner's Rhythm", "Discount Glyph", "Minigame Lore", "Starbound Route", "Astral Focus", "Frugal Passage", "Ancient Knowledge", "Ascendant Heart", "Eternal Echo"],
   strong: ["Reinforced Grip", "Automation Manual", "Budget Blueprint", "Spare Gear", "Compound Crew", "Double Shift", "Cannon Lathing", "Idle Logistics", "Minigame Playbook", "Torque Calibration", "Factory Foreman", "Grand Foundry"],
-  click: ["Quick Tap", "Steady Aim", "Split-Second", "Heavy Disc", "Double Grip", "Charged Toss", "Cannon Synergy", "Bullseye", "Muscle Memory", "Meteor Arm", "Quick Release", "Cosmic Launch"],
+  click: ["Lucky Reflex", "Steady Aim", "Split-Second", "Heavy Disc", "Double Grip", "Charged Toss", "Cannon Synergy", "Bullseye", "Muscle Memory", "Meteor Arm", "Quick Release", "Cosmic Launch"],
   mega: ["Packed Satchel", "Lucky Star", "Deep Reserve", "Overflowing Core", "Past Lives", "Golden Harvest", "Early Ascender", "Relic Pockets", "Singular Offering", "Echo Chamber", "Infinite Bounty", "Mega Mastery"],
-  cheap: ["Bulk Order", "Coupon Cache", "Lean Workshop", "Second-Hand Tools", "Supplier Pact", "Careful Spending", "Guild Discount", "Bargain Engine", "Frugal Foundry", "Wholesale Network", "Perfect Ledger", "Cost Collapse"],
-  auto: ["Clockwork Wrist", "Oiled Bearings", "Double Pendulum", "Overtime Circuit", "Self-Feeding Line", "Rapid Relay", "Unattended Shift", "Assembly Swarm", "Chrono Engine", "Infinite Conveyor"],
-  mini: ["Practice Round", "Prize Pouch", "Pattern Sense", "Lucky Streak", "Sweep Expert", "Bonus Round", "Arcade Scholar", "Risk Assessment", "Master Player", "Grand Champion"]
+  cheap: ["Bulk Order", "Click Coupon", "Machine Rebate", "Arcade Voucher", "Supplier Pact", "Heavy Parts Deal", "Stockpile Savings", "Automation Contract", "Precision Coupon", "Wholesale Network", "Clearance Ledger", "Cost Collapse"],
+  auto: ["Clockwork Wrist", "Oiled Bearings", "Double Pendulum", "Overtime Circuit", "Self-Feeding Line", "Rapid Relay", "Unattended Shift", "Assembly Swarm", "Chrono Engine", "Infinite Conveyor", "Feedback Reactor", "Singularity Engine"],
+  mini: ["Practice Round", "Prize Pouch", "Pattern Sense", "Lucky Streak", "Sweep Expert", "Bonus Round", "Arcade Scholar", "Risk Assessment", "Master Player", "Grand Champion", "Hidden Cabinet", "Perfect Run"]
 }
 const skillEffects = {
   path: [
-    "+1 base Fribby per click", "Start each new run with 100 Fribbies", "+10% minigame payouts", "Opens the next depth of the web", "+1 auto throw per second", "Regular upgrade costs -5%", "+15% minigame payouts", "+15% auto-throw payout", "+15% click payout", "Minigame unlocks cost -20%", "+1 base Fribby per auto throw", "+10% to click and auto gains", "+5% click and automatic gains per level; repeatable"
+    "Click power gains +10 Fribbies per throw", "Start each ascension run with 1,000 Fribbies", "+10% minigame rewards", "Opens the next rung across every branch", "+5 automatic throws per second", "Regular upgrade prices -5%", "+15% minigame rewards", "+15% automatic payout", "+15% click payout", "Minigame unlock prices -20%", "+10 Fribbies per automatic throw", "+10% click and automatic payout", "+5% click and automatic payout per level; repeatable"
   ],
   strong: [
-    "+15% power to regular upgrades", "+20% auto-throw payout", "Regular upgrade costs -10%", "+1 auto throw per second", "Auto payout grows by +2% per Auto Thrower", "+20% auto-throw payout", "Mega Cannon gives 50% extra click power", "+2 auto throws per second", "+20% minigame payouts", "+20% click payout", "+30% auto-throw payout", "+20% to all produced Fribbies"
+    "Click and automatic payout +15%", "Automatic throws pay +20%", "Regular upgrade prices -10%", "Every 5 regular upgrade levels adds +10% click and automatic payout, up to +50%", "Every 5 Auto Throwers adds +20% automatic payout, up to +80%", "Automatic payout +100% once you reach 10 throws per second", "Mega Cannon gains +50% click power", "Each Turbo Thrower adds +10% automatic payout, up to +100%", "+20% minigame rewards", "Click payout +20%", "Automatic payout +30%", "Click and automatic payout +20%"
   ],
   click: [
-    "+1 base Fribby per click", "+15% click payout", "5% chance for a triple-value throw", "+5 base Fribbies per click", "Each Extra Hand adds another click Fribby", "+25% click payout", "Each Fribby Cannon adds +2 click Fribbies", "10% chance for a triple-value throw", "Up to +100% click power from Extra Hands", "+50 base Fribbies per click", "+30% click payout", "+50% click payout"
+    "Critical-hit chance +10 percentage points", "Click payout +25%", "5% chance to triple click payout", "+50 Fribbies per click", "Each Extra Hand adds +5 additional Fribbies per click", "Critical hits deal 5× normal click payout", "Each Fribby Cannon adds +20 Fribbies per click", "10% chance to triple click payout", "Extra Hands grant up to +100% click payout", "+250 Fribbies per click", "Click payout +30%", "Click payout +50%"
   ],
   mega: [
-    "+1 Mega Fribby on every ascension", "+10% ascension reward", "+1 Mega Fribby per 5 million Fribbies converted", "+1 Mega Fribby near the next million", "+2% reward per previous ascension", "+15% ascension reward", "+1 Mega Fribby per 5 previous ascensions", "+2 Mega Fribbies on every ascension", "+25% reward for large ascensions", "+5% reward per other Mega Fribby skill", "+3 Mega Fribbies on every ascension", "+30% ascension reward"
+    "+5 Mega Fribbies on every ascension", "Ascension reward +20%", "Gain an extra 20% of the base reward", "+25 Mega Fribbies when within 250,000 Fribbies of the threshold", "Ascension reward +2% per previous ascension", "Ascension reward +15%", "+1 Mega Fribby per 2 previous ascensions", "+10 Mega Fribbies when all six minigames are unlocked", "+25% on ascensions worth 10+ Mega Fribbies", "+5% reward per other Mega Fribby upgrade", "+15 Mega Fribbies when ascending from 5,000,000+ Fribbies", "Ascension reward +30%"
   ],
-  cheap: ["Regular upgrade costs -4%", "Regular upgrade costs -5%", "Regular upgrade costs -6%", "Regular upgrade costs -7%", "Regular upgrade costs -8%", "Regular upgrade costs -9%", "Regular upgrade costs -10%", "Regular upgrade costs -11%", "Regular upgrade costs -12%", "Regular upgrade costs -13%", "Regular upgrade costs -14%", "Regular upgrade costs -15%"],
-  auto: ["+1 auto throw per second", "+10% auto-throw payout", "+2 auto throws per second", "Auto throwers gain +5% payout each", "+15% auto-throw payout", "Auto Throwers add +1 Fribby to each automatic throw", "+2 auto throws per second", "Each Turbo Thrower adds +2 Fribbies to automatic throws", "+25% auto-throw payout", "+40% auto payout, +5 base Fribbies, and +5 throws/sec"],
-  mini: ["Minigame rewards +10%", "Minigame unlock costs -10%", "+5% minigame rewards per unlocked game", "Minigame rewards +15%", "Minigame rewards +25%", "Minigame rewards +20%", "Ascension reward +2% per unlocked minigame", "Minigame rewards +25%", "Minigame rewards +30%", "All minigame rewards +40%"]
+  cheap: ["All regular upgrade prices -8%", "Click-focused upgrade prices -10%", "Automation upgrade prices -12%", "Minigame unlock price -20%", "All regular upgrade prices -10%", "Fribby Cannon and Mega Cannon prices -20%", "All regular upgrade prices -12%", "Auto Thrower and Turbo Thrower prices -25%", "Click-focused upgrade prices -20%", "All regular upgrade prices -14%", "All regular upgrade prices -16%", "All regular upgrade prices -20%"],
+  auto: ["+5 automatic throws per second", "Automatic payout +25%", "Each Auto Thrower adds an extra +1 throw/sec, up to +20", "Each Auto Thrower adds +5% automatic payout, up to +50%", "Automatic payout +15%", "Each Auto Thrower adds +10 Fribbies per automatic throw", "Every 5 automatic throws/sec adds +10% payout, up to +100%", "Each Turbo Thrower adds +2 Fribbies to automatic payout", "+25% automatic payout; every 5 Turbo Throwers adds +1 base Fribby", "Automatic payout +40%, +5 base payout, and +5 throws per second", "Each Fribby Factory adds +10% automatic payout, up to +100%", "Automatic payout +50%, +10 base payout, and +5 throws per second"],
+  mini: ["Minigame rewards +10%", "Minigame unlock prices -10%", "+5% minigame rewards per unlocked game", "Minigame rewards +15%", "Minigame rewards +25%", "Minigame rewards +20%", "Ascension reward +2% per unlocked minigame", "Minigame rewards +25%", "Minigame rewards +30%", "All minigame rewards +40%", "Minigame rewards +35%", "Minigame rewards +50% and ascension reward +10%"]
 }
 const skillBranchOrder = ["auto", "cheap", "strong", "path", "click", "mega", "mini"]
-const skillNodeIcons = { path: "✦", strong: "⚒", click: "➤", mega: "✧", cheap: "¤", auto: "⚙", mini: "✹" }
+const skillNodeIcons = { path: "◇", strong: "▰", click: "⊕", mega: "✧", cheap: "−", auto: "↻", mini: "▦" }
 const skillNodeIconSets = {
-  path: ["✦", "✧", "⟡", "✥", "⌁", "✶", "⟁", "☼", "✺", "◇", "✴", "❖", "✴"],
-  strong: ["⚒", "⚙", "▦", "⬢", "⌘", "♜", "⛭", "▣", "⚑", "⚗", "◈", "✹"],
-  click: ["➤", "➶", "⌖", "◉", "≫", "⚡", "✸", "◎", "➳", "✹", "➷", "✴"],
-  mega: ["✧", "◇", "◈", "✥", "☼", "✴", "⟡", "❖", "✹", "⬡", "✺", "✦"],
-  cheap: ["¤", "↓", "◉", "⌗", "▱", "⊖", "⌁", "⌘", "▣", "◌", "⟐", "✧"],
-  auto: ["⚙", "⟳", "≫", "⌛", "⤳", "⇢", "⏩", "♻", "⌬", "✴"],
-  mini: ["✹", "▣", "⌘", "♧", "▦", "✷", "🎮", "♜", "✴", "🏆"]
+  path: Array(13).fill("◇"),
+  strong: Array(12).fill("▰"),
+  click: Array(12).fill("⊕"),
+  mega: Array(12).fill("✧"),
+  cheap: Array(12).fill("−"),
+  auto: Array(12).fill("↻"),
+  mini: Array(12).fill("▦")
 }
 
 let u0Amount = 0
@@ -88,10 +87,18 @@ function countSkills(branch) {
 function pathSkillCount() {
   return [...purchasedSkills].filter(id => /^path-(?:[0-9]|1[01])$/.test(id)).length
 }
-function getRegularUpgradeCost(cost) {
-  const cheapDiscounts = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+function getRegularUpgradeCost(cost, upgradeIndex = -1) {
   let discount = (hasSkill("path-5") ? 5 : 0) + (hasSkill("strong-2") ? 10 : 0)
-  cheapDiscounts.forEach((amount, index) => { if (hasSkill(`cheap-${index}`)) discount += amount })
+  const generalDiscounts = [[0, 8], [4, 10], [6, 12], [9, 14], [10, 16], [11, 20]]
+  generalDiscounts.forEach(([index, amount]) => { if (hasSkill(`cheap-${index}`)) discount += amount })
+  const clickUpgrades = [0, 3, 5, 8]
+  const automationUpgrades = [1, 2, 4, 6, 7]
+  if (clickUpgrades.includes(upgradeIndex)) {
+    discount += (hasSkill("cheap-1") ? 10 : 0) + (hasSkill("cheap-8") ? 20 : 0)
+  }
+  if (automationUpgrades.includes(upgradeIndex) && hasSkill("cheap-2")) discount += 12
+  if ([3, 8].includes(upgradeIndex) && hasSkill("cheap-5")) discount += 20
+  if ([1, 7].includes(upgradeIndex) && hasSkill("cheap-7")) discount += 25
   discount = Math.min(80, discount)
   const price = BigInt(100 - discount) * cost / 100n
   return price > 0n ? price : 1n
@@ -99,11 +106,12 @@ function getRegularUpgradeCost(cost) {
 function getMinigameUnlockPrice() {
   let discount = hasSkill("path-9") ? 20 : 0
   if (hasSkill("mini-1")) discount += 10
+  if (hasSkill("cheap-3")) discount += 20
   return (minigameUnlockCost * BigInt(100 - discount) / 100n) || 1n
 }
 function getMinigameRewardMultiplierPercent() {
   let bonus = (hasSkill("path-2") ? 10 : 0) + (hasSkill("path-6") ? 15 : 0) + (hasSkill("strong-8") ? 20 : 0)
-  const miniBonuses = [10, 0, 0, 15, 25, 20, 0, 25, 30, 40]
+  const miniBonuses = [10, 0, 0, 15, 25, 20, 0, 25, 30, 40, 35, 50]
   miniBonuses.forEach((amount, index) => { if (hasSkill(`mini-${index}`)) bonus += amount })
   if (hasSkill("mini-2")) bonus += unlockedMinigames * 5
   return 100 + bonus
@@ -112,16 +120,20 @@ function getMinigamePayout(baseReward) {
   return BigInt(baseReward) * BigInt(getFribbiesPerClick()) * BigInt(getMinigameRewardMultiplierPercent()) / 100n
 }
 function getAutoThrowsPerSecond() {
-  return u1Amount + u7Amount * 5 + (hasSkill("path-4") ? 1 : 0) + (hasSkill("strong-3") ? 1 : 0) + (hasSkill("strong-7") ? 2 : 0)
-    + (hasSkill("auto-0") ? 1 : 0) + (hasSkill("auto-2") ? 2 : 0) + (hasSkill("auto-6") ? 2 : 0) + (hasSkill("auto-9") ? 5 : 0)
+  return u1Amount + u7Amount * 5 + (hasSkill("path-4") ? 5 : 0)
+    + (hasSkill("auto-0") ? 5 : 0) + (hasSkill("auto-2") ? Math.min(20, u1Amount) : 0) + (hasSkill("auto-9") ? 5 : 0)
+    + (hasSkill("auto-11") ? 5 : 0)
+}
+function getRegularUpgradeLevelCount() {
+  return u0Amount + u1Amount + u2Amount + u3Amount + u4Amount + u5Amount + u6Amount + u7Amount + u8Amount
 }
 function getClickBonusPercent() {
   return 100
     + (hasSkill("strong-0") ? 15 : 0)
+    + (hasSkill("strong-3") ? Math.min(50, Math.floor(getRegularUpgradeLevelCount() / 5) * 10) : 0)
     + (hasSkill("strong-9") ? 20 : 0)
     + (hasSkill("strong-11") ? 20 : 0)
-    + (hasSkill("click-1") ? 15 : 0)
-    + (hasSkill("click-5") ? 25 : 0)
+    + (hasSkill("click-1") ? 25 : 0)
     + (hasSkill("click-10") ? 30 : 0)
     + (hasSkill("click-11") ? 50 : 0)
     + (hasSkill("click-8") ? Math.min(100, u0Amount) : 0)
@@ -133,30 +145,35 @@ function getAutoBonusPercent() {
   return 100
     + (hasSkill("strong-0") ? 15 : 0)
     + (hasSkill("strong-1") ? 20 : 0)
-    + (hasSkill("strong-5") ? 20 : 0)
+    + (hasSkill("strong-3") ? Math.min(50, Math.floor(getRegularUpgradeLevelCount() / 5) * 10) : 0)
+    + (hasSkill("strong-5") && getAutoThrowsPerSecond() >= 10 ? 100 : 0)
     + (hasSkill("strong-10") ? 30 : 0)
     + (hasSkill("strong-11") ? 20 : 0)
+    + (hasSkill("strong-7") ? Math.min(100, u7Amount * 10) : 0)
     + (hasSkill("path-7") ? 15 : 0)
     + (hasSkill("path-11") ? 10 : 0)
-    + (hasSkill("strong-4") ? Math.min(50, u1Amount * 2) : 0)
-    + (hasSkill("auto-1") ? 10 : 0)
+    + (hasSkill("strong-4") ? Math.min(80, Math.floor(u1Amount / 5) * 20) : 0)
+    + (hasSkill("auto-1") ? 25 : 0)
     + (hasSkill("auto-3") ? Math.min(50, u1Amount * 5) : 0)
+    + (hasSkill("auto-6") ? Math.min(100, Math.floor(getAutoThrowsPerSecond() / 5) * 10) : 0)
     + (hasSkill("auto-4") ? 15 : 0)
     + (hasSkill("auto-8") ? 25 : 0)
     + (hasSkill("auto-9") ? 40 : 0)
+    + (hasSkill("auto-10") ? Math.min(100, u6Amount * 10) : 0)
+    + (hasSkill("auto-11") ? 50 : 0)
     + (repeatableEchoes * 5)
 }
 function refreshUpgradeLabels() {
   const labels = [
-    `Extra Hand (${u0Amount}, +1 Fribby per click) - ${getRegularUpgradeCost(u0Cost)} Fribbies`,
-    `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${getRegularUpgradeCost(u1Cost)} Fribbies`,
-    `Intern (${u2Amount}, +1 Fribby per auto throw) - ${getRegularUpgradeCost(u2Cost)} Fribbies`,
-    `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${getRegularUpgradeCost(u3Cost)} Fribbies`,
-    `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${getRegularUpgradeCost(u4Cost)} Fribbies`,
-    `Power Throw (${u5Amount}, +10 Fribbies per click) - ${getRegularUpgradeCost(u5Cost)} Fribbies`,
-    `Fribby Factory (${u6Amount}, +10 Fribbies per auto throw) - ${getRegularUpgradeCost(u6Cost)} Fribbies`,
-    `Turbo Thrower (${u7Amount}, +5 auto throws/sec) - ${getRegularUpgradeCost(u7Cost)} Fribbies`,
-    `Mega Cannon (${u8Amount}, +${hasSkill("strong-6") ? 150 : 100} Fribbies per click) - ${getRegularUpgradeCost(u8Cost)} Fribbies`
+    `Extra Hand (${u0Amount}, +1 Fribby per click) - ${getRegularUpgradeCost(u0Cost, 0)} Fribbies`,
+    `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${getRegularUpgradeCost(u1Cost, 1)} Fribbies`,
+    `Intern (${u2Amount}, +1 Fribby per auto throw) - ${getRegularUpgradeCost(u2Cost, 2)} Fribbies`,
+    `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${getRegularUpgradeCost(u3Cost, 3)} Fribbies`,
+    `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${getRegularUpgradeCost(u4Cost, 4)} Fribbies`,
+    `Power Throw (${u5Amount}, +10 Fribbies per click) - ${getRegularUpgradeCost(u5Cost, 5)} Fribbies`,
+    `Fribby Factory (${u6Amount}, +10 Fribbies per auto throw) - ${getRegularUpgradeCost(u6Cost, 6)} Fribbies`,
+    `Turbo Thrower (${u7Amount}, +5 auto throws/sec) - ${getRegularUpgradeCost(u7Cost, 7)} Fribbies`,
+    `Mega Cannon (${u8Amount}, +${hasSkill("strong-6") ? 150 : 100} Fribbies per click) - ${getRegularUpgradeCost(u8Cost, 8)} Fribbies`
   ]
   labels.forEach((label, index) => {
     const button = document.getElementById(`upgrade${index}`)
@@ -165,36 +182,36 @@ function refreshUpgradeLabels() {
 }
 function getFribbiesPerClick() {
   let base = u0Amount + 1 + u3Amount * 5 + u5Amount * 10 + u8Amount * (hasSkill("strong-6") ? 150 : 100)
-  if (hasSkill("path-0")) base += 1
+  if (hasSkill("path-0")) base += 10
   if (hasSkill("path-8")) base += 0
-  if (hasSkill("click-0")) base += 1
-  if (hasSkill("click-3")) base += 5
-  if (hasSkill("click-4")) base += u0Amount
-  if (hasSkill("click-6")) base += u3Amount * 2
-  if (hasSkill("click-9")) base += 50
+  if (hasSkill("click-3")) base += 50
+  if (hasSkill("click-4")) base += u0Amount * 5
+  if (hasSkill("click-6")) base += u3Amount * 20
+  if (hasSkill("click-9")) base += 250
   return Math.max(1, Math.floor(base * getClickBonusPercent() / 100))
 }
 function getAutoThrowReward() {
   let base = 1 + u2Amount + u4Amount * 5 + u6Amount * 10
-  if (hasSkill("path-1")) base += 1
-  if (hasSkill("path-10")) base += 1
-  if (hasSkill("auto-5")) base += u1Amount
+  if (hasSkill("path-10")) base += 10
+  if (hasSkill("auto-5")) base += u1Amount * 10
   if (hasSkill("auto-7")) base += u7Amount * 2
+  if (hasSkill("auto-8")) base += Math.floor(u7Amount / 5)
   if (hasSkill("auto-9")) base += 5
+  if (hasSkill("auto-11")) base += 10
   return Math.max(1, Math.floor(base * getAutoBonusPercent() / 100))
 }
 
 function throwFribby() {
   playSoundEffect("throwSound")
   let gain = getFribbiesPerClick()
-  const criticalChance = (hasSkill("click-2") ? 5 : 0) + (hasSkill("click-7") ? 10 : 0)
-  if (criticalChance > 0 && Math.random() * 100 < criticalChance) gain *= 3
+  const criticalChance = (hasSkill("click-0") ? 10 : 0) + (hasSkill("click-2") ? 5 : 0) + (hasSkill("click-7") ? 10 : 0)
+  if (criticalChance > 0 && Math.random() * 100 < criticalChance) gain *= hasSkill("click-5") ? 5 : 3
   fribbies += BigInt(gain)
   updateFribby()
 }
 
 function buy0() {
-  const purchaseCost = getRegularUpgradeCost(u0Cost)
+  const purchaseCost = getRegularUpgradeCost(u0Cost, 0)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
    fribbies -= purchaseCost
@@ -210,7 +227,7 @@ function buy0() {
 }
 
 function buy1() {
-  const purchaseCost = getRegularUpgradeCost(u1Cost)
+  const purchaseCost = getRegularUpgradeCost(u1Cost, 1)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
    fribbies -= purchaseCost
@@ -227,7 +244,7 @@ function buy1() {
 }
 
 function buy2() {
-  const purchaseCost = getRegularUpgradeCost(u2Cost)
+  const purchaseCost = getRegularUpgradeCost(u2Cost, 2)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
    fribbies -= purchaseCost
@@ -243,7 +260,7 @@ function buy2() {
 }
 
 function buy3() {
-  const purchaseCost = getRegularUpgradeCost(u3Cost)
+  const purchaseCost = getRegularUpgradeCost(u3Cost, 3)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
     fribbies -= purchaseCost
@@ -259,7 +276,7 @@ function buy3() {
 }
 
 function buy4() {
-  const purchaseCost = getRegularUpgradeCost(u4Cost)
+  const purchaseCost = getRegularUpgradeCost(u4Cost, 4)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
     fribbies -= purchaseCost
@@ -275,7 +292,7 @@ function buy4() {
 }
 
 function buy5() {
-  const purchaseCost = getRegularUpgradeCost(u5Cost)
+  const purchaseCost = getRegularUpgradeCost(u5Cost, 5)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
     fribbies -= purchaseCost
@@ -291,7 +308,7 @@ function buy5() {
 }
 
 function buy6() {
-  const purchaseCost = getRegularUpgradeCost(u6Cost)
+  const purchaseCost = getRegularUpgradeCost(u6Cost, 6)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
     fribbies -= purchaseCost
@@ -307,7 +324,7 @@ function buy6() {
 }
 
 function buy7() {
-  const purchaseCost = getRegularUpgradeCost(u7Cost)
+  const purchaseCost = getRegularUpgradeCost(u7Cost, 7)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
     fribbies -= purchaseCost
@@ -324,7 +341,7 @@ function buy7() {
 }
 
 function buy8() {
-  const purchaseCost = getRegularUpgradeCost(u8Cost)
+  const purchaseCost = getRegularUpgradeCost(u8Cost, 8)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
     fribbies -= purchaseCost
@@ -357,13 +374,19 @@ function skillIndexToId(index) {
   if (index < 61) return `cheap-${index - 49}`
   if (index < 71) return `auto-${index - 61}`
   if (index < 81) return `mini-${index - 71}`
+  if (index === 81) return "auto-10"
+  if (index === 82) return "auto-11"
+  if (index === 83) return "mini-10"
+  if (index === 84) return "mini-11"
   return null
 }
 function skillIdToIndex(id) {
   const match = /^(path|strong|click|mega|cheap|auto|mini)-(\d+)$/.exec(id)
   if (!match) return -1
-  const offset = { path: 0, strong: 13, click: 25, mega: 37, cheap: 49, auto: 61, mini: 71 }[match[1]]
   const number = Number(match[2])
+  if (match[1] === "auto" && number >= 10 && number < 12) return 81 + number - 10
+  if (match[1] === "mini" && number >= 10 && number < 12) return 83 + number - 10
+  const offset = { path: 0, strong: 13, click: 25, mega: 37, cheap: 49, auto: 61, mini: 71 }[match[1]]
   const limit = { path: 13, strong: 12, click: 12, mega: 12, cheap: 12, auto: 10, mini: 10 }[match[1]]
   return number >= 0 && number < limit ? offset + number : -1
 }
@@ -387,19 +410,21 @@ function updateAscensionUI() {
 function calculateAscensionReward() {
   const baseReward = fribbies / ASCENSION_THRESHOLD
   let percent = 100
-  percent += hasSkill("mega-1") ? 10 : 0
+  percent += hasSkill("mega-1") ? 20 : 0
   percent += hasSkill("mega-4") ? ascensionCount * 2 : 0
   percent += hasSkill("mega-5") ? 15 : 0
   percent += hasSkill("mega-8") && baseReward >= 10n ? 25 : 0
   percent += hasSkill("mega-9") ? Math.max(0, countSkills("mega") - 1) * 5 : 0
   percent += hasSkill("mega-11") ? 30 : 0
+  percent += hasSkill("mini-6") ? unlockedMinigames * 2 : 0
+  percent += hasSkill("mini-11") ? 10 : 0
   let reward = baseReward * BigInt(percent) / 100n
-  if (hasSkill("mega-0")) reward += 1n
-  if (hasSkill("mega-2")) reward += baseReward / 5n
-  if (hasSkill("mega-3") && fribbies % ASCENSION_THRESHOLD >= 750000n) reward += 1n
-  if (hasSkill("mega-6")) reward += BigInt(Math.floor(ascensionCount / 5))
-  if (hasSkill("mega-7")) reward += 2n
-  if (hasSkill("mega-10")) reward += 3n
+  if (hasSkill("mega-0")) reward += 5n
+  if (hasSkill("mega-2")) reward += (baseReward + 4n) / 5n
+  if (hasSkill("mega-3") && fribbies % ASCENSION_THRESHOLD >= 750000n) reward += 25n
+  if (hasSkill("mega-6")) reward += BigInt(Math.floor(ascensionCount / 2))
+  if (hasSkill("mega-7") && unlockedMinigames >= 6) reward += 10n
+  if (hasSkill("mega-10") && fribbies >= 5000000n) reward += 15n
   return reward > 0n ? reward : 1n
 }
 function ascend() {
@@ -408,7 +433,7 @@ function ascend() {
   if (!confirm(`Ascend and gain ${formatFribbies(reward)} Mega Fribbies? This resets your Fribbies, regular upgrades, and minigame unlocks.`)) return
   megaFribbies += reward
   ascensionCount++
-  fribbies = hasSkill("path-1") ? 100n : 0n
+  fribbies = hasSkill("path-1") ? 1000n : 0n
   u0Amount=0; u0Cost=10n; u1Amount=0; u1Cost=50n; u2Amount=0; u2Cost=200n
   u3Amount=0; u3Cost=500n; u4Amount=0; u4Cost=1000n; u5Amount=0; u5Cost=2500n
   u6Amount=0; u6Cost=5000n; u7Amount=0; u7Cost=10000n; u8Amount=0; u8Cost=25000n
@@ -533,26 +558,37 @@ let cachedSkillGraphById = null
 function getSkillGraph() {
   if (cachedSkillGraph) return cachedSkillGraph
   const graph = []
-  const coreX = 905
-  const rowGap = 112
-  const pathY = index => 125 + index * rowGap
-  const zig = index => index % 2 ? 28 : -18
-  graph.push({ id: "core", x: coreX, y: 42, parents: [], core: true })
-  for (let i = 0; i < 12; i++) {
-    graph.push({ id: `path-${i}`, branch: "path", index: i, x: coreX + zig(i) * .35, y: pathY(i), parents: [i === 0 ? "core" : `path-${i - 1}`] })
+  const cx = 1100, cy = 1100
+  const branchAngles = { path: -Math.PI / 2, strong: -Math.PI / 3, click: 0, mega: Math.PI / 3, mini: Math.PI * 2 / 3, auto: Math.PI, cheap: Math.PI * 4 / 3 }
+  const point = (branch, index) => {
+    if (branch === "path" && index === 12) {
+      return { x: Math.round(cx + Math.cos(branchAngles.path) * 990), y: Math.round(cy + Math.sin(branchAngles.path) * 990) }
+    }
+    const count = branch === "path" ? 12 : skillNames[branch].length
+    const maxIndex = Math.max(1, count - 1)
+    const radius = 155 + index * (735 / maxIndex)
+    const angle = branchAngles[branch]
+    return { x: Math.round(cx + Math.cos(angle) * radius), y: Math.round(cy + Math.sin(angle) * radius) }
   }
-  graph.push({ id: "workshop-hub", hub: true, x: 580, y: 230, parents: ["path-0"] })
+
+  graph.push({ id: "core", x: cx, y: cy, parents: [], core: true })
   for (let i = 0; i < 12; i++) {
-    graph.push({ id: `strong-${i}`, branch: "strong", index: i, x: 690 + zig(i), y: pathY(i) + (i === 0 ? 95 : 32), parents: [ ...(i ? [`path-${i}`, `strong-${i - 1}`] : ["workshop-hub"]) ] })
-    graph.push({ id: `click-${i}`, branch: "click", index: i, x: 1120 - zig(i), y: pathY(i) + 38 + (i % 3 === 0 ? 12 : 0), parents: [ `path-${i}`, ...(i ? [`click-${i - 1}`] : []) ] })
-    graph.push({ id: `mega-${i}`, branch: "mega", index: i, x: 1335 + zig(i), y: pathY(i) + 52 + (i % 2 ? 20 : 0), parents: [ `path-${i}`, ...(i ? [`mega-${i - 1}`] : []) ] })
-    graph.push({ id: `cheap-${i}`, branch: "cheap", index: i, x: 475 - zig(i), y: pathY(i) + 180 + (i % 2 ? 18 : 0), parents: [ ...(i ? [`path-${i}`, `cheap-${i - 1}`, `strong-${Math.min(11, i + 1)}`] : ["workshop-hub"]) ] })
-    if (i < 10) {
-      graph.push({ id: `auto-${i}`, branch: "auto", index: i, x: 260 + zig(i), y: pathY(i) + 270 + (i % 2 ? 15 : 0), parents: [ `strong-${Math.min(11, i + 2)}`, ...(i ? [`auto-${i - 1}`] : []) ] })
-      graph.push({ id: `mini-${i}`, branch: "mini", index: i, x: 1550 - zig(i), y: pathY(i) + 260 + (i % 3 === 0 ? 23 : 0), parents: [ `path-${Math.min(11, i + 2)}`, ...(i ? [`mini-${i - 1}`] : []) ] })
+    const p = point("path", i)
+    graph.push({ id: `path-${i}`, branch: "path", index: i, ...p, parents: [i === 0 ? "core" : `path-${i - 1}`] })
+  }
+  for (const branch of ["strong", "click", "mega", "cheap", "auto", "mini"]) {
+    const count = skillNames[branch].length
+    for (let i = 0; i < count; i++) {
+      const p = point(branch, i)
+      const pathGate = `path-${i}`
+      graph.push({
+        id: `${branch}-${i}`, branch, index: i, ...p,
+        parents: i === 0 ? ["core", pathGate] : [`${branch}-${i - 1}`, pathGate]
+      })
     }
   }
-  graph.push({ id: "path-12", branch: "path", index: 12, x: coreX + 20, y: pathY(11) + 380, parents: ["path-11", "strong-11", "click-11", "mega-11", "cheap-11", "auto-9", "mini-9"] })
+  const echo = point("path", 12)
+  graph.push({ id: "path-12", branch: "path", index: 12, ...echo, parents: ["path-11", "strong-11", "click-11", "mega-11", "cheap-11", "auto-11", "mini-11"] })
   cachedSkillGraph = graph
   cachedSkillGraphById = new Map(graph.map(node => [node.id, node]))
   return graph
@@ -573,8 +609,9 @@ function createSkillNode(nodeData) {
   wrapper.dataset.skillId = id
   const graphNode = typeof nodeData === "string" ? getSkillGraph().find(node => node.id === id) : nodeData
   if (graphNode) {
-    wrapper.style.left = `${graphNode.x - 75}px`
-    wrapper.style.top = `${graphNode.y - 34}px`
+    const diameter = id === "path-12" ? 72 : 58
+    wrapper.style.left = `${graphNode.x - diameter / 2}px`
+    wrapper.style.top = `${graphNode.y - diameter / 2}px`
   }
   const button = document.createElement("button")
   button.type = "button"
@@ -585,7 +622,7 @@ function createSkillNode(nodeData) {
   const icon = document.createElement("span")
   icon.className = "skill-node-icon"
   icon.setAttribute("aria-hidden", "true")
-  icon.textContent = skillNodeIconSets[branch]?.[index] || skillNodeIcons[branch] || "✦"
+  icon.textContent = skillNodeIconSets[branch]?.[index] || skillNodeIcons[branch] || "◇"
   const name = document.createElement("span")
   name.className = "skill-node-name"
   name.hidden = true
@@ -606,8 +643,7 @@ function createSkillNode(nodeData) {
   const tooltip = document.createElement("span")
   tooltip.className = "skill-node-tooltip"
   tooltip.textContent = skillNodeLabel(id)
-  caption.appendChild(tooltip)
-  wrapper.append(button, caption)
+  wrapper.append(button, caption, tooltip)
   return wrapper
 }
 function renderSkillTree() {
@@ -621,18 +657,38 @@ function renderSkillTree() {
   const svgNS = "http://www.w3.org/2000/svg"
   const edges = document.createElementNS(svgNS, "svg")
   edges.classList.add("skill-tree-edges")
-  edges.setAttribute("viewBox", "0 0 1850 2000")
+  edges.setAttribute("viewBox", "0 0 2200 2200")
   edges.setAttribute("preserveAspectRatio", "xMinYMin meet")
   const graphById = new Map(graph.map(node => [node.id, node]))
+  const edgeAnchor = (node, other) => {
+    const dx = other.x - node.x
+    const dy = other.y - node.y
+    const length = Math.hypot(dx, dy) || 1
+    const ux = dx / length
+    const uy = dy / length
+    const radius = node.core
+      ? 1 / Math.sqrt((ux * ux) / (98 * 98) + (uy * uy) / (36 * 36))
+      : node.id === "path-12" ? 36 : 30
+    return { x: node.x + ux * radius, y: node.y + uy * radius }
+  }
   graph.forEach(node => {
     node.parents.forEach(parentId => {
       const parent = graphById.get(parentId)
       if (!parent) return
+      const start = edgeAnchor(parent, node)
+      const end = edgeAnchor(node, parent)
+      const dx = end.x - start.x
+      const dy = end.y - start.y
+      const length = Math.hypot(dx, dy) || 1
+      const curve = Math.min(24, length * .06) * (Number(node.index || 0) % 2 ? 1 : -1)
+      const px = -dy / length
+      const py = dx / length
+      const c1x = start.x + dx * .35 + px * curve
+      const c1y = start.y + dy * .35 + py * curve
+      const c2x = start.x + dx * .65 + px * curve
+      const c2y = start.y + dy * .65 + py * curve
       const path = document.createElementNS(svgNS, "path")
-      const startX = parent.x, startY = parent.y + (parent.core ? 22 : parent.hub ? 27 : 34)
-      const endX = node.x, endY = node.y - (node.hub ? 27 : 34)
-      const midY = (startY + endY) / 2
-      path.setAttribute("d", `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`)
+      path.setAttribute("d", `M ${start.x} ${start.y} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${end.x} ${end.y}`)
       path.setAttribute("class", `skill-edge edge-${node.branch || "core"}`)
       path.dataset.to = node.id
       path.dataset.from = parentId
@@ -642,19 +698,10 @@ function renderSkillTree() {
   map.appendChild(edges)
   const origin = document.createElement("div")
   origin.className = "skill-tree-origin skill-web-origin"
-  origin.innerHTML = '<span class="origin-star" aria-hidden="true">✦</span><strong>FRIBBY CORE</strong><span>Start the web</span>'
+  origin.innerHTML = '<span class="origin-star" aria-hidden="true">⊙</span><strong>FRIBBY CORE</strong><span>Start the web</span>'
   origin.style.left = `${graph[0].x}px`
   origin.style.top = `${graph[0].y}px`
   map.appendChild(origin)
-  const hub = graph.find(node => node.hub)
-  if (hub) {
-    const hubEl = document.createElement("div")
-    hubEl.className = "skill-web-hub"
-    hubEl.style.left = `${hub.x}px`
-    hubEl.style.top = `${hub.y}px`
-    hubEl.innerHTML = '<span>⚒</span><strong>UPGRADE WORKSHOP</strong><small>Choose a specialization</small>'
-    map.appendChild(hubEl)
-  }
   graph.filter(node => !node.core && !node.hub).forEach(node => map.appendChild(createSkillNode(node)))
   const legends = document.createElement("div")
   legends.className = "skill-web-legend"
@@ -665,6 +712,15 @@ function renderSkillTree() {
     legends.appendChild(item)
   })
   tree.append(legends, map)
+  requestAnimationFrame(() => {
+    const treeRect = tree.getBoundingClientRect()
+    const mapRect = map.getBoundingClientRect()
+    if (!tree.clientWidth || !tree.clientHeight || !map.offsetWidth || !map.offsetHeight) return
+    const mapLeft = mapRect.left - treeRect.left + tree.scrollLeft
+    const mapTop = mapRect.top - treeRect.top + tree.scrollTop
+    tree.scrollLeft = mapLeft + map.offsetWidth / 2 - tree.clientWidth / 2
+    tree.scrollTop = mapTop + map.offsetHeight / 2 - tree.clientHeight / 2
+  })
   updateSkillTreeButtons()
 }
 function isSkillAvailable(id) {
@@ -674,7 +730,6 @@ function isSkillAvailable(id) {
   const node = cachedSkillGraphById.get(id)
   if (!node || node.core) return false
   return node.parents.every(parentId => parentId === "core"
-    || (parentId === "workshop-hub" ? purchasedSkills.has("path-0") : false)
     || (parentId === "path-12" ? repeatableEchoes > 0 : purchasedSkills.has(parentId)))
 }
 function skillCost(id) {
@@ -705,13 +760,23 @@ function updateSkillTreeButtons() {
     if (footer) footer.textContent = repeatable
       ? `Level ${repeatableEchoes} · ${formatFribbies(cost)} Mega Fribbies`
       : purchased ? "✓ Unlocked" : `${formatFribbies(cost)} Mega Fribbies`
-    button.title = `${name}: ${effect}`
-    button.setAttribute("aria-label", repeatable
-      ? `${name}, level ${repeatableEchoes}. ${effect}. Costs ${formatFribbies(cost)} Mega Fribbies.`
-      : `${name}. ${effect}. ${purchased ? "Purchased." : `Costs ${formatFribbies(cost)} Mega Fribbies.`}`)
-    button.disabled = repeatable
+    const statusText = repeatable
+      ? repeatableEchoes >= MAX_REPEATABLE_ECHOES
+        ? "Maximum level reached."
+        : `Level ${repeatableEchoes}; next level costs ${formatFribbies(cost)} Mega Fribbies.`
+      : purchased ? "Purchased."
+        : !available ? `Locked. Unlock all connected parent nodes first. Cost: ${formatFribbies(cost)} Mega Fribbies.`
+          : megaFribbies < cost ? `Available; earn ${formatFribbies(cost - megaFribbies)} more Mega Fribbies to unlock.`
+            : `Ready to unlock for ${formatFribbies(cost)} Mega Fribbies.`
+    button.title = `${name}: ${effect}. ${statusText}`
+    button.setAttribute("aria-label", `${name}. ${effect}. ${statusText}`)
+    const tooltip = button.closest(".skill-node-wrap")?.querySelector(".skill-node-tooltip")
+    if (tooltip) tooltip.textContent = `${name} — ${effect}. ${statusText}`
+    // Keep locked nodes focusable so players can inspect their upgrade details on touch and keyboard.
+    button.disabled = false
+    button.setAttribute("aria-disabled", String(repeatable
       ? (!available || megaFribbies < cost)
-      : (!purchased && (!available || megaFribbies < cost))
+      : (purchased || !available || megaFribbies < cost)))
     button.classList.toggle("purchased", purchased && !repeatable)
     button.classList.toggle("repeatable", repeatable)
     button.classList.toggle("locked", !purchased && !available)
@@ -2076,7 +2141,7 @@ function fieldsToSaveData(decoded) {
   }
   const mask = decoded.length >= 24 ? toBigIntAmount(decoded[23]) : 0n
   const skillIds = decoded.length >= 24
-    ? Array.from({ length: 81 }, (_, index) => (mask & (1n << BigInt(index))) ? skillIndexToId(index) : null).filter(Boolean)
+    ? Array.from({ length: 85 }, (_, index) => (mask & (1n << BigInt(index))) ? skillIndexToId(index) : null).filter(Boolean)
     : []
   const legacyEchoLevel = skillIds.includes("path-12") ? 1 : 0
   return {
