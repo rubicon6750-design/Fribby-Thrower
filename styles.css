@@ -942,6 +942,10 @@ body.dark-mode .skill-node.skill-unlock-flash { box-shadow: 0 0 0 3px #6ee7b788,
   color: #706184;
   white-space: nowrap;
 }
+.skill-node-wrap:hover,
+.skill-node-wrap:focus-within {
+  z-index: 100;
+}
 .skill-node-tooltip {
   position: absolute;
   left: 50%;
@@ -959,7 +963,9 @@ body.dark-mode .skill-node.skill-unlock-flash { box-shadow: 0 0 0 3px #6ee7b788,
   visibility: hidden;
   transform: translate(-50%, 5px);
   transition: opacity .15s ease, transform .15s ease, visibility .15s;
-  z-index: 20;
+  z-index: 1000;
+  pointer-events: none;
+  overflow-wrap: anywhere;
 }
 .skill-node-wrap:hover .skill-node-tooltip,
 .skill-node-wrap:focus-within .skill-node-tooltip {

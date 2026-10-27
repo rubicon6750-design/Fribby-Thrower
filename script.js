@@ -675,6 +675,9 @@ function renderSkillTree() {
     node.parents.forEach(parentId => {
       const parent = graphById.get(parentId)
       if (!parent) return
+      // Draw only the core spokes and links within each branch. Unlock gates
+      // still work, but do not draw cross-branch lines that clutter the web.
+      if (parentId !== "core" && parent.branch !== node.branch) return
       const start = edgeAnchor(parent, node)
       const end = edgeAnchor(node, parent)
       const dx = end.x - start.x
