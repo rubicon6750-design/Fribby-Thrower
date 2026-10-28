@@ -1022,11 +1022,12 @@ body.dark-mode .skill-tree-origin.skill-web-origin { background: radial-gradient
 
 /* Click and regular-upgrade feedback echoes the ascension skill effects. */
 #fribbyButton, .upgrade-list button { position: relative; isolation: isolate; overflow: visible; }
-#fribbyButton.fribby-click-burst { animation: fribby-click-burst .38s cubic-bezier(.16,1.2,.3,1); box-shadow: 0 0 0 3px #93c5fd99, 0 0 24px #60a5faad, 0 0 44px #a78bfa55; }
-@keyframes fribby-click-burst { 0% { transform: scale(1); filter: brightness(1); } 35% { transform: scale(1.09); filter: brightness(1.35); } 100% { transform: scale(1); filter: brightness(1); } }
-.upgrade-list button.regular-upgrade-purchase { z-index: 2; border-color: #10b981 !important; box-shadow: 0 0 0 3px #6ee7b788, 0 0 22px #34d399b8, 0 0 42px #a7f3d066 !important; animation: regular-upgrade-purchase .72s cubic-bezier(.16,1.2,.3,1) both; }
+#fribbyButton.fribby-click-burst { animation: fribby-click-burst .72s cubic-bezier(.16,1.2,.3,1) both; box-shadow: 0 0 0 3px #93c5fd99, 0 0 24px #60a5faad, 0 0 44px #a78bfa55; }
+#fribbyButton { transition: box-shadow .32s ease-out, filter .32s ease-out; }
+@keyframes fribby-click-burst { 0% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 0 3px #93c5fd99, 0 0 24px #60a5faad, 0 0 44px #a78bfa55; } 28% { transform: scale(1.09); filter: brightness(1.35); } 100% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent; } }
+.upgrade-list button.regular-upgrade-purchase { z-index: 2; border-color: #10b981 !important; animation: regular-upgrade-purchase .9s cubic-bezier(.16,1.2,.3,1) both; }
 .upgrade-list button.regular-upgrade-purchase::after { content: ""; position: absolute; inset: -4px; border: 2px solid #6ee7b7; border-radius: inherit; pointer-events: none; animation: regular-upgrade-ring .82s ease-out both; }
-@keyframes regular-upgrade-purchase { 0% { transform: scale(.97); filter: brightness(1); } 36% { transform: scale(1.035); filter: brightness(1.3); } 100% { transform: scale(1); filter: brightness(1); } }
+@keyframes regular-upgrade-purchase { 0% { transform: scale(.97); filter: brightness(1); box-shadow: 0 0 0 3px #6ee7b788, 0 0 22px #34d399b8, 0 0 42px #a7f3d066; } 30% { transform: scale(1.035); filter: brightness(1.3); } 100% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent; } }
 @keyframes regular-upgrade-ring { 0% { inset: 0; opacity: .95; } 100% { inset: -20px; opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { #fribbyButton.fribby-click-burst, .upgrade-list button.regular-upgrade-purchase, .upgrade-list button.regular-upgrade-purchase::after { animation-duration: .01ms !important; } }
 
@@ -1060,3 +1061,5 @@ body.dark-mode .skill-tree-origin.skill-web-origin { background: radial-gradient
 .fribby-stats small { display: block; margin-top: 10px; opacity: .8; line-height: 1.4; }
 .fribby-stats[hidden] { display: none; }
 body.dark-mode .fribby-stats { background: #202636; color: #e6eaf2; border-color: #52617d; }
+
+.minigame-click-power-note { margin: 0 0 12px; padding: 8px 11px; border: 1px solid var(--border-color, #64748b); border-radius: 8px; background: color-mix(in srgb, var(--panel-bg, #64748b) 12%, transparent); font-size: .9rem; opacity: .92; }

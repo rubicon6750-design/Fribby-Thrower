@@ -19,14 +19,14 @@ const skillBranches = [
 ]
 const skillNames = {
   path: ["First Spark", "Pocketed Pouch", "Lucky Compass", "Branching Fate", "Runner's Rhythm", "Discount Glyph", "Minigame Lore", "Starbound Route", "Astral Focus", "Frugal Passage", "Ancient Knowledge", "Ascendant Heart", "Eternal Echo"],
-  strong: ["Reinforced Grip", "Automation Manual", "Budget Blueprint", "Spare Gear", "Compound Crew", "Double Shift", "Cannon Lathing", "Idle Logistics", "Minigame Playbook", "Torque Calibration", "Factory Foreman", "Grand Foundry"],
-  click: ["Lucky Reflex", "Steady Aim", "Split-Second", "Heavy Disc", "Double Grip", "Charged Toss", "Cannon Synergy", "Bullseye", "Muscle Memory", "Meteor Arm", "Quick Release", "Cosmic Launch"],
-  mega: ["Packed Satchel", "Lucky Star", "Deep Reserve", "Overflowing Core", "Past Lives", "Golden Harvest", "Early Ascender", "Relic Pockets", "Singular Offering", "Echo Chamber", "Infinite Bounty", "Mega Mastery"],
-  cheap: ["Bulk Order", "Click Coupon", "Machine Rebate", "Arcade Voucher", "Supplier Pact", "Heavy Parts Deal", "Stockpile Savings", "Automation Contract", "Precision Coupon", "Wholesale Network", "Clearance Ledger", "Cost Collapse"],
-  auto: ["Clockwork Wrist", "Oiled Bearings", "Double Pendulum", "Overtime Circuit", "Self-Feeding Line", "Turbo Thrower", "Unattended Shift", "Assembly Swarm", "Chrono Engine", "Infinite Conveyor", "Feedback Reactor", "Singularity Engine"],
-  mini: ["Practice Round", "Prize Pouch", "Pattern Sense", "Lucky Streak", "Sweep Expert", "Bonus Round", "Arcade Scholar", "Risk Assessment", "Master Player", "Grand Champion", "Hidden Cabinet", "Perfect Run"],
-  arcade: ["Cabinet Key", "Fresh Cartridge", "Bonus Stage", "Prize Circuit", "Secret Mode", "Combo Token", "Arcade Passport", "High-Score Halo", "Double Feature", "Golden Cabinet", "Endless Festival", "Arcade Mythos"],
-  collection: ["Number Scout", "Prize Practice", "Odd-One Spotter", "Sharp Eyes", "Memory Keeper", "Steady Hands", "Odds Caller", "Risk Reader", "Target Trainer", "Fast Fingers", "Word Scrambler", "Grand Arcade"]
+  strong: ["Reinforced Grip", "Automation Manual", "Budget Blueprint", "Spare Gear", "Compound Crew", "Double Shift", "Cannon Lathing", "Idle Logistics", "Minigame Playbook", "Torque Calibration", "Factory Foreman", "Grand Foundry", "Eternal Echo: Grand Foundry"],
+  click: ["Lucky Reflex", "Steady Aim", "Split-Second", "Heavy Disc", "Double Grip", "Charged Toss", "Cannon Synergy", "Bullseye", "Muscle Memory", "Meteor Arm", "Quick Release", "Cosmic Launch", "Eternal Echo: Cosmic Launch"],
+  mega: ["Packed Satchel", "Lucky Star", "Deep Reserve", "Overflowing Core", "Past Lives", "Golden Harvest", "Early Ascender", "Relic Pockets", "Singular Offering", "Echo Chamber", "Infinite Bounty", "Mega Mastery", "Eternal Echo: Mega Mastery"],
+  cheap: ["Bulk Order", "Click Coupon", "Machine Rebate", "Arcade Voucher", "Supplier Pact", "Heavy Parts Deal", "Stockpile Savings", "Automation Contract", "Precision Coupon", "Wholesale Network", "Clearance Ledger", "Cost Collapse", "Eternal Echo: Cost Collapse"],
+  auto: ["Clockwork Wrist", "Oiled Bearings", "Double Pendulum", "Overtime Circuit", "Self-Feeding Line", "Turbo Thrower", "Unattended Shift", "Assembly Swarm", "Chrono Engine", "Infinite Conveyor", "Feedback Reactor", "Singularity Engine", "Eternal Echo: Singularity Engine"],
+  mini: ["Practice Round", "Prize Pouch", "Pattern Sense", "Lucky Streak", "Sweep Expert", "Bonus Round", "Arcade Scholar", "Risk Assessment", "Master Player", "Grand Champion", "Hidden Cabinet", "Perfect Run", "Eternal Echo: Perfect Run"],
+  arcade: ["Cabinet Key", "Fresh Cartridge", "Bonus Stage", "Prize Circuit", "Secret Mode", "Combo Token", "Arcade Passport", "High-Score Halo", "Double Feature", "Golden Cabinet", "Endless Festival", "Arcade Mythos", "Eternal Echo: Arcade Mythos"],
+  collection: ["Number Scout", "Prize Practice", "Odd-One Spotter", "Sharp Eyes", "Memory Keeper", "Steady Hands", "Odds Caller", "Risk Reader", "Target Trainer", "Fast Fingers", "Word Scrambler", "Grand Arcade", "Eternal Echo: Grand Arcade"]
 }
 const skillEffects = {
   path: [
@@ -34,31 +34,31 @@ const skillEffects = {
   ],
   strong: [
     "Click and automatic payout +15%", "Automatic throws pay +20%", "Regular upgrade prices -10%", "Every 5 regular upgrade levels adds +10% click and automatic payout, up to +50%", "Every 5 Auto Throwers adds +20% automatic payout, up to +80%", "Automatic payout +100% once you reach 10 throws per second", "Mega Cannon gains +50% click power", "Each Turbo Thrower adds +10% automatic payout, up to +100%", "+20% minigame rewards", "Click payout +20%", "Automatic payout +30%", "Click and automatic payout +20%"
-  ],
+  , "All regular upgrades are 25% stronger."],
   click: [
     "Critical-hit chance +10 percentage points", "Click payout +25%", "5% chance to triple click payout", "+50 Fribbies per click", "Each Extra Hand adds +5 additional Fribbies per click", "Critical hits deal 5× normal click payout", "Each Fribby Cannon adds +20 Fribbies per click", "10% chance to triple click payout", "Extra Hand grant up to +100% click payout", "+250 Fribbies per click", "Click payout +30%", "Click payout +50%"
-  ],
+  , "Clicking power is increased by 50%."],
   mega: [
     "+5 Mega Fribbies on every ascension", "Ascension reward +20%", "Gain an extra 20% of the base reward", "+25 Mega Fribbies when within 250,000 Fribbies of the threshold", "Ascension reward +2% per previous ascension", "Ascension reward +15%", "+1 Mega Fribby per 2 previous ascensions", "+10 Mega Fribbies when all fourteen minigames are unlocked", "+25% on ascensions worth 10+ Mega Fribbies", "+5% reward per other Mega Fribby upgrade", "+15 Mega Fribbies when ascending from 5,000,000+ Fribbies", "Ascension reward +30%"
-  ],
-  cheap: ["All regular upgrade prices -8%", "Click-focused upgrade prices -10%", "Automation upgrade prices -12%", "Minigame unlock price -20%", "All regular upgrade prices -10%", "Fribby Cannon and Mega Cannon prices -20%", "All regular upgrade prices -12%", "Auto Thrower and Turbo Thrower prices -25%", "Click-focused upgrade prices -20%", "All regular upgrade prices -14%", "All regular upgrade prices -16%", "All regular upgrade prices -20%"],
-  auto: ["+5 automatic throws per second", "Automatic payout +25%", "Each Auto Thrower adds an extra +1 throw/sec, up to +20", "Each Auto Thrower adds +5% automatic payout, up to +50%", "Automatic payout +15%", "Each Auto Thrower adds +10 Fribbies per automatic throw", "Every 5 automatic throws/sec adds +10% payout, up to +100%", "Each Turbo Thrower adds +2 Fribbies to automatic payout", "+25% automatic payout; every 5 Turbo Throwers adds +1 base Fribby", "Automatic payout +40%, +5 base payout, and +5 throws per second", "Each Fribby Factory adds +10% automatic payout, up to +100%", "Automatic payout +50%, +10 base payout, and +5 throws per second"],
-  mini: ["Minigame rewards +10%", "Minigame unlock prices -10%", "+5% minigame rewards per unlocked game", "Minigame rewards +15%", "Minigame rewards +25%", "Minigame rewards +20%", "Ascension reward +2% per unlocked minigame", "Minigame rewards +25%", "Minigame rewards +30%", "All minigame rewards +40%", "Minigame rewards +35%", "Minigame rewards +50% and ascension reward +10%"],
-  arcade: ["Rapid Toss reward +25%", "Odd Orbit reward +25%", "Minigame rewards +15%", "Rapid Toss rewards +25%", "Minigame unlock costs -15%", "Odd Orbit rewards +25%", "Minigame rewards +20% per two games unlocked", "All minigames grant +10% rewards", "Rapid Toss time +3 seconds", "Odd Orbit pays out double on a perfect streak", "Minigame rewards +35%", "All minigame rewards +50%"],
-  collection: ["Unlock Quick Count", "All minigame rewards +10%", "Unlock Odd One Out", "Minigame rewards +15%", "Unlock Sum Sprint", "Minigame rewards +20%", "Unlock Color Mixer", "Minigame rewards +25%", "Unlock Disc Golf", "Minigame rewards +30%", "Unlock Word Shuffle", "All minigame rewards +50%"]
+  , "Gain 25% more Mega Fribbies from every ascension."],
+  cheap: ["All regular upgrade prices -8%", "Click-focused upgrade prices -10%", "Automation upgrade prices -12%", "Minigame unlock price -20%", "All regular upgrade prices -10%", "Fribby Cannon and Mega Cannon prices -20%", "All regular upgrade prices -12%", "Auto Thrower and Turbo Thrower prices -25%", "Click-focused upgrade prices -20%", "All regular upgrade prices -14%", "All regular upgrade prices -16%", "All regular upgrade prices -20%", "All regular upgrade prices are reduced by 20%."],
+  auto: ["+5 automatic throws per second", "Automatic payout +25%", "Each Auto Thrower adds an extra +1 throw/sec, up to +20", "Each Auto Thrower adds +5% automatic payout, up to +50%", "Automatic payout +15%", "Each Auto Thrower adds +10 Fribbies per automatic throw", "Every 5 automatic throws/sec adds +10% payout, up to +100%", "Each Turbo Thrower adds +2 Fribbies to automatic payout", "+25% automatic payout; every 5 Turbo Throwers adds +1 base Fribby", "Automatic payout +40%, +5 base payout, and +5 throws per second", "Each Fribby Factory adds +10% automatic payout, up to +100%", "Automatic payout +50%, +10 base payout, and +5 throws per second", "Automatic throws are 50% faster and pay 25% more."],
+  mini: ["Minigame rewards +10%", "Minigame unlock prices -10%", "+5% minigame rewards per unlocked game", "Minigame rewards +15%", "Minigame rewards +25%", "Minigame rewards +20%", "Ascension reward +2% per unlocked minigame", "Minigame rewards +25%", "Minigame rewards +30%", "All minigame rewards +40%", "Minigame rewards +35%", "Minigame rewards +50% and ascension reward +10%", "All minigame rewards are increased by 50%."],
+  arcade: ["Rapid Toss reward +25%", "Odd Orbit reward +25%", "Minigame rewards +15%", "Rapid Toss rewards +25%", "Minigame unlock costs -15%", "Odd Orbit rewards +25%", "Minigame rewards +20% per two games unlocked", "All minigames grant +10% rewards", "Rapid Toss time +3 seconds", "Odd Orbit pays out double on a perfect streak", "Minigame rewards +35%", "All minigame rewards +50%", "Arcade-specific bonuses are doubled."],
+  collection: ["Unlock Quick Count", "All minigame rewards +10%", "Unlock Odd One Out", "Minigame rewards +15%", "Unlock Sum Sprint", "Minigame rewards +20%", "Unlock Color Mixer", "Minigame rewards +25%", "Unlock Disc Golf", "Minigame rewards +30%", "Unlock Word Shuffle", "All minigame rewards +50%", "All minigames grant 25% more Fribbies per unlocked minigame."]
 }
 const skillBranchOrder = ["auto", "cheap", "strong", "path", "click", "mega", "mini", "arcade", "collection"]
 const skillNodeIcons = { path: "◇", strong: "▰", click: "⊕", mega: "✧", cheap: "−", auto: "↻", mini: "▦", arcade: "▤", collection: "▧" }
 const skillNodeIconSets = {
   path: Array(13).fill("◇"),
-  strong: Array(12).fill("▰"),
-  click: Array(12).fill("⊕"),
-  mega: Array(12).fill("✧"),
-  cheap: Array(12).fill("−"),
-  auto: Array(12).fill("↻"),
-  mini: Array(12).fill("▦"),
-  arcade: Array(12).fill("▤"),
-  collection: Array(12).fill("▧")
+  strong: Array(13).fill("▰"),
+  click: Array(13).fill("⊕"),
+  mega: Array(13).fill("✧"),
+  cheap: Array(13).fill("−"),
+  auto: Array(13).fill("↻"),
+  mini: Array(13).fill("▦"),
+  arcade: Array(13).fill("▤"),
+  collection: Array(13).fill("▧")
 }
 
 let u0Amount = 0
@@ -107,7 +107,7 @@ function updateFribby() {
 }
 function hasSkill(id) { return purchasedSkills.has(id) }
 function countSkills(branch) {
-  return [...purchasedSkills].filter(id => id.startsWith(branch + "-") && id !== "path-12").length
+  return [...purchasedSkills].filter(id => id.startsWith(branch + "-") && id !== "path-12" && !id.endsWith("-12")).length
 }
 function pathSkillCount() {
   return [...purchasedSkills].filter(id => /^path-(?:[0-9]|1[01])$/.test(id)).length
@@ -124,7 +124,8 @@ function getRegularUpgradeCost(cost, upgradeIndex = -1) {
   if (automationUpgrades.includes(upgradeIndex) && hasSkill("cheap-2")) discount += 12
   if ([3, 8].includes(upgradeIndex) && hasSkill("cheap-5")) discount += 20
   if ([1, 7].includes(upgradeIndex) && hasSkill("cheap-7")) discount += 25
-  discount = Math.min(80, discount)
+  if (hasSkill("cheap-12")) discount += 20
+  discount = Math.min(90, discount)
   const price = BigInt(100 - discount) * cost / 100n
   return price > 0n ? price : 1n
 }
@@ -135,6 +136,17 @@ function getMinigameUnlockPrice() {
   if (hasSkill("arcade-4")) discount += 15
   return (minigameUnlockCost * BigInt(100 - discount) / 100n) || 1n
 }
+function addMinigameClickPowerNotes() {
+  document.querySelectorAll('[id^="minigame-"]').forEach(panel => {
+    if (panel.id === "minigamesArea" || panel.querySelector(".minigame-click-power-note")) return;
+    const note = document.createElement("p");
+    note.className = "minigame-click-power-note";
+    note.textContent = "Minigame Fribby rewards are multiplied by your current clicking power.";
+    note.setAttribute("aria-live", "polite");
+    panel.insertBefore(note, panel.firstChild);
+  });
+}
+
 function getMinigameRewardMultiplierPercent() {
   let bonus = (hasSkill("path-2") ? 10 : 0) + (hasSkill("path-6") ? 15 : 0) + (hasSkill("strong-8") ? 20 : 0)
   const miniBonuses = [10, 0, 0, 15, 25, 20, 0, 25, 30, 40, 35, 50]
@@ -142,27 +154,30 @@ function getMinigameRewardMultiplierPercent() {
   if (hasSkill("mini-2")) bonus += getTotalUnlockedMinigames() * 5
   bonus += (hasSkill("arcade-2") ? 15 : 0) + (hasSkill("arcade-6") ? Math.floor(getTotalUnlockedMinigames() / 2) * 20 : 0) + (hasSkill("arcade-7") ? 10 : 0) + (hasSkill("arcade-10") ? 35 : 0) + (hasSkill("arcade-11") ? 50 : 0)
   bonus += (hasSkill("collection-1") ? 10 : 0) + (hasSkill("collection-3") ? 15 : 0) + (hasSkill("collection-5") ? 20 : 0) + (hasSkill("collection-7") ? 25 : 0) + (hasSkill("collection-9") ? 30 : 0) + (hasSkill("collection-11") ? 50 : 0)
+  if (hasSkill("mini-12")) bonus += 50
+  if (hasSkill("arcade-12")) bonus += 50
+  if (hasSkill("collection-12")) bonus += 25 * getTotalUnlockedMinigames()
   return 100 + bonus
 }
 function getMinigamePayout(baseReward) {
   let bonusPercent = getMinigameRewardMultiplierPercent()
   const activeRapidToss = document.getElementById("minigame-rapidToss") && !document.getElementById("minigame-rapidToss").hidden
   const activeOddOrbit = document.getElementById("minigame-oddOrbit") && !document.getElementById("minigame-oddOrbit").hidden
-  if (activeRapidToss && (hasSkill("arcade-0") || hasSkill("arcade-3"))) bonusPercent += (hasSkill("arcade-0") ? 25 : 0) + (hasSkill("arcade-3") ? 25 : 0)
-  if (activeOddOrbit && (hasSkill("arcade-1") || hasSkill("arcade-5"))) bonusPercent += (hasSkill("arcade-1") ? 25 : 0) + (hasSkill("arcade-5") ? 25 : 0)
+  if (activeRapidToss && (hasSkill("arcade-0") || hasSkill("arcade-3"))) bonusPercent += ((hasSkill("arcade-0") ? 25 : 0) + (hasSkill("arcade-3") ? 25 : 0)) * (hasSkill("arcade-12") ? 2 : 1)
+  if (activeOddOrbit && (hasSkill("arcade-1") || hasSkill("arcade-5"))) bonusPercent += ((hasSkill("arcade-1") ? 25 : 0) + (hasSkill("arcade-5") ? 25 : 0)) * (hasSkill("arcade-12") ? 2 : 1)
   return BigInt(baseReward) * BigInt(getFribbiesPerClick()) * BigInt(bonusPercent) / 100n
 }
 function getAutoThrowsPerSecond() {
   return u1Amount + u7Amount * 5 + (hasSkill("path-4") ? 5 : 0)
     + (hasSkill("auto-0") ? 5 : 0) + (hasSkill("auto-2") ? Math.min(20, u1Amount) : 0) + (hasSkill("auto-9") ? 5 : 0)
-    + (hasSkill("auto-11") ? 5 : 0)
+    + (hasSkill("auto-11") ? 5 : 0) + (hasSkill("auto-12") ? Math.max(1, Math.floor(u1Amount * 0.5)) : 0)
 }
 function getRegularUpgradeLevelCount() {
   return u0Amount + u1Amount + u2Amount + u3Amount + u4Amount + u5Amount + u6Amount + u7Amount + u8Amount + u9Amount + u10Amount + u11Amount + u12Amount + u13Amount + u14Amount
 }
 function getClickBonusPercent() {
   return 100
-    + (hasSkill("strong-0") ? 15 : 0)
+    + (hasSkill("strong-0") ? 15 : 0) + (hasSkill("strong-12") ? 25 : 0)
     + (hasSkill("strong-3") ? Math.min(50, Math.floor(getRegularUpgradeLevelCount() / 5) * 10) : 0)
     + (hasSkill("strong-9") ? 20 : 0)
     + (hasSkill("strong-11") ? 20 : 0)
@@ -172,7 +187,7 @@ function getClickBonusPercent() {
     + (hasSkill("click-8") ? Math.min(100, u0Amount) : 0)
     + (hasSkill("path-8") ? 15 : 0)
     + (hasSkill("path-11") ? 10 : 0)
-    + (repeatableEchoes * 5)
+    + (repeatableEchoes * 5) + (hasSkill("click-12") ? 50 : 0)
 }
 function getAutoBonusPercent() {
   return 100
@@ -194,6 +209,7 @@ function getAutoBonusPercent() {
     + (hasSkill("auto-9") ? 40 : 0)
     + (hasSkill("auto-10") ? Math.min(100, u6Amount * 10) : 0)
     + (hasSkill("auto-11") ? 50 : 0)
+    + (hasSkill("auto-12") ? 25 : 0)
     + (repeatableEchoes * 5)
 }
 function refreshUpgradeLabels() {
@@ -501,6 +517,7 @@ function skillIndexToId(index) {
   if (index === 82) return "auto-11"
   if (index === 83) return "mini-10"
   if (index === 84) return "mini-11"
+  if (index >= 109 && index < 117) return ["strong-12", "click-12", "mega-12", "cheap-12", "auto-12", "mini-12", "arcade-12", "collection-12"][index - 109]
   if (index >= 85 && index < 97) return `arcade-${index - 85}`
   if (index >= 97 && index < 109) return `collection-${index - 97}`
   return null
@@ -509,6 +526,7 @@ function skillIdToIndex(id) {
   const match = /^(path|strong|click|mega|cheap|auto|mini|arcade|collection)-(\d+)$/.exec(id)
   if (!match) return -1
   const number = Number(match[2])
+  if (match[2] === "12" && ["strong", "click", "mega", "cheap", "auto", "mini", "arcade", "collection"].includes(match[1])) return 109 + ["strong", "click", "mega", "cheap", "auto", "mini", "arcade", "collection"].indexOf(match[1])
   if (match[1] === "auto" && number >= 10 && number < 12) return 81 + number - 10
   if (match[1] === "mini" && number >= 10 && number < 12) return 83 + number - 10
   if (match[1] === "arcade") return number >= 0 && number < 12 ? 85 + number : -1
@@ -543,6 +561,7 @@ function calculateAscensionReward() {
   percent += hasSkill("mega-8") && baseReward >= 10n ? 25 : 0
   percent += hasSkill("mega-9") ? Math.max(0, countSkills("mega") - 1) * 5 : 0
   percent += hasSkill("mega-11") ? 30 : 0
+  percent += hasSkill("mega-12") ? 25 : 0
   percent += hasSkill("mini-6") ? getTotalUnlockedMinigames() * 2 : 0
   percent += hasSkill("mini-11") ? 10 : 0
   let reward = baseReward * BigInt(percent) / 100n
@@ -720,7 +739,7 @@ function getSkillGraph() {
     }
     const count = branch === "path" ? 12 : skillNames[branch].length
     const maxIndex = Math.max(1, count - 1)
-    const radius = 155 + index * (735 / maxIndex)
+    const radius = index === 12 && branch !== "path" ? 950 : 155 + Math.min(index, 11) * (735 / 11)
     const angle = branchAngles[branch]
     return { x: Math.round(cx + Math.cos(angle) * radius), y: Math.round(cy + Math.sin(angle) * radius) }
   }
@@ -734,7 +753,7 @@ function getSkillGraph() {
     const count = skillNames[branch].length
     for (let i = 0; i < count; i++) {
       const p = point(branch, i)
-      const pathGate = `path-${i}`
+      const pathGate = `path-${Math.min(i, 11)}`
       graph.push({
         id: `${branch}-${i}`, branch, index: i, ...p,
         parents: i === 0 ? ["core", pathGate] : [`${branch}-${i - 1}`, pathGate]
@@ -763,7 +782,7 @@ function createSkillNode(nodeData) {
   wrapper.dataset.skillId = id
   const graphNode = typeof nodeData === "string" ? getSkillGraph().find(node => node.id === id) : nodeData
   if (graphNode) {
-    const diameter = id === "path-12" ? 72 : 58
+    const diameter = id === "path-12" ? 72 : (Number(id.split("-")[1]) === 12 ? 66 : 58)
     wrapper.style.left = `${graphNode.x - diameter / 2}px`
     wrapper.style.top = `${graphNode.y - diameter / 2}px`
   }
@@ -999,6 +1018,7 @@ function buySkill(id) {
   if (id.startsWith("collection-")) refreshBonusMinigames()
   updateAscensionUI()
   triggerSkillUnlockEffect(id)
+  if (id.endsWith("-12")) triggerEternalEchoEffect(1)
   // A central-path skill unlocks one matching rung in each outer branch.
   if (id.startsWith("path-") && !isRepeatableSkillId(id)) {
     document.querySelectorAll(".skill-node.available[data-skill-id]").forEach(node => {
@@ -3237,3 +3257,5 @@ document.addEventListener("DOMContentLoaded", () => {
   updateFribbyStats()
   window.setInterval(updateFribbyStats, 500)
 })
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", addMinigameClickPowerNotes, { once: true }); else addMinigameClickPowerNotes();
