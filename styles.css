@@ -816,6 +816,7 @@ body.dark-mode .skill-node.skill-unlock-flash { box-shadow: 0 0 0 3px #6ee7b788,
 .branch-cheap { --branch-color: #e16b91; --branch-glow: #f9a8d4; }
 .branch-auto { --branch-color: #4b91d1; --branch-glow: #93c5fd; }
 .branch-mini { --branch-color: #7eaa4f; --branch-glow: #bef264; }
+.branch-arcade { --branch-color: #bb70d9; --branch-glow: #e9b8ff; }
 .skill-web-map {
   position: relative;
   width: 2200px;
@@ -1038,3 +1039,5 @@ body.dark-mode .skill-tree-origin.skill-web-origin { background: radial-gradient
 .regular-upgrade-toast { position: absolute; z-index: 8; left: 50%; top: -10px; transform: translate(-50%, 0); padding: 3px 8px; border-radius: 999px; background: #064e3b; color: #d1fae5; border: 1px solid #6ee7b7; font-size: .68rem; font-weight: 900; letter-spacing: .09em; white-space: nowrap; pointer-events: none; animation: upgrade-toast-rise 1s ease-out both; }
 @keyframes upgrade-toast-rise { 0% { opacity: 0; transform: translate(-50%, 8px) scale(.65); } 18% { opacity: 1; transform: translate(-50%, -7px) scale(1.08); } 100% { opacity: 0; transform: translate(-50%, -35px) scale(.96); } }
 @media (prefers-reduced-motion: reduce) { .fribby-gain-pop, .regular-upgrade-toast, #fribbyButton.fribby-click-burst::after { animation-duration: .01ms !important; } }
+
+.branch-collection { --branch-color: #d18a4b; --branch-glow: #ffd29e; }

@@ -60,25 +60,27 @@
       </section>
       <div class="upgrade-list" aria-label="Upgrades">
         <button id="upgrade0" onclick="buy0()">Lucky Mitts (0, +1 Fribby per click) - 10 Fribbies</button>
-        <button id="upgrade1" onclick="buy1()">Tick-Tock Sprite (0, +1 auto throw/sec) - 50 Fribbies</button>
+        <button id="upgrade1" onclick="buy1()">Tick-Tock Timer (0, +1 auto throw/sec) - 50 Fribbies</button>
         <button id="upgrade2" onclick="buy2()">Supply Skipper (0, +1 Fribby per auto throw) - 200 Fribbies</button>
-        <button id="upgrade3" onclick="buy3()">Comet Sling (0, +5 Fribbies per click) - 500 Fribbies</button>
+        <button id="upgrade3" onclick="buy3()">Slingshot (0, +5 Fribbies per click) - 500 Fribbies</button>
         <button id="upgrade4" onclick="buy4()">Night Foreman (0, +5 Fribbies per auto throw) - 1,000 Fribbies</button>
-        <button id="upgrade5" onclick="buy5()">Nova Knuckles (0, +10 Fribbies per click) - 2,500 Fribbies</button>
+        <button id="upgrade5" onclick="buy5()">Power Mitts (0, +10 Fribbies per click) - 2,500 Fribbies</button>
         <button id="upgrade6" onclick="buy6()">Giggleworks (0, +10 Fribbies per auto throw) - 5,000 Fribbies</button>
-        <button id="upgrade7" onclick="buy7()">Blink Relay (0, +5 auto throws/sec) - 10,000 Fribbies</button>
-        <button id="upgrade8" onclick="buy8()">Meteor Maul (0, +100 Fribbies per click) - 25,000 Fribbies</button>
-        <button id="upgrade9" onclick="buy9()">Aurora Dynamo (0, +500 Fribbies per click) - 50,000 Fribbies</button>
-        <button id="upgrade10" onclick="buy10()">Nebula Press (0, +25 Fribbies per auto throw) - 100,000 Fribbies</button>
-        <button id="upgrade11" onclick="buy11()">Quasar Catapult (0, +2,500 Fribbies per click) - 250,000 Fribbies</button>
-        <button id="upgrade12" onclick="buy12()">Galaxy Conveyor (0, +100 Fribbies per auto throw) - 500,000 Fribbies</button>
+        <button id="upgrade7" onclick="buy7()">Relay Runner (0, +5 auto throws/sec) - 10,000 Fribbies</button>
+        <button id="upgrade8" onclick="buy8()">Heavy Hitter (0, +100 Fribbies per click) - 25,000 Fribbies</button>
+        <button id="upgrade9" onclick="buy9()">Dynamo Press (0, +500 Fribbies per click) - 50,000 Fribbies</button>
+        <button id="upgrade10" onclick="buy10()">Workshop Press (0, +25 Fribbies per auto throw) - 100,000 Fribbies</button>
+        <button id="upgrade11" onclick="buy11()">Longshot Launcher (0, +2,500 Fribbies per click) - 250,000 Fribbies</button>
+        <button id="upgrade12" onclick="buy12()">Fribby Conveyor (0, +100 Fribbies per auto throw) - 500,000 Fribbies</button>
+        <button id="upgrade13" onclick="buy13()">Precision Driver (0, +10,000 Fribbies per click) - 1,000,000 Fribbies</button>
+        <button id="upgrade14" onclick="buy14()">Double-Shift Engine (0, +500 Fribbies per auto throw) - 2,500,000 Fribbies</button>
         <button id="minigameUpgrade" type="button" onclick="buyMinigameUnlock()">Unlock Minigame (0/6, lets you play for Fribbies) - 2500 Fribbies</button>
       </div>
     </main>
 
       <section id="skillTreePanel" class="skill-tree-panel" aria-labelledby="skillTreeTitle">
         <h2 id="skillTreeTitle">Mega Fribby Skill Tree</h2>
-        <p>The Fribby Core sits at the center of a radial upgrade web, with six branches growing outward from it. Each upgrade you buy on the central Ascension Path unlocks the next tier of upgrades across every outer branch. To access stronger ascension upgrades, buy the Ascension Path nodes first; outer-branch upgrades stay locked until their matching path rung is unlocked. Hover over or focus any node to inspect its effect and cost. Eternal Echo waits beyond the final rung.</p>
+        <p>The Fribby Core sits at the center of a radial upgrade web, with seven branches growing outward from it, including a new Arcade Expansion branch. Each upgrade you buy on the central Ascension Path unlocks the next tier of upgrades across every outer branch. To access stronger ascension upgrades, buy the Ascension Path nodes first; outer-branch upgrades stay locked until their matching path rung is unlocked. Hover over or focus any node to inspect its effect and cost. Eternal Echo waits beyond the final rung.</p>
         <div id="skillTree" class="skill-tree" aria-label="Connected ascension skill tree"></div>
       </section>
 
@@ -114,18 +116,20 @@
             <label for="adminMegaFribbies">Mega Fribbies</label>
             <input id="adminMegaFribbies" type="text" inputmode="numeric" value="0" autocomplete="off">
             <label for="adminUpgrade0">Lucky Mitts amount</label><input id="adminUpgrade0" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade1">Tick-Tock Sprite amount</label><input id="adminUpgrade1" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade1">Tick-Tock Timer amount</label><input id="adminUpgrade1" type="number" min="0" step="1" value="0">
             <label for="adminUpgrade2">Supply Skipper amount</label><input id="adminUpgrade2" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade3">Comet Sling amount</label><input id="adminUpgrade3" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade3">Slingshot amount</label><input id="adminUpgrade3" type="number" min="0" step="1" value="0">
             <label for="adminUpgrade4">Night Foreman amount</label><input id="adminUpgrade4" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade5">Nova Knuckles amount</label><input id="adminUpgrade5" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade5">Power Mitts amount</label><input id="adminUpgrade5" type="number" min="0" step="1" value="0">
             <label for="adminUpgrade6">Giggleworks amount</label><input id="adminUpgrade6" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade7">Blink Relay amount</label><input id="adminUpgrade7" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade8">Meteor Maul amount</label><input id="adminUpgrade8" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade9">Aurora Dynamo amount</label><input id="adminUpgrade9" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade10">Nebula Press amount</label><input id="adminUpgrade10" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade11">Quasar Catapult amount</label><input id="adminUpgrade11" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade12">Galaxy Conveyor amount</label><input id="adminUpgrade12" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade7">Relay Runner amount</label><input id="adminUpgrade7" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade8">Heavy Hitter amount</label><input id="adminUpgrade8" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade9">Dynamo Press amount</label><input id="adminUpgrade9" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade10">Workshop Press amount</label><input id="adminUpgrade10" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade11">Longshot Launcher amount</label><input id="adminUpgrade11" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade12">Fribby Conveyor amount</label><input id="adminUpgrade12" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade13">Precision Driver amount</label><input id="adminUpgrade13" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade14">Double-Shift Engine amount</label><input id="adminUpgrade14" type="number" min="0" step="1" value="0">
           </div>
           <button type="button" onclick="applyAdminGameEdits()">Apply game edits</button>
           <p id="adminGameEditStatus" role="status" aria-live="polite"></p>
@@ -147,6 +151,14 @@
       <button type="button" data-minigame="matching" onclick="showMinigame('matching')" hidden>Fribby Match</button>
       <button type="button" data-minigame="pathFinder" onclick="showMinigame('pathFinder')" hidden>Path Finder</button>
       <button type="button" data-minigame="minesweeper" onclick="showMinigame('minesweeper')" hidden>Fribbysweeper</button>
+      <button type="button" data-minigame="rapidToss" onclick="showMinigame('rapidToss')" hidden>Rapid Toss</button>
+      <button type="button" data-minigame="oddOrbit" onclick="showMinigame('oddOrbit')" hidden>Odd Orbit</button>
+      <button type="button" data-minigame="quickCount" onclick="showMinigame('quickCount')" hidden>Quick Count</button>
+      <button type="button" data-minigame="oddOneOut" onclick="showMinigame('oddOneOut')" hidden>Odd One Out</button>
+      <button type="button" data-minigame="memoryFlash" onclick="showMinigame('memoryFlash')" hidden>Memory Flash</button>
+      <button type="button" data-minigame="higherLower" onclick="showMinigame('higherLower')" hidden>Higher or Lower</button>
+      <button type="button" data-minigame="targetTap" onclick="showMinigame('targetTap')" hidden>Target Tap</button>
+      <button type="button" data-minigame="wordShuffle" onclick="showMinigame('wordShuffle')" hidden>Word Shuffle</button>
     </nav>
 
     <section id="minigame-minesweeper" hidden>
@@ -203,6 +215,41 @@
       <button id="luckySpinButton" type="button" onclick="spinLuckyWheel()">🥏 Spin the Fribby Wheel (100 Fribbies)</button>
       <div id="luckyWheel" class="lucky-wheel" aria-label="Lucky wheel">🥏</div>
       <p id="luckySpinStatus" aria-live="polite">Ready, set, spin!</p>
+    </section>
+
+    <section id="minigame-rapidToss" hidden>
+      <h3>Rapid Toss</h3>
+      <p>Start a 10-second round, then toss as fast as you can. Each toss earns a small Fribby prize.</p>
+      <button type="button" id="rapidTossStart" onclick="startRapidToss()">Start Rapid Toss</button>
+      <button type="button" id="rapidTossTap" onclick="tapRapidToss()" disabled>TOSS!</button>
+      <p id="rapidTossStatus" aria-live="polite">Ready when you are.</p>
+    </section>
+
+    <section id="minigame-oddOrbit" hidden>
+      <h3>Odd Orbit</h3>
+      <p>Predict whether the orbiting number will be odd or even. Correct guesses win 150 Fribbies.</p>
+      <button type="button" onclick="playOddOrbit('odd')">Odd</button>
+      <button type="button" onclick="playOddOrbit('even')">Even</button>
+      <p id="oddOrbitStatus" aria-live="polite">Choose your prediction!</p>
+    </section>
+    <section id="minigame-quickCount" hidden>
+      <h3>Quick Count</h3><p>Count the discs, then enter your answer. Correct answers earn a prize.</p>
+      <p id="quickCountPrompt" aria-live="polite">Start a round to see the discs.</p><input id="quickCountAnswer" type="number" min="0" max="20" aria-label="Number of discs"><button type="button" onclick="playQuickCount()">Check Count</button><button type="button" onclick="startQuickCount()">New Round</button><p id="quickCountStatus" aria-live="polite"></p>
+    </section>
+    <section id="minigame-oddOneOut" hidden>
+      <h3>Odd One Out</h3><p>Choose the symbol that differs from the others.</p><div id="oddOneOutBoard"></div><p id="oddOneOutStatus" aria-live="polite"></p><button type="button" onclick="startOddOneOut()">New Round</button>
+    </section>
+    <section id="minigame-memoryFlash" hidden>
+      <h3>Memory Flash</h3><p>Watch the sequence, then repeat it in order.</p><p id="memoryFlashPrompt" aria-live="polite">Press Start to begin.</p><div id="memoryFlashChoices"></div><p id="memoryFlashStatus" aria-live="polite"></p><button type="button" onclick="startMemoryFlash()">Start Sequence</button>
+    </section>
+    <section id="minigame-higherLower" hidden>
+      <h3>Higher or Lower</h3><p>Guess whether the next number will be higher or lower. Correct guesses earn Fribbies.</p><p id="higherLowerNumber" aria-live="polite">Current number: —</p><button type="button" onclick="playHigherLower('higher')">Higher</button><button type="button" onclick="playHigherLower('lower')">Lower</button><p id="higherLowerStatus" aria-live="polite"></p><button type="button" onclick="startHigherLower()">New Round</button>
+    </section>
+    <section id="minigame-targetTap" hidden>
+      <h3>Target Tap</h3><p>Hit the target as many times as you can in 8 seconds.</p><button type="button" id="targetTapButton" onclick="tapTarget()" disabled>Start round first</button><button type="button" onclick="startTargetTap()">Start 8-second Round</button><p id="targetTapStatus" aria-live="polite">Ready?</p>
+    </section>
+    <section id="minigame-wordShuffle" hidden>
+      <h3>Word Shuffle</h3><p>Unscramble the word related to the game.</p><p id="wordShufflePrompt" aria-live="polite"></p><input id="wordShuffleAnswer" type="text" aria-label="Unscrambled word"><button type="button" onclick="checkWordShuffle()">Check Word</button><button type="button" onclick="startWordShuffle()">New Word</button><p id="wordShuffleStatus" aria-live="polite"></p>
     </section>
     </div>
 
