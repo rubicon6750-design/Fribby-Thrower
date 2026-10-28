@@ -45,7 +45,7 @@ const skillEffects = {
   auto: ["+5 automatic throws per second", "Automatic payout +25%", "Each Auto Thrower adds an extra +1 throw/sec, up to +20", "Each Auto Thrower adds +5% automatic payout, up to +50%", "Automatic payout +15%", "Each Auto Thrower adds +10 Fribbies per automatic throw", "Every 5 automatic throws/sec adds +10% payout, up to +100%", "Each Turbo Thrower adds +2 Fribbies to automatic payout", "+25% automatic payout; every 5 Turbo Throwers adds +1 base Fribby", "Automatic payout +40%, +5 base payout, and +5 throws per second", "Each Fribby Factory adds +10% automatic payout, up to +100%", "Automatic payout +50%, +10 base payout, and +5 throws per second"],
   mini: ["Minigame rewards +10%", "Minigame unlock prices -10%", "+5% minigame rewards per unlocked game", "Minigame rewards +15%", "Minigame rewards +25%", "Minigame rewards +20%", "Ascension reward +2% per unlocked minigame", "Minigame rewards +25%", "Minigame rewards +30%", "All minigame rewards +40%", "Minigame rewards +35%", "Minigame rewards +50% and ascension reward +10%"],
   arcade: ["Rapid Toss reward +25%", "Odd Orbit reward +25%", "Minigame rewards +15%", "Rapid Toss rewards +25%", "Minigame unlock costs -15%", "Odd Orbit rewards +25%", "Minigame rewards +20% per two games unlocked", "All minigames grant +10% rewards", "Rapid Toss time +3 seconds", "Odd Orbit pays out double on a perfect streak", "Minigame rewards +35%", "All minigame rewards +50%"],
-  collection: ["Unlock Quick Count", "All minigame rewards +10%", "Unlock Odd One Out", "Minigame rewards +15%", "Unlock Memory Flash", "Minigame rewards +20%", "Unlock Higher or Lower", "Minigame rewards +25%", "Unlock Target Tap", "Minigame rewards +30%", "Unlock Word Shuffle", "All minigame rewards +50%"]
+  collection: ["Unlock Quick Count", "All minigame rewards +10%", "Unlock Odd One Out", "Minigame rewards +15%", "Unlock Sum Sprint", "Minigame rewards +20%", "Unlock Color Mixer", "Minigame rewards +25%", "Unlock Disc Golf", "Minigame rewards +30%", "Unlock Word Shuffle", "All minigame rewards +50%"]
 }
 const skillBranchOrder = ["auto", "cheap", "strong", "path", "click", "mega", "mini", "arcade", "collection"]
 const skillNodeIcons = { path: "◇", strong: "▰", click: "⊕", mega: "✧", cheap: "−", auto: "↻", mini: "▦", arcade: "▤", collection: "▧" }
@@ -94,12 +94,16 @@ let u14Cost = 2500000n
 
 let autoThrowTimer
 let gameSaveDirty = false
+let statsDisplayEnabled = false
+let recentFribbyClicks = []
+const FRIBBY_STATS_WINDOW_MS = 10000
 
 function updateFribby() {
   document.getElementById("fribbyAmount").innerText = "Fribbies: " + formatFribbies(fribbies)
   updateAscensionUI()
   updateTabVisibility()
   gameSaveDirty = true
+  updateFribbyStats()
 }
 function hasSkill(id) { return purchasedSkills.has(id) }
 function countSkills(branch) {
@@ -242,6 +246,11 @@ function throwFribby() {
   const criticalChance = (hasSkill("click-0") ? 10 : 0) + (hasSkill("click-2") ? 5 : 0) + (hasSkill("click-7") ? 10 : 0)
   if (criticalChance > 0 && Math.random() * 100 < criticalChance) gain *= hasSkill("click-5") ? 5 : 3
   triggerFribbyClickEffect(gain)
+  if (statsDisplayEnabled) {
+    const now = Date.now()
+    recentFribbyClicks.push({ time: now, gain })
+    pruneRecentFribbyClicks(now)
+  }
   fribbies += BigInt(gain)
   updateFribby()
 }
@@ -425,6 +434,49 @@ function purchaseNewRegularUpgrade(index) {
   else if (index === 14) { u14Amount++; u14Cost = (u14Cost * 3n + 1n) / 2n }
   updateFribby()
   refreshUpgradeLabels()
+}
+
+function toggleStatsDisplay() {
+  statsDisplayEnabled = !statsDisplayEnabled
+  if (!statsDisplayEnabled) recentFribbyClicks = []
+  const button = document.getElementById("statsToggle")
+  const panel = document.getElementById("fribbyStats")
+  if (button) {
+    button.textContent = statsDisplayEnabled ? "📊 Hide Fribby Stats: On" : "📊 Show Fribby Stats: Off"
+    button.setAttribute("aria-pressed", String(statsDisplayEnabled))
+  }
+  if (panel) panel.hidden = !statsDisplayEnabled
+  try { localStorage.setItem("fribbyStatsDisplay", String(statsDisplayEnabled)) } catch (error) {}
+  updateFribbyStats()
+}
+
+function pruneRecentFribbyClicks(now = Date.now()) {
+  const cutoff = now - FRIBBY_STATS_WINDOW_MS
+  while (recentFribbyClicks.length && recentFribbyClicks[0].time < cutoff) recentFribbyClicks.shift()
+}
+
+function updateFribbyStats() {
+  if (!statsDisplayEnabled) return
+  const panel = document.getElementById("fribbyStats")
+  if (!panel) return
+  const now = Date.now()
+  pruneRecentFribbyClicks(now)
+  const perClick = getFribbiesPerClick()
+  const autoThrows = getAutoThrowsPerSecond()
+  const perAutoThrow = getAutoThrowReward()
+  const autoPerSecond = BigInt(autoThrows) * BigInt(perAutoThrow)
+  const recentClickGain = recentFribbyClicks.reduce((sum, click) => sum + BigInt(click.gain), 0n)
+  const clickPerSecond = recentClickGain / BigInt(FRIBBY_STATS_WINDOW_MS / 1000)
+  const values = {
+    statsPerClick: formatFribbies(BigInt(perClick)),
+    statsAutoThrows: autoThrows.toLocaleString(),
+    statsPerAutoThrow: formatFribbies(BigInt(perAutoThrow)),
+    statsPerSecond: formatFribbies(autoPerSecond + clickPerSecond)
+  }
+  Object.entries(values).forEach(([id, value]) => {
+    const element = document.getElementById(id)
+    if (element) element.textContent = value
+  })
 }
 
 function updateAutoThrowInterval() {
@@ -958,7 +1010,7 @@ function buySkill(id) {
   saveGame()
 }
 
-const bonusMinigames = ["quickCount", "oddOneOut", "memoryFlash", "higherLower", "targetTap", "wordShuffle"]
+const bonusMinigames = ["quickCount", "oddOneOut", "sumSprint", "colorMixer", "discGolf", "wordShuffle"]
 function isMinigameUnlocked(game) {
   if (minigameUnlockOrder.slice(0, unlockedMinigames).includes(game)) return true
   const bonusIndex = bonusMinigames.indexOf(game)
@@ -1025,7 +1077,7 @@ function getMinigameName(game) {
     matching: "Fribby Match",
     minesweeper: "Fribbysweeper",
     rapidToss: "Rapid Toss",
-    oddOrbit: "Odd Orbit", quickCount: "Quick Count", oddOneOut: "Odd One Out", memoryFlash: "Memory Flash", higherLower: "Higher or Lower", targetTap: "Target Tap", wordShuffle: "Word Shuffle"
+    oddOrbit: "Odd Orbit", quickCount: "Quick Count", oddOneOut: "Odd One Out", sumSprint: "Sum Sprint", colorMixer: "Color Mixer", discGolf: "Disc Golf", wordShuffle: "Word Shuffle"
   }
   return names[game]
 }
@@ -1773,12 +1825,9 @@ function spinLuckyWheel() {
 // Six compact minigames unlocked along the Minigame Collection branch.
 let quickCountTarget = 0
 let oddOneOutTarget = -1
-let memoryFlashSequence = []
-let memoryFlashInput = []
-let higherLowerCurrent = 0
-let targetTapTimer = null
-let targetTapActive = false
-let targetTapHits = 0
+let sumSprintAnswer = null
+let colorMixerRound = null
+let discGolfTarget = null
 let wordShuffleAnswer = ""
 
 function rewardMinigame(base, status, message) {
@@ -1823,72 +1872,78 @@ function startOddOneOut() {
   })
   document.getElementById("oddOneOutStatus").textContent = "Find the diamond."
 }
-function startMemoryFlash() {
-  memoryFlashSequence = Array.from({length: 4}, () => Math.floor(Math.random() * 4))
-  memoryFlashInput = []
-  const choices = document.getElementById("memoryFlashChoices")
-  choices.innerHTML = ""
-  const symbols = ["●", "▲", "■", "◆"]
-  symbols.forEach((symbol, index) => {
+function startSumSprint() {
+  const operations = [
+    () => { const a = 2 + Math.floor(Math.random() * 18), b = 2 + Math.floor(Math.random() * 18); return { prompt: `${a} + ${b} = ?`, answer: a + b } },
+    () => { const a = 10 + Math.floor(Math.random() * 30), b = 1 + Math.floor(Math.random() * Math.min(20, a)); return { prompt: `${a} − ${b} = ?`, answer: a - b } },
+    () => { const a = 2 + Math.floor(Math.random() * 9), b = 2 + Math.floor(Math.random() * 9); return { prompt: `${a} × ${b} = ?`, answer: a * b } }
+  ]
+  const problem = operations[Math.floor(Math.random() * operations.length)]()
+  sumSprintAnswer = problem.answer
+  document.getElementById("sumSprintPrompt").textContent = problem.prompt
+  document.getElementById("sumSprintAnswer").value = ""
+  document.getElementById("sumSprintStatus").textContent = "Solve the equation to earn Fribbies."
+}
+function playSumSprint() {
+  const status = document.getElementById("sumSprintStatus")
+  if (sumSprintAnswer === null) return startSumSprint()
+  const answer = document.getElementById("sumSprintAnswer").value.trim()
+  if (answer !== "" && Number(answer) === sumSprintAnswer) {
+    rewardMinigame(180, status, "Correct calculation! +{reward} Fribbies.")
+    sumSprintAnswer = null
+  } else status.textContent = "Not quite—check your arithmetic and try again."
+}
+function startColorMixer() {
+  const recipes = [
+    { question: "Red + blue makes…", answer: "Purple", options: ["Purple", "Green", "Orange"] },
+    { question: "Red + yellow makes…", answer: "Orange", options: ["Green", "Orange", "Purple"] },
+    { question: "Blue + yellow makes…", answer: "Green", options: ["Orange", "Purple", "Green"] },
+    { question: "Black + white makes…", answer: "Gray", options: ["Brown", "Gray", "Pink"] }
+  ]
+  colorMixerRound = recipes[Math.floor(Math.random() * recipes.length)]
+  document.getElementById("colorMixerPrompt").textContent = colorMixerRound.question
+  const board = document.getElementById("colorMixerChoices")
+  board.innerHTML = ""
+  colorMixerRound.options.forEach(option => {
     const button = document.createElement("button")
     button.type = "button"
-    button.textContent = symbol
-    button.disabled = true
+    button.textContent = option
     button.onclick = () => {
-      if (memoryFlashInput.length >= memoryFlashSequence.length) return
-      memoryFlashInput.push(index)
-      document.getElementById("memoryFlashStatus").textContent = `Sequence: ${memoryFlashInput.length}/${memoryFlashSequence.length}`
-      if (memoryFlashInput.length === memoryFlashSequence.length) {
-        const correct = memoryFlashInput.every((value, i) => value === memoryFlashSequence[i])
-        if (correct) rewardMinigame(175, document.getElementById("memoryFlashStatus"), "Perfect memory! +{reward} Fribbies.")
-        else document.getElementById("memoryFlashStatus").textContent = "Sequence missed. Try again!"
-      }
+      if (!colorMixerRound) return
+      if (option === colorMixerRound.answer) {
+        rewardMinigame(160, document.getElementById("colorMixerStatus"), "Perfect blend! +{reward} Fribbies.")
+        board.querySelectorAll("button").forEach(choice => choice.disabled = true)
+        colorMixerRound = null
+      } else document.getElementById("colorMixerStatus").textContent = "That blend doesn't look right. Try another color."
     }
-    choices.appendChild(button)
+    board.appendChild(button)
   })
-  document.getElementById("memoryFlashPrompt").textContent = memoryFlashSequence.map(n => symbols[n]).join("  ")
-  document.getElementById("memoryFlashStatus").textContent = "Memorize the sequence, then repeat it using the buttons."
-  // Hide the sequence after a short peek; button clicks then repeat it.
-  window.setTimeout(() => {
-    document.getElementById("memoryFlashPrompt").textContent = "Repeat the sequence using the buttons."
-    choices.querySelectorAll("button").forEach(button => button.disabled = false)
-  }, 1800)
+  document.getElementById("colorMixerStatus").textContent = "Choose the resulting color."
 }
-function startHigherLower() {
-  higherLowerCurrent = 1 + Math.floor(Math.random() * 50)
-  document.getElementById("higherLowerNumber").textContent = `Current number: ${higherLowerCurrent}`
-  document.getElementById("higherLowerStatus").textContent = "Will the next number be higher or lower?"
+function startDiscGolf() {
+  discGolfTarget = 30 + Math.floor(Math.random() * 71)
+  document.getElementById("discGolfTarget").textContent = `The basket is ${discGolfTarget} metres away. Choose your throw distance.`
+  document.getElementById("discGolfStatus").textContent = "Pick the closest distance."
+  const board = document.getElementById("discGolfChoices")
+  board.innerHTML = ""
+  ;[20, 40, 60, 80, 100].forEach(distance => {
+    const button = document.createElement("button")
+    button.type = "button"
+    button.textContent = `${distance} m`
+    button.onclick = () => {
+      if (discGolfTarget === null) return
+      const difference = Math.abs(distance - discGolfTarget)
+      const status = document.getElementById("discGolfStatus")
+      if (difference <= 10) rewardMinigame(220, status, `Great throw! +{reward} Fribbies. (${difference} m off target.)`)
+      else if (difference <= 20) rewardMinigame(90, status, `Close throw! +{reward} Fribbies. (${difference} m off target.)`)
+      else status.textContent = `You were ${difference} m off target. Start a new hole to try again.`
+      discGolfTarget = null
+      board.querySelectorAll("button").forEach(choice => choice.disabled = true)
+    }
+    board.appendChild(button)
+  })
 }
-function playHigherLower(choice) {
-  if (!higherLowerCurrent) return startHigherLower()
-  const next = 1 + Math.floor(Math.random() * 50)
-  const correct = choice === "higher" ? next > higherLowerCurrent : next < higherLowerCurrent
-  document.getElementById("higherLowerNumber").textContent = `Previous: ${higherLowerCurrent} · New number: ${next}`
-  if (next === higherLowerCurrent) document.getElementById("higherLowerStatus").textContent = "A tie! Try again."
-  else if (correct) rewardMinigame(150, document.getElementById("higherLowerStatus"), "Good call! +{reward} Fribbies.")
-  else document.getElementById("higherLowerStatus").textContent = "Wrong guess! Start a new round to try again."
-  higherLowerCurrent = 0
-}
-function startTargetTap() {
-  clearTimeout(targetTapTimer)
-  targetTapActive = true
-  targetTapHits = 0
-  const button = document.getElementById("targetTapButton")
-  button.disabled = false
-  button.textContent = "TAP!"
-  document.getElementById("targetTapStatus").textContent = "Go!"
-  targetTapTimer = window.setTimeout(() => {
-    targetTapActive = false
-    button.disabled = true
-    button.textContent = "Round over"
-    rewardMinigame(targetTapHits * 15, document.getElementById("targetTapStatus"), `${targetTapHits} hits! You earned {reward} Fribbies.`)
-  }, 8000)
-}
-function tapTarget() {
-  if (!targetTapActive) return
-  targetTapHits++
-  document.getElementById("targetTapStatus").textContent = `${targetTapHits} hits!`
-}
+
 function startWordShuffle() {
   const words = ["FRIBBY", "TOSS", "QUICK", "PRIZE", "ARCADE", "BUTTON"]
   wordShuffleAnswer = words[Math.floor(Math.random() * words.length)]
@@ -3072,4 +3127,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })
   observer.observe(document.body, { childList: true, subtree: true, characterData: true })
+})
+
+
+// Restore the optional earnings panel preference and keep its estimates current.
+document.addEventListener("DOMContentLoaded", () => {
+  try { statsDisplayEnabled = localStorage.getItem("fribbyStatsDisplay") === "true" } catch (error) {}
+  const button = document.getElementById("statsToggle")
+  const panel = document.getElementById("fribbyStats")
+  if (button) {
+    button.textContent = statsDisplayEnabled ? "📊 Hide Fribby Stats: On" : "📊 Show Fribby Stats: Off"
+    button.setAttribute("aria-pressed", String(statsDisplayEnabled))
+  }
+  if (panel) panel.hidden = !statsDisplayEnabled
+  updateFribbyStats()
+  window.setInterval(updateFribbyStats, 500)
 })

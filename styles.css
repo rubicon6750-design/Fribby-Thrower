@@ -1041,3 +1041,22 @@ body.dark-mode .skill-tree-origin.skill-web-origin { background: radial-gradient
 @media (prefers-reduced-motion: reduce) { .fribby-gain-pop, .regular-upgrade-toast, #fribbyButton.fribby-click-burst::after { animation-duration: .01ms !important; } }
 
 .branch-collection { --branch-color: #d18a4b; --branch-glow: #ffd29e; }
+
+
+/* Optional live production statistics */
+.fribby-stats {
+  width: min(100%, 620px);
+  box-sizing: border-box;
+  margin: 12px auto 18px;
+  padding: 14px 18px;
+  text-align: left;
+  border: 1px solid #a9b9d8;
+  border-radius: 12px;
+  background: #f4f7ff;
+  color: #25324a;
+}
+.fribby-stats h2 { margin: 0 0 8px; font-size: 1.15rem; }
+.fribby-stats p { display: flex; justify-content: space-between; gap: 16px; margin: 7px 0; }
+.fribby-stats small { display: block; margin-top: 10px; opacity: .8; line-height: 1.4; }
+.fribby-stats[hidden] { display: none; }
+body.dark-mode .fribby-stats { background: #202636; color: #e6eaf2; border-color: #52617d; }

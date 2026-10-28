@@ -37,6 +37,7 @@
         <button type="button" onclick="document.getElementById('musicUpload').click()">🎵 Upload Music</button>
         <input id="musicUpload" type="file" accept=".mp3,.wav,.ogg,.m4a,audio/mpeg,audio/wav,audio/ogg,audio/mp4" hidden onchange="uploadBackgroundMusic(event)">
         <button id="themeToggle" type="button" onclick="toggleTheme()" aria-pressed="false">🌙 Dark Mode</button>
+        <button id="statsToggle" type="button" onclick="toggleStatsDisplay()" aria-pressed="false">📊 Show Fribby Stats: Off</button>
         <button id="uwuToggle" type="button" onclick="toggleUwuMode()" aria-pressed="false" hidden>Uwu Mode: Off</button>
         <button type="button" onclick="exportSave()">Export Save</button>
         <button type="button" onclick="document.getElementById('importSaveFile').click()">Import Save</button>
@@ -49,6 +50,14 @@
       <h1>Fribby Thrower</h1>
       <button id="fribbyButton" onclick="throwFribby()">Fribby!</button>
       <p id="fribbyAmount">Fribbies Thrown: 0</p>
+      <section id="fribbyStats" class="fribby-stats" aria-live="polite" hidden>
+        <h2>Fribby Statistics</h2>
+        <p>Fribbies per click: <strong id="statsPerClick">1</strong></p>
+        <p>Automatic throws per second: <strong id="statsAutoThrows">0</strong></p>
+        <p>Fribbies per automatic throw: <strong id="statsPerAutoThrow">1</strong></p>
+        <p>Total Fribbies per second: <strong id="statsPerSecond">0</strong></p>
+        <small>Total per second includes automatic earnings and the average from clicks in the last 10 seconds.</small>
+      </section>
 
 
       <section id="ascensionPanel" class="ascension-panel" aria-labelledby="ascensionTitle">
@@ -155,9 +164,9 @@
       <button type="button" data-minigame="oddOrbit" onclick="showMinigame('oddOrbit')" hidden>Odd Orbit</button>
       <button type="button" data-minigame="quickCount" onclick="showMinigame('quickCount')" hidden>Quick Count</button>
       <button type="button" data-minigame="oddOneOut" onclick="showMinigame('oddOneOut')" hidden>Odd One Out</button>
-      <button type="button" data-minigame="memoryFlash" onclick="showMinigame('memoryFlash')" hidden>Memory Flash</button>
-      <button type="button" data-minigame="higherLower" onclick="showMinigame('higherLower')" hidden>Higher or Lower</button>
-      <button type="button" data-minigame="targetTap" onclick="showMinigame('targetTap')" hidden>Target Tap</button>
+      <button type="button" data-minigame="sumSprint" onclick="showMinigame('sumSprint')" hidden>Sum Sprint</button>
+      <button type="button" data-minigame="colorMixer" onclick="showMinigame('colorMixer')" hidden>Color Mixer</button>
+      <button type="button" data-minigame="discGolf" onclick="showMinigame('discGolf')" hidden>Disc Golf</button>
       <button type="button" data-minigame="wordShuffle" onclick="showMinigame('wordShuffle')" hidden>Word Shuffle</button>
     </nav>
 
@@ -239,14 +248,14 @@
     <section id="minigame-oddOneOut" hidden>
       <h3>Odd One Out</h3><p>Choose the symbol that differs from the others.</p><div id="oddOneOutBoard"></div><p id="oddOneOutStatus" aria-live="polite"></p><button type="button" onclick="startOddOneOut()">New Round</button>
     </section>
-    <section id="minigame-memoryFlash" hidden>
-      <h3>Memory Flash</h3><p>Watch the sequence, then repeat it in order.</p><p id="memoryFlashPrompt" aria-live="polite">Press Start to begin.</p><div id="memoryFlashChoices"></div><p id="memoryFlashStatus" aria-live="polite"></p><button type="button" onclick="startMemoryFlash()">Start Sequence</button>
+    <section id="minigame-sumSprint" hidden>
+      <h3>Sum Sprint</h3><p>Solve a quick arithmetic problem to earn a prize.</p><p id="sumSprintPrompt" aria-live="polite">Press New Problem to begin.</p><input id="sumSprintAnswer" type="number" aria-label="Answer to arithmetic problem"><button type="button" onclick="playSumSprint()">Check Answer</button><button type="button" onclick="startSumSprint()">New Problem</button><p id="sumSprintStatus" aria-live="polite"></p>
     </section>
-    <section id="minigame-higherLower" hidden>
-      <h3>Higher or Lower</h3><p>Guess whether the next number will be higher or lower. Correct guesses earn Fribbies.</p><p id="higherLowerNumber" aria-live="polite">Current number: —</p><button type="button" onclick="playHigherLower('higher')">Higher</button><button type="button" onclick="playHigherLower('lower')">Lower</button><p id="higherLowerStatus" aria-live="polite"></p><button type="button" onclick="startHigherLower()">New Round</button>
+    <section id="minigame-colorMixer" hidden>
+      <h3>Color Mixer</h3><p>Work out which color appears when two colors are mixed.</p><p id="colorMixerPrompt" aria-live="polite">Press New Blend to begin.</p><div id="colorMixerChoices"></div><p id="colorMixerStatus" aria-live="polite"></p><button type="button" onclick="startColorMixer()">New Blend</button>
     </section>
-    <section id="minigame-targetTap" hidden>
-      <h3>Target Tap</h3><p>Hit the target as many times as you can in 8 seconds.</p><button type="button" id="targetTapButton" onclick="tapTarget()" disabled>Start round first</button><button type="button" onclick="startTargetTap()">Start 8-second Round</button><p id="targetTapStatus" aria-live="polite">Ready?</p>
+    <section id="minigame-discGolf" hidden>
+      <h3>Disc Golf</h3><p>Estimate the throw distance needed to reach the basket.</p><p id="discGolfTarget" aria-live="polite">Press New Hole to begin.</p><div id="discGolfChoices"></div><p id="discGolfStatus" aria-live="polite"></p><button type="button" onclick="startDiscGolf()">New Hole</button>
     </section>
     <section id="minigame-wordShuffle" hidden>
       <h3>Word Shuffle</h3><p>Unscramble the word related to the game.</p><p id="wordShufflePrompt" aria-live="polite"></p><input id="wordShuffleAnswer" type="text" aria-label="Unscrambled word"><button type="button" onclick="checkWordShuffle()">Check Word</button><button type="button" onclick="startWordShuffle()">New Word</button><p id="wordShuffleStatus" aria-live="polite"></p>
