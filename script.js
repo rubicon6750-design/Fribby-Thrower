@@ -2802,8 +2802,20 @@ function playSoundEffect(elementId) {
   })
 }
 
-// Gassy mode synthesizes its sounds locally, so it needs no extra audio files.
+// Gassy mode gives each original SFX its own fart-like sound, synthesized locally.
 let fartAudioContext = null
+const fartSoundProfiles = {
+  throwSound:            { start: 145, end: 48, duration: 0.24, type: "sawtooth", filter: 620, bursts: 3, wobble: 15 },
+  upgradeSound:          { start: 90, end: 34, duration: 0.42, type: "triangle", filter: 420, bursts: 2, wobble: 24 },
+  upgradeFailSound:      { start: 62, end: 82, duration: 0.34, type: "square", filter: 300, bursts: 4, wobble: 7 },
+  saveSound:             { start: 118, end: 42, duration: 0.52, type: "sawtooth", filter: 760, bursts: 5, wobble: 31 },
+  patternThrowSound:     { start: 185, end: 76, duration: 0.18, type: "triangle", filter: 880, bursts: 2, wobble: 38 },
+  minigameStartSound:    { start: 72, end: 130, duration: 0.48, type: "sawtooth", filter: 500, bursts: 3, wobble: 18 },
+  minigameCompleteSound: { start: 105, end: 29, duration: 0.68, type: "triangle", filter: 680, bursts: 6, wobble: 34 },
+  minesweeperCorrectSound:{ start: 155, end: 58, duration: 0.16, type: "sine", filter: 980, bursts: 1, wobble: 12 },
+  minesweeperFailSound:  { start: 48, end: 24, duration: 0.72, type: "sawtooth", filter: 240, bursts: 7, wobble: 5 },
+  musicToggleSound:      { start: 132, end: 44, duration: 0.3, type: "square", filter: 560, bursts: 2, wobble: 22 }
+}
 function playFartSound(elementId) {
   try {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext
@@ -2812,31 +2824,36 @@ function playFartSound(elementId) {
     const context = fartAudioContext
     if (context.state === "suspended") context.resume().catch(() => {})
 
+    const profile = fartSoundProfiles[elementId] || fartSoundProfiles.throwSound
     const now = context.currentTime
-    const variation = (Array.from(elementId).reduce((sum, char) => sum + char.charCodeAt(0), 0) % 5)
-    const duration = 0.22 + variation * 0.045
+    const duration = profile.duration * (0.92 + Math.random() * 0.16)
     const oscillator = context.createOscillator()
     const gain = context.createGain()
     const filter = context.createBiquadFilter()
-    oscillator.type = "sawtooth"
-    oscillator.frequency.setValueAtTime(95 + variation * 11, now)
-    oscillator.frequency.exponentialRampToValueAtTime(38 + variation * 4, now + duration)
+    const wobble = profile.wobble * (0.8 + Math.random() * 0.4)
+
+    oscillator.type = profile.type
+    oscillator.frequency.setValueAtTime(profile.start * (0.94 + Math.random() * 0.12), now)
+    oscillator.frequency.exponentialRampToValueAtTime(Math.max(18, profile.end), now + duration)
     filter.type = "lowpass"
-    filter.frequency.setValueAtTime(520 + variation * 80, now)
-    filter.frequency.exponentialRampToValueAtTime(170, now + duration)
+    filter.frequency.setValueAtTime(profile.filter, now)
+    filter.frequency.exponentialRampToValueAtTime(Math.max(100, profile.filter * 0.32), now + duration)
     gain.gain.setValueAtTime(0.0001, now)
-    gain.gain.linearRampToValueAtTime(0.22, now + 0.025)
-    // A few uneven bursts give the low wobble a silly, raspberry-like texture.
-    for (let i = 1; i <= 4; i++) {
-      const time = now + duration * i / 5
-      gain.gain.setValueAtTime(i % 2 ? 0.15 : 0.22, time)
+    gain.gain.linearRampToValueAtTime(0.2, now + 0.018)
+
+    // Each SFX has its own rhythm and pitch wobble, so the fart sounds are recognizably different.
+    for (let i = 1; i <= profile.bursts; i++) {
+      const time = now + duration * i / (profile.bursts + 1)
+      const level = i % 2 ? 0.16 : 0.23
+      gain.gain.setValueAtTime(level, time)
+      oscillator.frequency.setValueAtTime(Math.max(18, profile.start - wobble * i), time)
     }
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration + 0.04)
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration + 0.035)
     oscillator.connect(filter)
     filter.connect(gain)
     gain.connect(context.destination)
     oscillator.start(now)
-    oscillator.stop(now + duration + 0.05)
+    oscillator.stop(now + duration + 0.045)
   } catch (error) {
     // Keep the game running if Web Audio is unavailable or blocked.
   }
