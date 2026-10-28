@@ -59,21 +59,21 @@
         <p id="ascensionStatus" role="status" aria-live="polite"></p>
       </section>
       <div class="upgrade-list" aria-label="Upgrades">
-        <button id="upgrade0" onclick="buy0()">Lucky Mitts (0, +1 Fribby per click) - 10 Fribbies</button>
-        <button id="upgrade1" onclick="buy1()">Tick-Tock Timer (0, +1 auto throw/sec) - 50 Fribbies</button>
-        <button id="upgrade2" onclick="buy2()">Supply Skipper (0, +1 Fribby per auto throw) - 200 Fribbies</button>
-        <button id="upgrade3" onclick="buy3()">Slingshot (0, +5 Fribbies per click) - 500 Fribbies</button>
-        <button id="upgrade4" onclick="buy4()">Night Foreman (0, +5 Fribbies per auto throw) - 1,000 Fribbies</button>
-        <button id="upgrade5" onclick="buy5()">Power Mitts (0, +10 Fribbies per click) - 2,500 Fribbies</button>
-        <button id="upgrade6" onclick="buy6()">Giggleworks (0, +10 Fribbies per auto throw) - 5,000 Fribbies</button>
-        <button id="upgrade7" onclick="buy7()">Relay Runner (0, +5 auto throws/sec) - 10,000 Fribbies</button>
-        <button id="upgrade8" onclick="buy8()">Heavy Hitter (0, +100 Fribbies per click) - 25,000 Fribbies</button>
-        <button id="upgrade9" onclick="buy9()">Dynamo Press (0, +500 Fribbies per click) - 50,000 Fribbies</button>
-        <button id="upgrade10" onclick="buy10()">Workshop Press (0, +25 Fribbies per auto throw) - 100,000 Fribbies</button>
-        <button id="upgrade11" onclick="buy11()">Longshot Launcher (0, +2,500 Fribbies per click) - 250,000 Fribbies</button>
-        <button id="upgrade12" onclick="buy12()">Fribby Conveyor (0, +100 Fribbies per auto throw) - 500,000 Fribbies</button>
-        <button id="upgrade13" onclick="buy13()">Precision Driver (0, +10,000 Fribbies per click) - 1,000,000 Fribbies</button>
-        <button id="upgrade14" onclick="buy14()">Double-Shift Engine (0, +500 Fribbies per auto throw) - 2,500,000 Fribbies</button>
+        <button id="upgrade0" onclick="buy0()">Extra Hand (0, +1 Fribby per click) - 10 Fribbies</button>
+        <button id="upgrade1" onclick="buy1()">Auto Thrower (0, +1 auto throw/sec) - 50 Fribbies</button>
+        <button id="upgrade2" onclick="buy2()">Intern (0, +1 Fribby per auto throw) - 200 Fribbies</button>
+        <button id="upgrade3" onclick="buy3()">Fribby Cannon (0, +5 Fribbies per click) - 500 Fribbies</button>
+        <button id="upgrade4" onclick="buy4()">Supervisor (0, +5 Fribbies per auto throw) - 1,000 Fribbies</button>
+        <button id="upgrade5" onclick="buy5()">Power Throw (0, +10 Fribbies per click) - 2,500 Fribbies</button>
+        <button id="upgrade6" onclick="buy6()">Fribby Factory (0, +10 Fribbies per auto throw) - 5,000 Fribbies</button>
+        <button id="upgrade7" onclick="buy7()">Turbo Thrower (0, +5 auto throws/sec) - 10,000 Fribbies</button>
+        <button id="upgrade8" onclick="buy8()">Mega Cannon (0, +100 Fribbies per click) - 25,000 Fribbies</button>
+        <button id="upgrade9" onclick="buy9()">Power Cannon (0, +500 Fribbies per click) - 50,000 Fribbies</button>
+        <button id="upgrade10" onclick="buy10()">Factory Intern (0, +25 Fribbies per auto throw) - 100,000 Fribbies</button>
+        <button id="upgrade11" onclick="buy11()">Turbo Cannon (0, +2,500 Fribbies per click) - 250,000 Fribbies</button>
+        <button id="upgrade12" onclick="buy12()">Mega Factory (0, +100 Fribbies per auto throw) - 500,000 Fribbies</button>
+        <button id="upgrade13" onclick="buy13()">Super Cannon (0, +10,000 Fribbies per click) - 1,000,000 Fribbies</button>
+        <button id="upgrade14" onclick="buy14()">Turbo Factory (0, +500 Fribbies per auto throw) - 2,500,000 Fribbies</button>
         <button id="minigameUpgrade" type="button" onclick="buyMinigameUnlock()">Unlock Minigame (0/6, lets you play for Fribbies) - 2500 Fribbies</button>
       </div>
     </main>
@@ -115,21 +115,21 @@
             <input id="adminFribbies" type="text" inputmode="numeric" value="0" autocomplete="off">
             <label for="adminMegaFribbies">Mega Fribbies</label>
             <input id="adminMegaFribbies" type="text" inputmode="numeric" value="0" autocomplete="off">
-            <label for="adminUpgrade0">Lucky Mitts amount</label><input id="adminUpgrade0" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade1">Tick-Tock Timer amount</label><input id="adminUpgrade1" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade2">Supply Skipper amount</label><input id="adminUpgrade2" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade3">Slingshot amount</label><input id="adminUpgrade3" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade4">Night Foreman amount</label><input id="adminUpgrade4" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade5">Power Mitts amount</label><input id="adminUpgrade5" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade6">Giggleworks amount</label><input id="adminUpgrade6" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade7">Relay Runner amount</label><input id="adminUpgrade7" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade8">Heavy Hitter amount</label><input id="adminUpgrade8" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade9">Dynamo Press amount</label><input id="adminUpgrade9" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade10">Workshop Press amount</label><input id="adminUpgrade10" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade11">Longshot Launcher amount</label><input id="adminUpgrade11" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade12">Fribby Conveyor amount</label><input id="adminUpgrade12" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade13">Precision Driver amount</label><input id="adminUpgrade13" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade14">Double-Shift Engine amount</label><input id="adminUpgrade14" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade0">Extra Hand amount</label><input id="adminUpgrade0" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade1">Auto Thrower amount</label><input id="adminUpgrade1" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade2">Intern amount</label><input id="adminUpgrade2" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade3">Fribby Cannon amount</label><input id="adminUpgrade3" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade4">Supervisor amount</label><input id="adminUpgrade4" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade5">Power Throw amount</label><input id="adminUpgrade5" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade6">Fribby Factory amount</label><input id="adminUpgrade6" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade7">Turbo Thrower amount</label><input id="adminUpgrade7" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade8">Mega Cannon amount</label><input id="adminUpgrade8" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade9">Power Cannon amount</label><input id="adminUpgrade9" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade10">Factory Intern amount</label><input id="adminUpgrade10" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade11">Turbo Cannon amount</label><input id="adminUpgrade11" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade12">Mega Factory amount</label><input id="adminUpgrade12" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade13">Super Cannon amount</label><input id="adminUpgrade13" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade14">Turbo Factory amount</label><input id="adminUpgrade14" type="number" min="0" step="1" value="0">
           </div>
           <button type="button" onclick="applyAdminGameEdits()">Apply game edits</button>
           <p id="adminGameEditStatus" role="status" aria-live="polite"></p>

@@ -23,26 +23,26 @@ const skillNames = {
   click: ["Lucky Reflex", "Steady Aim", "Split-Second", "Heavy Disc", "Double Grip", "Charged Toss", "Cannon Synergy", "Bullseye", "Muscle Memory", "Meteor Arm", "Quick Release", "Cosmic Launch"],
   mega: ["Packed Satchel", "Lucky Star", "Deep Reserve", "Overflowing Core", "Past Lives", "Golden Harvest", "Early Ascender", "Relic Pockets", "Singular Offering", "Echo Chamber", "Infinite Bounty", "Mega Mastery"],
   cheap: ["Bulk Order", "Click Coupon", "Machine Rebate", "Arcade Voucher", "Supplier Pact", "Heavy Parts Deal", "Stockpile Savings", "Automation Contract", "Precision Coupon", "Wholesale Network", "Clearance Ledger", "Cost Collapse"],
-  auto: ["Clockwork Wrist", "Oiled Bearings", "Double Pendulum", "Overtime Circuit", "Self-Feeding Line", "Relay Runner", "Unattended Shift", "Assembly Swarm", "Chrono Engine", "Infinite Conveyor", "Feedback Reactor", "Singularity Engine"],
+  auto: ["Clockwork Wrist", "Oiled Bearings", "Double Pendulum", "Overtime Circuit", "Self-Feeding Line", "Turbo Thrower", "Unattended Shift", "Assembly Swarm", "Chrono Engine", "Infinite Conveyor", "Feedback Reactor", "Singularity Engine"],
   mini: ["Practice Round", "Prize Pouch", "Pattern Sense", "Lucky Streak", "Sweep Expert", "Bonus Round", "Arcade Scholar", "Risk Assessment", "Master Player", "Grand Champion", "Hidden Cabinet", "Perfect Run"],
   arcade: ["Cabinet Key", "Fresh Cartridge", "Bonus Stage", "Prize Circuit", "Secret Mode", "Combo Token", "Arcade Passport", "High-Score Halo", "Double Feature", "Golden Cabinet", "Endless Festival", "Arcade Mythos"],
-  collection: ["Quick Count", "Prize Practice", "Odd One Out", "Sharp Eyes", "Memory Flash", "Steady Hands", "Higher or Lower", "Risk Reader", "Target Tap", "Fast Fingers", "Word Shuffle", "Grand Arcade"]
+  collection: ["Number Scout", "Prize Practice", "Odd-One Spotter", "Sharp Eyes", "Memory Keeper", "Steady Hands", "Odds Caller", "Risk Reader", "Target Trainer", "Fast Fingers", "Word Scrambler", "Grand Arcade"]
 }
 const skillEffects = {
   path: [
     "Click power gains +10 Fribbies per throw", "Start each ascension run with 1,000 Fribbies", "+10% minigame rewards", "Opens the next rung across every branch", "+5 automatic throws per second", "Regular upgrade prices -5%", "+15% minigame rewards", "+15% automatic payout", "+15% click payout", "Minigame unlock prices -20%", "+10 Fribbies per automatic throw", "+10% click and automatic payout", "+5% click and automatic payout per level; repeatable"
   ],
   strong: [
-    "Click and automatic payout +15%", "Automatic throws pay +20%", "Regular upgrade prices -10%", "Every 5 regular upgrade levels adds +10% click and automatic payout, up to +50%", "Every 5 Tick-Tock Timers adds +20% automatic payout, up to +80%", "Automatic payout +100% once you reach 10 throws per second", "Heavy Hitter gains +50% click power", "Each Relay Runner adds +10% automatic payout, up to +100%", "+20% minigame rewards", "Click payout +20%", "Automatic payout +30%", "Click and automatic payout +20%"
+    "Click and automatic payout +15%", "Automatic throws pay +20%", "Regular upgrade prices -10%", "Every 5 regular upgrade levels adds +10% click and automatic payout, up to +50%", "Every 5 Auto Throwers adds +20% automatic payout, up to +80%", "Automatic payout +100% once you reach 10 throws per second", "Mega Cannon gains +50% click power", "Each Turbo Thrower adds +10% automatic payout, up to +100%", "+20% minigame rewards", "Click payout +20%", "Automatic payout +30%", "Click and automatic payout +20%"
   ],
   click: [
-    "Critical-hit chance +10 percentage points", "Click payout +25%", "5% chance to triple click payout", "+50 Fribbies per click", "Each Lucky Mitts adds +5 additional Fribbies per click", "Critical hits deal 5× normal click payout", "Each Slingshot adds +20 Fribbies per click", "10% chance to triple click payout", "Lucky Mitts grant up to +100% click payout", "+250 Fribbies per click", "Click payout +30%", "Click payout +50%"
+    "Critical-hit chance +10 percentage points", "Click payout +25%", "5% chance to triple click payout", "+50 Fribbies per click", "Each Extra Hand adds +5 additional Fribbies per click", "Critical hits deal 5× normal click payout", "Each Fribby Cannon adds +20 Fribbies per click", "10% chance to triple click payout", "Extra Hand grant up to +100% click payout", "+250 Fribbies per click", "Click payout +30%", "Click payout +50%"
   ],
   mega: [
     "+5 Mega Fribbies on every ascension", "Ascension reward +20%", "Gain an extra 20% of the base reward", "+25 Mega Fribbies when within 250,000 Fribbies of the threshold", "Ascension reward +2% per previous ascension", "Ascension reward +15%", "+1 Mega Fribby per 2 previous ascensions", "+10 Mega Fribbies when all fourteen minigames are unlocked", "+25% on ascensions worth 10+ Mega Fribbies", "+5% reward per other Mega Fribby upgrade", "+15 Mega Fribbies when ascending from 5,000,000+ Fribbies", "Ascension reward +30%"
   ],
-  cheap: ["All regular upgrade prices -8%", "Click-focused upgrade prices -10%", "Automation upgrade prices -12%", "Minigame unlock price -20%", "All regular upgrade prices -10%", "Slingshot and Heavy Hitter prices -20%", "All regular upgrade prices -12%", "Tick-Tock Timer and Relay Runner prices -25%", "Click-focused upgrade prices -20%", "All regular upgrade prices -14%", "All regular upgrade prices -16%", "All regular upgrade prices -20%"],
-  auto: ["+5 automatic throws per second", "Automatic payout +25%", "Each Tick-Tock Timer adds an extra +1 throw/sec, up to +20", "Each Tick-Tock Timer adds +5% automatic payout, up to +50%", "Automatic payout +15%", "Each Tick-Tock Timer adds +10 Fribbies per automatic throw", "Every 5 automatic throws/sec adds +10% payout, up to +100%", "Each Relay Runner adds +2 Fribbies to automatic payout", "+25% automatic payout; every 5 Relay Runners adds +1 base Fribby", "Automatic payout +40%, +5 base payout, and +5 throws per second", "Each Giggleworks adds +10% automatic payout, up to +100%", "Automatic payout +50%, +10 base payout, and +5 throws per second"],
+  cheap: ["All regular upgrade prices -8%", "Click-focused upgrade prices -10%", "Automation upgrade prices -12%", "Minigame unlock price -20%", "All regular upgrade prices -10%", "Fribby Cannon and Mega Cannon prices -20%", "All regular upgrade prices -12%", "Auto Thrower and Turbo Thrower prices -25%", "Click-focused upgrade prices -20%", "All regular upgrade prices -14%", "All regular upgrade prices -16%", "All regular upgrade prices -20%"],
+  auto: ["+5 automatic throws per second", "Automatic payout +25%", "Each Auto Thrower adds an extra +1 throw/sec, up to +20", "Each Auto Thrower adds +5% automatic payout, up to +50%", "Automatic payout +15%", "Each Auto Thrower adds +10 Fribbies per automatic throw", "Every 5 automatic throws/sec adds +10% payout, up to +100%", "Each Turbo Thrower adds +2 Fribbies to automatic payout", "+25% automatic payout; every 5 Turbo Throwers adds +1 base Fribby", "Automatic payout +40%, +5 base payout, and +5 throws per second", "Each Fribby Factory adds +10% automatic payout, up to +100%", "Automatic payout +50%, +10 base payout, and +5 throws per second"],
   mini: ["Minigame rewards +10%", "Minigame unlock prices -10%", "+5% minigame rewards per unlocked game", "Minigame rewards +15%", "Minigame rewards +25%", "Minigame rewards +20%", "Ascension reward +2% per unlocked minigame", "Minigame rewards +25%", "Minigame rewards +30%", "All minigame rewards +40%", "Minigame rewards +35%", "Minigame rewards +50% and ascension reward +10%"],
   arcade: ["Rapid Toss reward +25%", "Odd Orbit reward +25%", "Minigame rewards +15%", "Rapid Toss rewards +25%", "Minigame unlock costs -15%", "Odd Orbit rewards +25%", "Minigame rewards +20% per two games unlocked", "All minigames grant +10% rewards", "Rapid Toss time +3 seconds", "Odd Orbit pays out double on a perfect streak", "Minigame rewards +35%", "All minigame rewards +50%"],
   collection: ["Unlock Quick Count", "All minigame rewards +10%", "Unlock Odd One Out", "Minigame rewards +15%", "Unlock Memory Flash", "Minigame rewards +20%", "Unlock Higher or Lower", "Minigame rewards +25%", "Unlock Target Tap", "Minigame rewards +30%", "Unlock Word Shuffle", "All minigame rewards +50%"]
@@ -194,21 +194,21 @@ function getAutoBonusPercent() {
 }
 function refreshUpgradeLabels() {
   const labels = [
-    `Lucky Mitts (${u0Amount}, +1 Fribby per click) - ${formatFribbies(getRegularUpgradeCost(u0Cost, 0))} Fribbies`,
-    `Tick-Tock Timer (${u1Amount}, +1 auto throw/sec) - ${formatFribbies(getRegularUpgradeCost(u1Cost, 1))} Fribbies`,
-    `Supply Skipper (${u2Amount}, +1 Fribby per auto throw) - ${formatFribbies(getRegularUpgradeCost(u2Cost, 2))} Fribbies`,
-    `Slingshot (${u3Amount}, +5 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u3Cost, 3))} Fribbies`,
-    `Night Foreman (${u4Amount}, +5 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u4Cost, 4))} Fribbies`,
-    `Power Mitts (${u5Amount}, +10 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u5Cost, 5))} Fribbies`,
-    `Giggleworks (${u6Amount}, +10 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u6Cost, 6))} Fribbies`,
-    `Relay Runner (${u7Amount}, +5 auto throws/sec) - ${formatFribbies(getRegularUpgradeCost(u7Cost, 7))} Fribbies`,
-    `Heavy Hitter (${u8Amount}, +${hasSkill("strong-6") ? 150 : 100} Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u8Cost, 8))} Fribbies`,
-    `Dynamo Press (${u9Amount}, +500 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u9Cost, 9))} Fribbies`,
-    `Workshop Press (${u10Amount}, +25 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u10Cost, 10))} Fribbies`,
-    `Longshot Launcher (${u11Amount}, +2,500 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u11Cost, 11))} Fribbies`,
-    `Fribby Conveyor (${u12Amount}, +100 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u12Cost, 12))} Fribbies`,
-    `Precision Driver (${u13Amount}, +10,000 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u13Cost, 13))} Fribbies`,
-    `Double-Shift Engine (${u14Amount}, +500 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u14Cost, 14))} Fribbies`
+    `Extra Hand (${u0Amount}, +1 Fribby per click) - ${formatFribbies(getRegularUpgradeCost(u0Cost, 0))} Fribbies`,
+    `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${formatFribbies(getRegularUpgradeCost(u1Cost, 1))} Fribbies`,
+    `Intern (${u2Amount}, +1 Fribby per auto throw) - ${formatFribbies(getRegularUpgradeCost(u2Cost, 2))} Fribbies`,
+    `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u3Cost, 3))} Fribbies`,
+    `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u4Cost, 4))} Fribbies`,
+    `Power Throw (${u5Amount}, +10 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u5Cost, 5))} Fribbies`,
+    `Fribby Factory (${u6Amount}, +10 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u6Cost, 6))} Fribbies`,
+    `Turbo Thrower (${u7Amount}, +5 auto throws/sec) - ${formatFribbies(getRegularUpgradeCost(u7Cost, 7))} Fribbies`,
+    `Mega Cannon (${u8Amount}, +${hasSkill("strong-6") ? 150 : 100} Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u8Cost, 8))} Fribbies`,
+    `Power Cannon (${u9Amount}, +500 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u9Cost, 9))} Fribbies`,
+    `Factory Intern (${u10Amount}, +25 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u10Cost, 10))} Fribbies`,
+    `Turbo Cannon (${u11Amount}, +2,500 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u11Cost, 11))} Fribbies`,
+    `Mega Factory (${u12Amount}, +100 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u12Cost, 12))} Fribbies`,
+    `Super Cannon (${u13Amount}, +10,000 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u13Cost, 13))} Fribbies`,
+    `Turbo Factory (${u14Amount}, +500 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u14Cost, 14))} Fribbies`
   ]
   labels.forEach((label, index) => {
     const button = document.getElementById(`upgrade${index}`)
@@ -256,7 +256,7 @@ function buy0() {
    u0Cost = u0Cost * 3n
    updateFribby()
    document.getElementById("upgrade0").innerText =
-        "Lucky Mitts - (" + u0Amount + ", +1 Fribby per click) - " + formatFribbies(u0Cost) + " Fribbies"
+        "Extra Hand - (" + u0Amount + ", +1 Fribby per click) - " + formatFribbies(u0Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -273,7 +273,7 @@ function buy1() {
    u1Cost = (u1Cost * 3n + 1n) / 2n
    updateFribby()
    document.getElementById("upgrade1").innerText =
-        "Tick-Tock Timer (" + u1Amount + ", +1 auto throw/sec) - " + formatFribbies(u1Cost) + " Fribbies"
+        "Auto Thrower (" + u1Amount + ", +1 auto throw/sec) - " + formatFribbies(u1Cost) + " Fribbies"
    refreshUpgradeLabels()
    updateAutoThrowInterval()
   } else {
@@ -291,7 +291,7 @@ function buy2() {
    u2Cost = (u2Cost * 3n + 1n) / 2n
    updateFribby()
    document.getElementById("upgrade2").innerText =
-        "Supply Skipper (" + u2Amount + ", +1 Fribby per auto throw) - " + formatFribbies(u2Cost) + " Fribbies"
+        "Intern (" + u2Amount + ", +1 Fribby per auto throw) - " + formatFribbies(u2Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -308,7 +308,7 @@ function buy3() {
     u3Cost = (u3Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade3").innerText =
-      "Slingshot (" + u3Amount + ", +5 Fribbies per click) - " + formatFribbies(u3Cost) + " Fribbies"
+      "Fribby Cannon (" + u3Amount + ", +5 Fribbies per click) - " + formatFribbies(u3Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -325,7 +325,7 @@ function buy4() {
     u4Cost = (u4Cost * 3n + 1n) / 2n
     updateFribby()
        document.getElementById("upgrade4").innerText =
-        "Night Foreman (" + u4Amount + ", +5 Fribbies per auto throw) - " + formatFribbies(u4Cost) + " Fribbies"
+        "Supervisor (" + u4Amount + ", +5 Fribbies per auto throw) - " + formatFribbies(u4Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -342,7 +342,7 @@ function buy5() {
     u5Cost = (u5Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade5").innerText =
-      "Power Mitts (" + u5Amount + ", +10 Fribbies per click) - " + formatFribbies(u5Cost) + " Fribbies"
+      "Power Throw (" + u5Amount + ", +10 Fribbies per click) - " + formatFribbies(u5Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -359,7 +359,7 @@ function buy6() {
     u6Cost = (u6Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade6").innerText =
-      "Giggleworks (" + u6Amount + ", +10 Fribbies per auto throw) - " + formatFribbies(u6Cost) + " Fribbies"
+      "Fribby Factory (" + u6Amount + ", +10 Fribbies per auto throw) - " + formatFribbies(u6Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -376,7 +376,7 @@ function buy7() {
     u7Cost = (u7Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade7").innerText =
-      "Relay Runner (" + u7Amount + ", +5 auto throws/sec) - " + formatFribbies(u7Cost) + " Fribbies"
+      "Turbo Thrower (" + u7Amount + ", +5 auto throws/sec) - " + formatFribbies(u7Cost) + " Fribbies"
    refreshUpgradeLabels()
     updateAutoThrowInterval()
   } else {
@@ -394,7 +394,7 @@ function buy8() {
     u8Cost = (u8Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade8").innerText =
-      "Heavy Hitter (" + u8Amount + ", +100 Fribbies per click) - " + formatFribbies(u8Cost) + " Fribbies"
+      "Mega Cannon (" + u8Amount + ", +100 Fribbies per click) - " + formatFribbies(u8Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
