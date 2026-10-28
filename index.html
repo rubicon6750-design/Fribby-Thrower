@@ -59,15 +59,19 @@
         <p id="ascensionStatus" role="status" aria-live="polite"></p>
       </section>
       <div class="upgrade-list" aria-label="Upgrades">
-        <button id="upgrade0" onclick="buy0()">Extra Hand (0, +1 Fribby per click) - 10 Fribbies</button>
-        <button id="upgrade1" onclick="buy1()">Auto Thrower (0, +1 auto throw/sec) - 50 Fribbies</button>
-        <button id="upgrade2" onclick="buy2()">Intern (0, +1 Fribby per auto throw) - 200 Fribbies</button>
-        <button id="upgrade3" onclick="buy3()">Fribby Cannon (0, +5 Fribbies per click) - 500 Fribbies</button>
-        <button id="upgrade4" onclick="buy4()">Supervisor (0, +5 Fribbies per auto throw) - 1000 Fribbies</button>
-        <button id="upgrade5" onclick="buy5()">Power Throw (0, +10 Fribbies per click) - 2500 Fribbies</button>
-        <button id="upgrade6" onclick="buy6()">Fribby Factory (0, +10 Fribbies per auto throw) - 5000 Fribbies</button>
-        <button id="upgrade7" onclick="buy7()">Turbo Thrower (0, +5 auto throws/sec) - 10000 Fribbies</button>
-        <button id="upgrade8" onclick="buy8()">Mega Cannon (0, +100 per click) - 25000 Fribbies</button>
+        <button id="upgrade0" onclick="buy0()">Lucky Mitts (0, +1 Fribby per click) - 10 Fribbies</button>
+        <button id="upgrade1" onclick="buy1()">Tick-Tock Sprite (0, +1 auto throw/sec) - 50 Fribbies</button>
+        <button id="upgrade2" onclick="buy2()">Supply Skipper (0, +1 Fribby per auto throw) - 200 Fribbies</button>
+        <button id="upgrade3" onclick="buy3()">Comet Sling (0, +5 Fribbies per click) - 500 Fribbies</button>
+        <button id="upgrade4" onclick="buy4()">Night Foreman (0, +5 Fribbies per auto throw) - 1,000 Fribbies</button>
+        <button id="upgrade5" onclick="buy5()">Nova Knuckles (0, +10 Fribbies per click) - 2,500 Fribbies</button>
+        <button id="upgrade6" onclick="buy6()">Giggleworks (0, +10 Fribbies per auto throw) - 5,000 Fribbies</button>
+        <button id="upgrade7" onclick="buy7()">Blink Relay (0, +5 auto throws/sec) - 10,000 Fribbies</button>
+        <button id="upgrade8" onclick="buy8()">Meteor Maul (0, +100 Fribbies per click) - 25,000 Fribbies</button>
+        <button id="upgrade9" onclick="buy9()">Aurora Dynamo (0, +500 Fribbies per click) - 50,000 Fribbies</button>
+        <button id="upgrade10" onclick="buy10()">Nebula Press (0, +25 Fribbies per auto throw) - 100,000 Fribbies</button>
+        <button id="upgrade11" onclick="buy11()">Quasar Catapult (0, +2,500 Fribbies per click) - 250,000 Fribbies</button>
+        <button id="upgrade12" onclick="buy12()">Galaxy Conveyor (0, +100 Fribbies per auto throw) - 500,000 Fribbies</button>
         <button id="minigameUpgrade" type="button" onclick="buyMinigameUnlock()">Unlock Minigame (0/6, lets you play for Fribbies) - 2500 Fribbies</button>
       </div>
     </main>
@@ -109,15 +113,19 @@
             <input id="adminFribbies" type="text" inputmode="numeric" value="0" autocomplete="off">
             <label for="adminMegaFribbies">Mega Fribbies</label>
             <input id="adminMegaFribbies" type="text" inputmode="numeric" value="0" autocomplete="off">
-            <label for="adminUpgrade0">Extra Hand amount</label><input id="adminUpgrade0" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade1">Auto Thrower amount</label><input id="adminUpgrade1" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade2">Intern amount</label><input id="adminUpgrade2" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade3">Fribby Cannon amount</label><input id="adminUpgrade3" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade4">Supervisor amount</label><input id="adminUpgrade4" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade5">Power Throw amount</label><input id="adminUpgrade5" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade6">Fribby Factory amount</label><input id="adminUpgrade6" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade7">Turbo Thrower amount</label><input id="adminUpgrade7" type="number" min="0" step="1" value="0">
-            <label for="adminUpgrade8">Mega Cannon amount</label><input id="adminUpgrade8" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade0">Lucky Mitts amount</label><input id="adminUpgrade0" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade1">Tick-Tock Sprite amount</label><input id="adminUpgrade1" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade2">Supply Skipper amount</label><input id="adminUpgrade2" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade3">Comet Sling amount</label><input id="adminUpgrade3" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade4">Night Foreman amount</label><input id="adminUpgrade4" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade5">Nova Knuckles amount</label><input id="adminUpgrade5" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade6">Giggleworks amount</label><input id="adminUpgrade6" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade7">Blink Relay amount</label><input id="adminUpgrade7" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade8">Meteor Maul amount</label><input id="adminUpgrade8" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade9">Aurora Dynamo amount</label><input id="adminUpgrade9" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade10">Nebula Press amount</label><input id="adminUpgrade10" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade11">Quasar Catapult amount</label><input id="adminUpgrade11" type="number" min="0" step="1" value="0">
+            <label for="adminUpgrade12">Galaxy Conveyor amount</label><input id="adminUpgrade12" type="number" min="0" step="1" value="0">
           </div>
           <button type="button" onclick="applyAdminGameEdits()">Apply game edits</button>
           <p id="adminGameEditStatus" role="status" aria-live="polite"></p>
