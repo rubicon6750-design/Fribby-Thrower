@@ -21,7 +21,7 @@ const skillNames = {
   click: ["Lucky Reflex", "Steady Aim", "Split-Second", "Heavy Disc", "Double Grip", "Charged Toss", "Cannon Synergy", "Bullseye", "Muscle Memory", "Meteor Arm", "Quick Release", "Cosmic Launch"],
   mega: ["Packed Satchel", "Lucky Star", "Deep Reserve", "Overflowing Core", "Past Lives", "Golden Harvest", "Early Ascender", "Relic Pockets", "Singular Offering", "Echo Chamber", "Infinite Bounty", "Mega Mastery"],
   cheap: ["Bulk Order", "Click Coupon", "Machine Rebate", "Arcade Voucher", "Supplier Pact", "Heavy Parts Deal", "Stockpile Savings", "Automation Contract", "Precision Coupon", "Wholesale Network", "Clearance Ledger", "Cost Collapse"],
-  auto: ["Clockwork Wrist", "Oiled Bearings", "Double Pendulum", "Overtime Circuit", "Self-Feeding Line", "Rapid Relay", "Unattended Shift", "Assembly Swarm", "Chrono Engine", "Infinite Conveyor", "Feedback Reactor", "Singularity Engine"],
+  auto: ["Clockwork Wrist", "Oiled Bearings", "Double Pendulum", "Overtime Circuit", "Self-Feeding Line", "Blink Relay", "Unattended Shift", "Assembly Swarm", "Chrono Engine", "Infinite Conveyor", "Feedback Reactor", "Singularity Engine"],
   mini: ["Practice Round", "Prize Pouch", "Pattern Sense", "Lucky Streak", "Sweep Expert", "Bonus Round", "Arcade Scholar", "Risk Assessment", "Master Player", "Grand Champion", "Hidden Cabinet", "Perfect Run"]
 }
 const skillEffects = {
@@ -29,16 +29,16 @@ const skillEffects = {
     "Click power gains +10 Fribbies per throw", "Start each ascension run with 1,000 Fribbies", "+10% minigame rewards", "Opens the next rung across every branch", "+5 automatic throws per second", "Regular upgrade prices -5%", "+15% minigame rewards", "+15% automatic payout", "+15% click payout", "Minigame unlock prices -20%", "+10 Fribbies per automatic throw", "+10% click and automatic payout", "+5% click and automatic payout per level; repeatable"
   ],
   strong: [
-    "Click and automatic payout +15%", "Automatic throws pay +20%", "Regular upgrade prices -10%", "Every 5 regular upgrade levels adds +10% click and automatic payout, up to +50%", "Every 5 Auto Throwers adds +20% automatic payout, up to +80%", "Automatic payout +100% once you reach 10 throws per second", "Mega Cannon gains +50% click power", "Each Turbo Thrower adds +10% automatic payout, up to +100%", "+20% minigame rewards", "Click payout +20%", "Automatic payout +30%", "Click and automatic payout +20%"
+    "Click and automatic payout +15%", "Automatic throws pay +20%", "Regular upgrade prices -10%", "Every 5 regular upgrade levels adds +10% click and automatic payout, up to +50%", "Every 5 Tick-Tock Sprites adds +20% automatic payout, up to +80%", "Automatic payout +100% once you reach 10 throws per second", "Meteor Maul gains +50% click power", "Each Blink Relay adds +10% automatic payout, up to +100%", "+20% minigame rewards", "Click payout +20%", "Automatic payout +30%", "Click and automatic payout +20%"
   ],
   click: [
-    "Critical-hit chance +10 percentage points", "Click payout +25%", "5% chance to triple click payout", "+50 Fribbies per click", "Each Extra Hand adds +5 additional Fribbies per click", "Critical hits deal 5× normal click payout", "Each Fribby Cannon adds +20 Fribbies per click", "10% chance to triple click payout", "Extra Hands grant up to +100% click payout", "+250 Fribbies per click", "Click payout +30%", "Click payout +50%"
+    "Critical-hit chance +10 percentage points", "Click payout +25%", "5% chance to triple click payout", "+50 Fribbies per click", "Each Lucky Mitts adds +5 additional Fribbies per click", "Critical hits deal 5× normal click payout", "Each Comet Sling adds +20 Fribbies per click", "10% chance to triple click payout", "Lucky Mittss grant up to +100% click payout", "+250 Fribbies per click", "Click payout +30%", "Click payout +50%"
   ],
   mega: [
     "+5 Mega Fribbies on every ascension", "Ascension reward +20%", "Gain an extra 20% of the base reward", "+25 Mega Fribbies when within 250,000 Fribbies of the threshold", "Ascension reward +2% per previous ascension", "Ascension reward +15%", "+1 Mega Fribby per 2 previous ascensions", "+10 Mega Fribbies when all six minigames are unlocked", "+25% on ascensions worth 10+ Mega Fribbies", "+5% reward per other Mega Fribby upgrade", "+15 Mega Fribbies when ascending from 5,000,000+ Fribbies", "Ascension reward +30%"
   ],
-  cheap: ["All regular upgrade prices -8%", "Click-focused upgrade prices -10%", "Automation upgrade prices -12%", "Minigame unlock price -20%", "All regular upgrade prices -10%", "Fribby Cannon and Mega Cannon prices -20%", "All regular upgrade prices -12%", "Auto Thrower and Turbo Thrower prices -25%", "Click-focused upgrade prices -20%", "All regular upgrade prices -14%", "All regular upgrade prices -16%", "All regular upgrade prices -20%"],
-  auto: ["+5 automatic throws per second", "Automatic payout +25%", "Each Auto Thrower adds an extra +1 throw/sec, up to +20", "Each Auto Thrower adds +5% automatic payout, up to +50%", "Automatic payout +15%", "Each Auto Thrower adds +10 Fribbies per automatic throw", "Every 5 automatic throws/sec adds +10% payout, up to +100%", "Each Turbo Thrower adds +2 Fribbies to automatic payout", "+25% automatic payout; every 5 Turbo Throwers adds +1 base Fribby", "Automatic payout +40%, +5 base payout, and +5 throws per second", "Each Fribby Factory adds +10% automatic payout, up to +100%", "Automatic payout +50%, +10 base payout, and +5 throws per second"],
+  cheap: ["All regular upgrade prices -8%", "Click-focused upgrade prices -10%", "Automation upgrade prices -12%", "Minigame unlock price -20%", "All regular upgrade prices -10%", "Comet Sling and Meteor Maul prices -20%", "All regular upgrade prices -12%", "Tick-Tock Sprite and Blink Relay prices -25%", "Click-focused upgrade prices -20%", "All regular upgrade prices -14%", "All regular upgrade prices -16%", "All regular upgrade prices -20%"],
+  auto: ["+5 automatic throws per second", "Automatic payout +25%", "Each Tick-Tock Sprite adds an extra +1 throw/sec, up to +20", "Each Tick-Tock Sprite adds +5% automatic payout, up to +50%", "Automatic payout +15%", "Each Tick-Tock Sprite adds +10 Fribbies per automatic throw", "Every 5 automatic throws/sec adds +10% payout, up to +100%", "Each Blink Relay adds +2 Fribbies to automatic payout", "+25% automatic payout; every 5 Blink Relays adds +1 base Fribby", "Automatic payout +40%, +5 base payout, and +5 throws per second", "Each Giggleworks adds +10% automatic payout, up to +100%", "Automatic payout +50%, +10 base payout, and +5 throws per second"],
   mini: ["Minigame rewards +10%", "Minigame unlock prices -10%", "+5% minigame rewards per unlocked game", "Minigame rewards +15%", "Minigame rewards +25%", "Minigame rewards +20%", "Ascension reward +2% per unlocked minigame", "Minigame rewards +25%", "Minigame rewards +30%", "All minigame rewards +40%", "Minigame rewards +35%", "Minigame rewards +50% and ascension reward +10%"]
 }
 const skillBranchOrder = ["auto", "cheap", "strong", "path", "click", "mega", "mini"]
@@ -71,14 +71,23 @@ let u7Amount = 0
 let u7Cost = 10000n
 let u8Amount = 0
 let u8Cost = 25000n
+let u9Amount = 0
+let u9Cost = 50000n
+let u10Amount = 0
+let u10Cost = 100000n
+let u11Amount = 0
+let u11Cost = 250000n
+let u12Amount = 0
+let u12Cost = 500000n
 
 let autoThrowTimer
+let gameSaveDirty = false
 
 function updateFribby() {
   document.getElementById("fribbyAmount").innerText = "Fribbies: " + formatFribbies(fribbies)
   updateAscensionUI()
   updateTabVisibility()
-  saveGame()
+  gameSaveDirty = true
 }
 function hasSkill(id) { return purchasedSkills.has(id) }
 function countSkills(branch) {
@@ -91,8 +100,8 @@ function getRegularUpgradeCost(cost, upgradeIndex = -1) {
   let discount = (hasSkill("path-5") ? 5 : 0) + (hasSkill("strong-2") ? 10 : 0)
   const generalDiscounts = [[0, 8], [4, 10], [6, 12], [9, 14], [10, 16], [11, 20]]
   generalDiscounts.forEach(([index, amount]) => { if (hasSkill(`cheap-${index}`)) discount += amount })
-  const clickUpgrades = [0, 3, 5, 8]
-  const automationUpgrades = [1, 2, 4, 6, 7]
+  const clickUpgrades = [0, 3, 5, 8, 9, 11]
+  const automationUpgrades = [1, 2, 4, 6, 7, 10, 12]
   if (clickUpgrades.includes(upgradeIndex)) {
     discount += (hasSkill("cheap-1") ? 10 : 0) + (hasSkill("cheap-8") ? 20 : 0)
   }
@@ -125,7 +134,7 @@ function getAutoThrowsPerSecond() {
     + (hasSkill("auto-11") ? 5 : 0)
 }
 function getRegularUpgradeLevelCount() {
-  return u0Amount + u1Amount + u2Amount + u3Amount + u4Amount + u5Amount + u6Amount + u7Amount + u8Amount
+  return u0Amount + u1Amount + u2Amount + u3Amount + u4Amount + u5Amount + u6Amount + u7Amount + u8Amount + u9Amount + u10Amount + u11Amount + u12Amount
 }
 function getClickBonusPercent() {
   return 100
@@ -165,15 +174,19 @@ function getAutoBonusPercent() {
 }
 function refreshUpgradeLabels() {
   const labels = [
-    `Extra Hand (${u0Amount}, +1 Fribby per click) - ${formatFribbies(getRegularUpgradeCost(u0Cost, 0))} Fribbies`,
-    `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${formatFribbies(getRegularUpgradeCost(u1Cost, 1))} Fribbies`,
-    `Intern (${u2Amount}, +1 Fribby per auto throw) - ${formatFribbies(getRegularUpgradeCost(u2Cost, 2))} Fribbies`,
-    `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u3Cost, 3))} Fribbies`,
-    `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u4Cost, 4))} Fribbies`,
-    `Power Throw (${u5Amount}, +10 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u5Cost, 5))} Fribbies`,
-    `Fribby Factory (${u6Amount}, +10 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u6Cost, 6))} Fribbies`,
-    `Turbo Thrower (${u7Amount}, +5 auto throws/sec) - ${formatFribbies(getRegularUpgradeCost(u7Cost, 7))} Fribbies`,
-    `Mega Cannon (${u8Amount}, +${hasSkill("strong-6") ? 150 : 100} Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u8Cost, 8))} Fribbies`
+    `Lucky Mitts (${u0Amount}, +1 Fribby per click) - ${formatFribbies(getRegularUpgradeCost(u0Cost, 0))} Fribbies`,
+    `Tick-Tock Sprite (${u1Amount}, +1 auto throw/sec) - ${formatFribbies(getRegularUpgradeCost(u1Cost, 1))} Fribbies`,
+    `Supply Skipper (${u2Amount}, +1 Fribby per auto throw) - ${formatFribbies(getRegularUpgradeCost(u2Cost, 2))} Fribbies`,
+    `Comet Sling (${u3Amount}, +5 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u3Cost, 3))} Fribbies`,
+    `Night Foreman (${u4Amount}, +5 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u4Cost, 4))} Fribbies`,
+    `Nova Knuckles (${u5Amount}, +10 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u5Cost, 5))} Fribbies`,
+    `Giggleworks (${u6Amount}, +10 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u6Cost, 6))} Fribbies`,
+    `Blink Relay (${u7Amount}, +5 auto throws/sec) - ${formatFribbies(getRegularUpgradeCost(u7Cost, 7))} Fribbies`,
+    `Meteor Maul (${u8Amount}, +${hasSkill("strong-6") ? 150 : 100} Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u8Cost, 8))} Fribbies`,
+    `Aurora Dynamo (${u9Amount}, +500 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u9Cost, 9))} Fribbies`,
+    `Nebula Press (${u10Amount}, +25 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u10Cost, 10))} Fribbies`,
+    `Quasar Catapult (${u11Amount}, +2,500 Fribbies per click) - ${formatFribbies(getRegularUpgradeCost(u11Cost, 11))} Fribbies`,
+    `Galaxy Conveyor (${u12Amount}, +100 Fribbies per auto throw) - ${formatFribbies(getRegularUpgradeCost(u12Cost, 12))} Fribbies`
   ]
   labels.forEach((label, index) => {
     const button = document.getElementById(`upgrade${index}`)
@@ -181,7 +194,7 @@ function refreshUpgradeLabels() {
   })
 }
 function getFribbiesPerClick() {
-  let base = u0Amount + 1 + u3Amount * 5 + u5Amount * 10 + u8Amount * (hasSkill("strong-6") ? 150 : 100)
+  let base = u0Amount + 1 + u3Amount * 5 + u5Amount * 10 + u8Amount * (hasSkill("strong-6") ? 150 : 100) + u9Amount * 500 + u11Amount * 2500
   if (hasSkill("path-0")) base += 10
   if (hasSkill("path-8")) base += 0
   if (hasSkill("click-3")) base += 50
@@ -191,7 +204,7 @@ function getFribbiesPerClick() {
   return Math.max(1, Math.floor(base * getClickBonusPercent() / 100))
 }
 function getAutoThrowReward() {
-  let base = 1 + u2Amount + u4Amount * 5 + u6Amount * 10
+  let base = 1 + u2Amount + u4Amount * 5 + u6Amount * 10 + u10Amount * 25 + u12Amount * 100
   if (hasSkill("path-10")) base += 10
   if (hasSkill("auto-5")) base += u1Amount * 10
   if (hasSkill("auto-7")) base += u7Amount * 2
@@ -206,6 +219,7 @@ function throwFribby() {
   let gain = getFribbiesPerClick()
   const criticalChance = (hasSkill("click-0") ? 10 : 0) + (hasSkill("click-2") ? 5 : 0) + (hasSkill("click-7") ? 10 : 0)
   if (criticalChance > 0 && Math.random() * 100 < criticalChance) gain *= hasSkill("click-5") ? 5 : 3
+  triggerFribbyClickEffect(gain)
   fribbies += BigInt(gain)
   updateFribby()
 }
@@ -214,12 +228,13 @@ function buy0() {
   const purchaseCost = getRegularUpgradeCost(u0Cost, 0)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
+   triggerRegularUpgradeEffect(0)
    fribbies -= purchaseCost
    u0Amount += 1
    u0Cost = u0Cost * 3n
    updateFribby()
    document.getElementById("upgrade0").innerText =
-        "Extra Hand - (" + u0Amount + ", +1 Fribby per click) - " + formatFribbies(u0Cost) + " Fribbies"
+        "Lucky Mitts - (" + u0Amount + ", +1 Fribby per click) - " + formatFribbies(u0Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -230,12 +245,13 @@ function buy1() {
   const purchaseCost = getRegularUpgradeCost(u1Cost, 1)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
+   triggerRegularUpgradeEffect(1)
    fribbies -= purchaseCost
       u1Amount += 1
    u1Cost = (u1Cost * 3n + 1n) / 2n
    updateFribby()
    document.getElementById("upgrade1").innerText =
-        "Auto Thrower (" + u1Amount + ", +1 auto throw/sec) - " + formatFribbies(u1Cost) + " Fribbies"
+        "Tick-Tock Sprite (" + u1Amount + ", +1 auto throw/sec) - " + formatFribbies(u1Cost) + " Fribbies"
    refreshUpgradeLabels()
    updateAutoThrowInterval()
   } else {
@@ -247,12 +263,13 @@ function buy2() {
   const purchaseCost = getRegularUpgradeCost(u2Cost, 2)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
+   triggerRegularUpgradeEffect(2)
    fribbies -= purchaseCost
       u2Amount += 1
    u2Cost = (u2Cost * 3n + 1n) / 2n
    updateFribby()
    document.getElementById("upgrade2").innerText =
-        "Intern (" + u2Amount + ", +1 Fribby per auto throw) - " + formatFribbies(u2Cost) + " Fribbies"
+        "Supply Skipper (" + u2Amount + ", +1 Fribby per auto throw) - " + formatFribbies(u2Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -263,12 +280,13 @@ function buy3() {
   const purchaseCost = getRegularUpgradeCost(u3Cost, 3)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
+   triggerRegularUpgradeEffect(3)
     fribbies -= purchaseCost
     u3Amount += 1
     u3Cost = (u3Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade3").innerText =
-      "Fribby Cannon (" + u3Amount + ", +5 Fribbies per click) - " + formatFribbies(u3Cost) + " Fribbies"
+      "Comet Sling (" + u3Amount + ", +5 Fribbies per click) - " + formatFribbies(u3Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -279,12 +297,13 @@ function buy4() {
   const purchaseCost = getRegularUpgradeCost(u4Cost, 4)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
+   triggerRegularUpgradeEffect(4)
     fribbies -= purchaseCost
     u4Amount += 1
     u4Cost = (u4Cost * 3n + 1n) / 2n
     updateFribby()
        document.getElementById("upgrade4").innerText =
-        "Supervisor (" + u4Amount + ", +5 Fribbies per auto throw) - " + formatFribbies(u4Cost) + " Fribbies"
+        "Night Foreman (" + u4Amount + ", +5 Fribbies per auto throw) - " + formatFribbies(u4Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -295,12 +314,13 @@ function buy5() {
   const purchaseCost = getRegularUpgradeCost(u5Cost, 5)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
+   triggerRegularUpgradeEffect(5)
     fribbies -= purchaseCost
     u5Amount += 1
     u5Cost = (u5Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade5").innerText =
-      "Power Throw (" + u5Amount + ", +10 Fribbies per click) - " + formatFribbies(u5Cost) + " Fribbies"
+      "Nova Knuckles (" + u5Amount + ", +10 Fribbies per click) - " + formatFribbies(u5Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -311,12 +331,13 @@ function buy6() {
   const purchaseCost = getRegularUpgradeCost(u6Cost, 6)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
+   triggerRegularUpgradeEffect(6)
     fribbies -= purchaseCost
     u6Amount += 1
     u6Cost = (u6Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade6").innerText =
-      "Fribby Factory (" + u6Amount + ", +10 Fribbies per auto throw) - " + formatFribbies(u6Cost) + " Fribbies"
+      "Giggleworks (" + u6Amount + ", +10 Fribbies per auto throw) - " + formatFribbies(u6Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
@@ -327,12 +348,13 @@ function buy7() {
   const purchaseCost = getRegularUpgradeCost(u7Cost, 7)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
+   triggerRegularUpgradeEffect(7)
     fribbies -= purchaseCost
     u7Amount += 1
     u7Cost = (u7Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade7").innerText =
-      "Turbo Thrower (" + u7Amount + ", +5 auto throws/sec) - " + formatFribbies(u7Cost) + " Fribbies"
+      "Blink Relay (" + u7Amount + ", +5 auto throws/sec) - " + formatFribbies(u7Cost) + " Fribbies"
    refreshUpgradeLabels()
     updateAutoThrowInterval()
   } else {
@@ -344,16 +366,39 @@ function buy8() {
   const purchaseCost = getRegularUpgradeCost(u8Cost, 8)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
+   triggerRegularUpgradeEffect(8)
     fribbies -= purchaseCost
     u8Amount += 1
     u8Cost = (u8Cost * 3n + 1n) / 2n
     updateFribby()
     document.getElementById("upgrade8").innerText =
-      "Mega Cannon (" + u8Amount + ", +100 Fribbies per click) - " + formatFribbies(u8Cost) + " Fribbies"
+      "Meteor Maul (" + u8Amount + ", +100 Fribbies per click) - " + formatFribbies(u8Cost) + " Fribbies"
    refreshUpgradeLabels()
   } else {
     playSoundEffect("upgradeFailSound")
   }
+}
+
+function buy9() { purchaseNewRegularUpgrade(9) }
+function buy10() { purchaseNewRegularUpgrade(10) }
+function buy11() { purchaseNewRegularUpgrade(11) }
+function buy12() { purchaseNewRegularUpgrade(12) }
+function purchaseNewRegularUpgrade(index) {
+  const costs = [u9Cost, u10Cost, u11Cost, u12Cost]
+  const purchaseCost = getRegularUpgradeCost(costs[index - 9], index)
+  if (fribbies < purchaseCost) {
+    playSoundEffect("upgradeFailSound")
+    return
+  }
+  playSoundEffect("upgradeSound")
+  triggerRegularUpgradeEffect(index)
+  fribbies -= purchaseCost
+  if (index === 9) { u9Amount++; u9Cost = (u9Cost * 3n + 1n) / 2n }
+  else if (index === 10) { u10Amount++; u10Cost = (u10Cost * 3n + 1n) / 2n }
+  else if (index === 11) { u11Amount++; u11Cost = (u11Cost * 3n + 1n) / 2n }
+  else if (index === 12) { u12Amount++; u12Cost = (u12Cost * 3n + 1n) / 2n }
+  updateFribby()
+  refreshUpgradeLabels()
 }
 
 function updateAutoThrowInterval() {
@@ -436,13 +481,12 @@ function ascend() {
   fribbies = hasSkill("path-1") ? 1000n : 0n
   u0Amount=0; u0Cost=10n; u1Amount=0; u1Cost=50n; u2Amount=0; u2Cost=200n
   u3Amount=0; u3Cost=500n; u4Amount=0; u4Cost=1000n; u5Amount=0; u5Cost=2500n
-  u6Amount=0; u6Cost=5000n; u7Amount=0; u7Cost=10000n; u8Amount=0; u8Cost=25000n
+  u6Amount=0; u6Cost=5000n; u7Amount=0; u7Cost=10000n; u8Amount=0; u8Cost=25000n; u9Amount=0; u9Cost=50000n; u10Amount=0; u10Cost=100000n; u11Amount=0; u11Cost=250000n; u12Amount=0; u12Cost=500000n
   clearInterval(autoThrowTimer)
   unlockedMinigames = 0; minigameUnlockCost = 2500n
   document.querySelectorAll("[data-minigame]").forEach(button => button.hidden = true)
   document.getElementById("minigamesArea").hidden = true
-  const defaults = ["Extra Hand (0, +1 Fribby per click) - 10 Fribbies", "Auto Thrower (0, +1 auto throw/sec) - 50 Fribbies", "Intern (0, +1 Fribby per auto throw) - 200 Fribbies", "Fribby Cannon (0, +5 Fribbies per click) - 500 Fribbies", "Supervisor (0, +5 Fribbies per auto throw) - 1000 Fribbies", "Power Throw (0, +10 Fribbies per click) - 2500 Fribbies", "Fribby Factory (0, +10 Fribbies per auto throw) - 5000 Fribbies", "Turbo Thrower (0, +5 auto throws/sec) - 10000 Fribbies", "Mega Cannon (0, +100 per click) - 25000 Fribbies"]
-  defaults.forEach((label, i) => document.getElementById(`upgrade${i}`).textContent = label)
+  refreshUpgradeLabels()
   updateMinigameUnlockButton()
   const status = document.getElementById("ascensionStatus")
   if (status) status.textContent = `Ascended! You gained ${formatFribbies(reward)} Mega Fribbies.`
@@ -498,6 +542,32 @@ function triggerAscensionEffect(reward, ascensions) {
   const removeDelay = reduced ? 950 : 2900
   window.setTimeout(() => overlay.classList.add("is-exiting"), fadeDelay)
   window.setTimeout(() => overlay.remove(), removeDelay)
+}
+function triggerFribbyClickEffect(gain) {
+  const button = document.getElementById("fribbyButton")
+  if (!button) return
+  button.classList.remove("fribby-click-burst")
+  void button.offsetWidth
+  button.classList.add("fribby-click-burst")
+  makeSkillParticles(button, 12, [190, 205, 270, 45, 52])
+  const gainPop = makeElement("span", "fribby-gain-pop", `+${formatFribbies(gain ?? getFribbiesPerClick())}`)
+  gainPop.setAttribute("aria-hidden", "true")
+  button.appendChild(gainPop)
+  window.setTimeout(() => gainPop.remove(), motionIsReduced() ? 250 : 900)
+  window.setTimeout(() => button.classList.remove("fribby-click-burst"), motionIsReduced() ? 250 : 600)
+}
+function triggerRegularUpgradeEffect(index) {
+  const button = document.getElementById(`upgrade${index}`)
+  if (!button) return
+  button.classList.remove("regular-upgrade-purchase")
+  void button.offsetWidth
+  button.classList.add("regular-upgrade-purchase")
+  makeSkillParticles(button, 14, [145, 165, 190, 270, 45, 52])
+  const toast = makeElement("span", "regular-upgrade-toast", "UPGRADE ACQUIRED")
+  toast.setAttribute("aria-hidden", "true")
+  button.appendChild(toast)
+  window.setTimeout(() => toast.remove(), motionIsReduced() ? 250 : 1100)
+  window.setTimeout(() => button.classList.remove("regular-upgrade-purchase"), motionIsReduced() ? 250 : 900)
 }
 function makeSkillParticles(button, count, hues = [145, 165, 270, 45]) {
   const existing = button.querySelector(".skill-fx-particles")
@@ -1616,7 +1686,7 @@ function getGameCookie(name) {
 
 function getGameSaveData() {
   return {
-    version: 4,
+    version: 6,
     fribbies: fribbies.toString(),
     upgrades: [
       { amount: u0Amount, cost: u0Cost.toString() },
@@ -1627,7 +1697,11 @@ function getGameSaveData() {
       { amount: u5Amount, cost: u5Cost.toString() },
       { amount: u6Amount, cost: u6Cost.toString() },
       { amount: u7Amount, cost: u7Cost.toString() },
-      { amount: u8Amount, cost: u8Cost.toString() }
+      { amount: u8Amount, cost: u8Cost.toString() },
+      { amount: u9Amount, cost: u9Cost.toString() },
+      { amount: u10Amount, cost: u10Cost.toString() },
+      { amount: u11Amount, cost: u11Cost.toString() },
+      { amount: u12Amount, cost: u12Cost.toString() }
     ],
     unlockedMinigames,
     minigameUnlockCost: minigameUnlockCost.toString(),
@@ -1642,23 +1716,29 @@ function saveGame(showMessage = false) {
   if (showMessage) playSoundEffect("saveSound")
   const serialized = JSON.stringify(getGameSaveData())
   let saved = false
+  let localStorageAvailable = false
 
-  // localStorage works more reliably than cookies when the game is opened
-  // directly as a file:// URL. Keep the cookie as a fallback for hosted copies.
+  // localStorage is the primary save. Avoid writing and verifying a cookie on
+  // every save; repeated serialization/storage writes during idle play can
+  // create needless memory and CPU pressure.
   try {
     localStorage.setItem(GAME_SAVE_COOKIE, serialized)
-    saved = localStorage.getItem(GAME_SAVE_COOKIE) === serialized
+    saved = true
+    localStorageAvailable = true
   } catch (error) {
-    // Storage may be disabled by browser privacy settings; try cookies below.
+    // Use the cookie only if localStorage is unavailable.
   }
 
-  try {
-    setGameCookie(GAME_SAVE_COOKIE, serialized, GAME_SAVE_DAYS)
-    if (getGameCookie(GAME_SAVE_COOKIE) !== null) saved = true
-  } catch (error) {
-    // The game can still use localStorage if cookies are unavailable.
+  if (!localStorageAvailable) {
+    try {
+      setGameCookie(GAME_SAVE_COOKIE, serialized, GAME_SAVE_DAYS)
+      saved = getGameCookie(GAME_SAVE_COOKIE) !== null
+    } catch (error) {
+      // Both browser storage options may be blocked.
+    }
   }
 
+  if (saved) gameSaveDirty = false
   const status = document.getElementById("saveStatus")
   if (status && showMessage) {
     status.textContent = saved
@@ -1695,6 +1775,13 @@ function migrateSaveData(data) {
     data.purchasedSkills = previousSkills.filter(id => id !== "path-12")
     data.version = 4
   }
+  if (Array.isArray(data.upgrades)) {
+    if (!data.upgrades[9]) data.upgrades[9] = { amount: 0, cost: "50000" }
+    if (!data.upgrades[10]) data.upgrades[10] = { amount: 0, cost: "100000" }
+    if (!data.upgrades[11]) data.upgrades[11] = { amount: 0, cost: "250000" }
+    if (!data.upgrades[12]) data.upgrades[12] = { amount: 0, cost: "500000" }
+  }
+  data.version = Math.max(6, Number(data.version) || 1)
   return data
 }
 
@@ -1723,7 +1810,7 @@ function loadGame(showMessage = true) {
 
   try {
     const data = migrateSaveData(JSON.parse(rawSave))
-    if (![1, 2, 3, 4].includes(data.version) || !Array.isArray(data.upgrades) || data.upgrades.length !== 9) {
+    if (![1, 2, 3, 4, 5, 6].includes(data.version) || !Array.isArray(data.upgrades) || data.upgrades.length < 9 || data.upgrades.length > 13) {
       throw new Error("Unsupported save format")
     }
 
@@ -1737,6 +1824,10 @@ function loadGame(showMessage = true) {
     u6Amount = Math.max(0, Number(data.upgrades[6].amount) || 0); u6Cost = toBigIntAmount(data.upgrades[6].cost, 5000n) || 5000n
     u7Amount = Math.max(0, Number(data.upgrades[7].amount) || 0); u7Cost = toBigIntAmount(data.upgrades[7].cost, 10000n) || 10000n
     u8Amount = Math.max(0, Number(data.upgrades[8].amount) || 0); u8Cost = toBigIntAmount(data.upgrades[8].cost, 25000n) || 25000n
+    u9Amount = Math.max(0, Number(data.upgrades[9]?.amount) || 0); u9Cost = toBigIntAmount(data.upgrades[9]?.cost, 50000n) || 50000n
+    u10Amount = Math.max(0, Number(data.upgrades[10]?.amount) || 0); u10Cost = toBigIntAmount(data.upgrades[10]?.cost, 100000n) || 100000n
+    u11Amount = Math.max(0, Number(data.upgrades[11]?.amount) || 0); u11Cost = toBigIntAmount(data.upgrades[11]?.cost, 250000n) || 250000n
+    u12Amount = Math.max(0, Number(data.upgrades[12]?.amount) || 0); u12Cost = toBigIntAmount(data.upgrades[12]?.cost, 500000n) || 500000n
 
     unlockedMinigames = Math.max(0, Math.min(minigameUnlockOrder.length, Number(data.unlockedMinigames) || 0))
     minigameUnlockCost = toBigIntAmount(data.minigameUnlockCost, 2500n) < 2500n ? 2500n : toBigIntAmount(data.minigameUnlockCost, 2500n)
@@ -1747,20 +1838,6 @@ function loadGame(showMessage = true) {
 
     updateFribby()
     renderSkillTree()
-    const labels = [
-      `Extra Hand - (${u0Amount}, +1 Fribby per click) - ${formatFribbies(u0Cost)} Fribbies`,
-      `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${formatFribbies(u1Cost)} Fribbies`,
-      `Intern (${u2Amount}, +1 Fribby per auto throw) - ${formatFribbies(u2Cost)} Fribbies`,
-      `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${formatFribbies(u3Cost)} Fribbies`,
-      `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${formatFribbies(u4Cost)} Fribbies`,
-      `Power Throw (${u5Amount}, +10 Fribbies per click) - ${formatFribbies(u5Cost)} Fribbies`,
-      `Fribby Factory (${u6Amount}, +10 Fribbies per auto throw) - ${formatFribbies(u6Cost)} Fribbies`,
-      `Turbo Thrower (${u7Amount}, +5 auto throws/sec) - ${formatFribbies(u7Cost)} Fribbies`,
-      `Mega Cannon (${u8Amount}, +100 Fribbies per click) - ${formatFribbies(u8Cost)} Fribbies`
-    ]
-    labels.forEach((label, index) => {
-      document.getElementById(`upgrade${index}`).textContent = label
-    })
     refreshUpgradeLabels()
 
     document.getElementById("minigamesArea").hidden = unlockedMinigames === 0
@@ -1784,9 +1861,17 @@ document.addEventListener("DOMContentLoaded", () => {
   updateAscensionUI()
   const status = document.getElementById("saveStatus")
   if (status) status.textContent = loaded ? "Save loaded automatically." : "Autosave is ready. Progress will be stored in this browser."
-  // Keep the cookie's expiration fresh while the game is open.
-  window.setInterval(() => saveGame(false), 5000)
-  window.addEventListener("beforeunload", () => saveGame(false))
+  // Autosave only when something changed, at a modest interval. Currency can
+  // update many times per second, but that should never trigger a storage write.
+  window.setInterval(() => {
+    if (gameSaveDirty) saveGame(false)
+  }, 30000)
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden" && gameSaveDirty) saveGame(false)
+  })
+  window.addEventListener("beforeunload", () => {
+    if (gameSaveDirty) saveGame(false)
+  })
 })
 
 const SUPABASE_URL = "https://soofisuqqwszdhqxiqzw.supabase.co"
@@ -2025,7 +2110,7 @@ function populateAdminGameEditor() {
   }
   setValue("adminFribbies", fribbies)
   setValue("adminMegaFribbies", megaFribbies)
-  ;[u0Amount, u1Amount, u2Amount, u3Amount, u4Amount, u5Amount, u6Amount, u7Amount, u8Amount]
+  ;[u0Amount, u1Amount, u2Amount, u3Amount, u4Amount, u5Amount, u6Amount, u7Amount, u8Amount, u9Amount, u10Amount, u11Amount, u12Amount]
     .forEach((amount, index) => setValue(`adminUpgrade${index}`, amount))
 }
 
@@ -2034,7 +2119,7 @@ function applyAdminGameEdits() {
   const fribbyInput = document.getElementById("adminFribbies")
   const megaInput = document.getElementById("adminMegaFribbies")
   const status = document.getElementById("adminGameEditStatus")
-  const amountInputs = Array.from({ length: 9 }, (_, index) => document.getElementById(`adminUpgrade${index}`))
+  const amountInputs = Array.from({ length: 13 }, (_, index) => document.getElementById(`adminUpgrade${index}`))
   const parseAmount = input => {
     const value = input?.value.trim() ?? ""
     return /^\d+$/.test(value) ? BigInt(value) : null
@@ -2051,7 +2136,7 @@ function applyAdminGameEdits() {
   }
   fribbies = nextFribbies
   megaFribbies = nextMegaFribbies
-  ;[u0Amount, u1Amount, u2Amount, u3Amount, u4Amount, u5Amount, u6Amount, u7Amount, u8Amount] = nextUpgrades
+  ;[u0Amount, u1Amount, u2Amount, u3Amount, u4Amount, u5Amount, u6Amount, u7Amount, u8Amount, u9Amount, u10Amount, u11Amount, u12Amount] = nextUpgrades
   updateFribby()
   refreshUpgradeLabels()
   updateAscensionUI()
@@ -2272,10 +2357,10 @@ async function importSaveFile(event) {
 
     // Validate the structure before touching the current save.
     if (
-      ![1, 2, 3, 4].includes(Number(data.version)) ||
+      ![1, 2, 3, 4, 5, 6].includes(Number(data.version)) ||
       !/^\d+$/.test(String(data.fribbies)) ||
       !Array.isArray(data.upgrades) ||
-      data.upgrades.length !== 9 ||
+      data.upgrades.length < 9 || data.upgrades.length > 13 ||
       !data.upgrades.every(item =>
         item &&
         Number.isFinite(Number(item.amount)) &&
@@ -2331,6 +2416,10 @@ function applyImportedSaveData(data) {
   u6Amount = Math.max(0, Number(data.upgrades[6].amount) || 0); u6Cost = toBigIntAmount(data.upgrades[6].cost, 5000n) || 5000n
   u7Amount = Math.max(0, Number(data.upgrades[7].amount) || 0); u7Cost = toBigIntAmount(data.upgrades[7].cost, 10000n) || 10000n
   u8Amount = Math.max(0, Number(data.upgrades[8].amount) || 0); u8Cost = toBigIntAmount(data.upgrades[8].cost, 25000n) || 25000n
+    u9Amount = Math.max(0, Number(data.upgrades[9]?.amount) || 0); u9Cost = toBigIntAmount(data.upgrades[9]?.cost, 50000n) || 50000n
+    u10Amount = Math.max(0, Number(data.upgrades[10]?.amount) || 0); u10Cost = toBigIntAmount(data.upgrades[10]?.cost, 100000n) || 100000n
+    u11Amount = Math.max(0, Number(data.upgrades[11]?.amount) || 0); u11Cost = toBigIntAmount(data.upgrades[11]?.cost, 250000n) || 250000n
+    u12Amount = Math.max(0, Number(data.upgrades[12]?.amount) || 0); u12Cost = toBigIntAmount(data.upgrades[12]?.cost, 500000n) || 500000n
   unlockedMinigames = Math.max(0, Math.min(minigameUnlockOrder.length, Number(data.unlockedMinigames) || 0))
   minigameUnlockCost = toBigIntAmount(data.minigameUnlockCost, 2500n) < 2500n ? 2500n : toBigIntAmount(data.minigameUnlockCost, 2500n)
   megaFribbies = toBigIntAmount(data.megaFribbies)
@@ -2340,20 +2429,6 @@ function applyImportedSaveData(data) {
 
   updateFribby()
   renderSkillTree()
-  const labels = [
-    `Extra Hand - (${u0Amount}, +1 Fribby per click) - ${formatFribbies(u0Cost)} Fribbies`,
-    `Auto Thrower (${u1Amount}, +1 auto throw/sec) - ${formatFribbies(u1Cost)} Fribbies`,
-    `Intern (${u2Amount}, +1 Fribby per auto throw) - ${formatFribbies(u2Cost)} Fribbies`,
-    `Fribby Cannon (${u3Amount}, +5 Fribbies per click) - ${formatFribbies(u3Cost)} Fribbies`,
-    `Supervisor (${u4Amount}, +5 Fribbies per auto throw) - ${formatFribbies(u4Cost)} Fribbies`,
-    `Power Throw (${u5Amount}, +10 Fribbies per click) - ${formatFribbies(u5Cost)} Fribbies`,
-    `Fribby Factory (${u6Amount}, +10 Fribbies per auto throw) - ${formatFribbies(u6Cost)} Fribbies`,
-    `Turbo Thrower (${u7Amount}, +5 auto throws/sec) - ${formatFribbies(u7Cost)} Fribbies`,
-    `Mega Cannon (${u8Amount}, +100 Fribbies per click) - ${formatFribbies(u8Cost)} Fribbies`
-  ]
-  labels.forEach((label, index) => {
-    document.getElementById(`upgrade${index}`).textContent = label
-  })
   refreshUpgradeLabels()
   document.getElementById("minigamesArea").hidden = unlockedMinigames === 0
   minigameUnlockOrder.forEach((game, index) => {
@@ -2540,14 +2615,13 @@ function wipeSave() {
   fribbies = 0n
   u0Amount=0; u0Cost=10n; u1Amount=0; u1Cost=50n; u2Amount=0; u2Cost=200n
   u3Amount=0; u3Cost=500n; u4Amount=0; u4Cost=1000n; u5Amount=0; u5Cost=2500n
-  u6Amount=0; u6Cost=5000n; u7Amount=0; u7Cost=10000n; u8Amount=0; u8Cost=25000n
+  u6Amount=0; u6Cost=5000n; u7Amount=0; u7Cost=10000n; u8Amount=0; u8Cost=25000n; u9Amount=0; u9Cost=50000n; u10Amount=0; u10Cost=100000n; u11Amount=0; u11Cost=250000n; u12Amount=0; u12Cost=500000n
   clearInterval(autoThrowTimer)
   unlockedMinigames = 0; minigameUnlockCost = 2500n
   megaFribbies = 0n; ascensionCount = 0; repeatableEchoes = 0; purchasedSkills = new Set()
   document.querySelectorAll("[data-minigame]").forEach(button => button.hidden = true)
   document.getElementById("minigamesArea").hidden = true
-  const defaults = ["Extra Hand (0, +1 Fribby per click) - 10 Fribbies","Auto Thrower (0, +1 auto throw/sec) - 50 Fribbies","Intern (0, +1 Fribby per auto throw) - 200 Fribbies","Fribby Cannon (0, +5 Fribbies per click) - 500 Fribbies","Supervisor (0, +5 Fribbies per auto throw) - 1000 Fribbies","Power Throw (0, +10 Fribbies per click) - 2500 Fribbies","Fribby Factory (0, +10 Fribbies per auto throw) - 5000 Fribbies","Foreman (0, +5 auto throws/sec) - 10000 Fribbies","Mega Cannon (0, +100 Fribbies per click) - 25000 Fribbies"]
-  defaults.forEach((label,i) => { const button=document.getElementById(`upgrade${i}`); if(button) button.textContent=label })
+  refreshUpgradeLabels()
   updateMinigameUnlockButton(); updateFribby(); renderSkillTree(); updateAscensionUI()
   const status = document.getElementById("saveStatus"); if(status) status.textContent = "Save wiped. A fresh game has started."
 }
@@ -2654,6 +2728,16 @@ function scanUwuText(root = document.body) {
   let node
   while ((node = walker.nextNode())) applyUwuToNode(node)
 }
+function releaseUwuText(root) {
+  if (!root) return
+  if (root.nodeType === Node.TEXT_NODE) {
+    uwuTextNodes.delete(root)
+    return
+  }
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+  let node
+  while ((node = walker.nextNode())) uwuTextNodes.delete(node)
+}
 function setUwuMode(enabled) {
   uwuModeEnabled = Boolean(enabled && uwuModeUnlocked)
   uwuApplyingText = true
@@ -2695,8 +2779,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const observer = new MutationObserver(records => {
     if (uwuApplyingText) return
     for (const record of records) {
-      if (record.type === "childList") record.addedNodes.forEach(node => scanUwuText(node))
-      else if (record.type === "characterData" && uwuModeEnabled) {
+      if (record.type === "childList") {
+        // Rebuilt panels (especially the ascension web) detach many text nodes.
+        // Drop those references immediately so repeated UI updates cannot grow
+        // the tracking Set for the lifetime of the tab.
+        record.removedNodes.forEach(node => {
+          if (!node.isConnected) releaseUwuText(node)
+        })
+        record.addedNodes.forEach(node => scanUwuText(node))
+      } else if (record.type === "characterData" && uwuModeEnabled) {
         const node = record.target
         const current = node.nodeValue
         const original = uwuOriginalText.get(node)
