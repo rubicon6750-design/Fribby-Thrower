@@ -2790,12 +2790,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function playSoundEffect(elementId) {
   if (sfxMuted) return
+  if (gassyModeEnabled) {
+    playFartSound(elementId)
+    return
+  }
   const sound = document.getElementById(elementId)
   if (!sound) return
   sound.currentTime = 0
   sound.play().catch(() => {
     // Playback may be blocked until the player interacts with the page.
   })
+}
+
+// Gassy mode synthesizes its sounds locally, so it needs no extra audio files.
+let fartAudioContext = null
+function playFartSound(elementId) {
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext
+    if (!AudioContextClass) return
+    if (!fartAudioContext) fartAudioContext = new AudioContextClass()
+    const context = fartAudioContext
+    if (context.state === "suspended") context.resume().catch(() => {})
+
+    const now = context.currentTime
+    const variation = (Array.from(elementId).reduce((sum, char) => sum + char.charCodeAt(0), 0) % 5)
+    const duration = 0.22 + variation * 0.045
+    const oscillator = context.createOscillator()
+    const gain = context.createGain()
+    const filter = context.createBiquadFilter()
+    oscillator.type = "sawtooth"
+    oscillator.frequency.setValueAtTime(95 + variation * 11, now)
+    oscillator.frequency.exponentialRampToValueAtTime(38 + variation * 4, now + duration)
+    filter.type = "lowpass"
+    filter.frequency.setValueAtTime(520 + variation * 80, now)
+    filter.frequency.exponentialRampToValueAtTime(170, now + duration)
+    gain.gain.setValueAtTime(0.0001, now)
+    gain.gain.linearRampToValueAtTime(0.22, now + 0.025)
+    // A few uneven bursts give the low wobble a silly, raspberry-like texture.
+    for (let i = 1; i <= 4; i++) {
+      const time = now + duration * i / 5
+      gain.gain.setValueAtTime(i % 2 ? 0.15 : 0.22, time)
+    }
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration + 0.04)
+    oscillator.connect(filter)
+    filter.connect(gain)
+    gain.connect(context.destination)
+    oscillator.start(now)
+    oscillator.stop(now + duration + 0.05)
+  } catch (error) {
+    // Keep the game running if Web Audio is unavailable or blocked.
+  }
 }
 
 /* Background music: loops automatically when allowed by the browser. */
@@ -3094,16 +3138,49 @@ function unlockUwuMode() {
   const button = document.getElementById("uwuToggle")
   if (button) button.title = 'Secret found! Toggle the r/l-to-w text effect here.'
 }
+
+/* Hidden Gassy Mode: type "gassy" anywhere to swap every SFX for fart noises. */
+let gassyModeUnlocked = false
+let gassyModeEnabled = false
+function setGassyMode(enabled) {
+  gassyModeEnabled = Boolean(enabled && gassyModeUnlocked)
+  const button = document.getElementById("gassyToggle")
+  if (button) {
+    button.hidden = !gassyModeUnlocked
+    button.textContent = `Fart SFX: ${gassyModeEnabled ? "On" : "Off"}`
+    button.setAttribute("aria-pressed", String(gassyModeEnabled))
+  }
+  try {
+    localStorage.setItem("fribbyGassyUnlocked", String(gassyModeUnlocked))
+    localStorage.setItem("fribbyGassyEnabled", String(gassyModeEnabled))
+  } catch (error) {}
+}
+function toggleGassyMode() { setGassyMode(!gassyModeEnabled) }
+function unlockGassyMode() {
+  if (gassyModeUnlocked) return
+  gassyModeUnlocked = true
+  setGassyMode(true)
+  const button = document.getElementById("gassyToggle")
+  if (button) button.title = "Secret found! Toggle fart sounds for all sound effects here."
+}
 document.addEventListener("keydown", event => {
   if (event.key.length !== 1) return
   window.__fribbyUwuBuffer = ((window.__fribbyUwuBuffer || "") + event.key.toLowerCase()).slice(-3)
   if (window.__fribbyUwuBuffer === "uwu") unlockUwuMode()
 })
+document.addEventListener("keydown", event => {
+  if (event.key.length !== 1) return
+  window.__fribbyGassyBuffer = ((window.__fribbyGassyBuffer || "") + event.key.toLowerCase()).slice(-5)
+  if (window.__fribbyGassyBuffer === "gassy") unlockGassyMode()
+})
 document.addEventListener("DOMContentLoaded", () => {
   try {
     uwuModeUnlocked = localStorage.getItem("fribbyUwuUnlocked") === "true"
     uwuModeEnabled = uwuModeUnlocked && localStorage.getItem("fribbyUwuEnabled") === "true"
+    gassyModeUnlocked = localStorage.getItem("fribbyGassyUnlocked") === "true"
+    gassyModeEnabled = gassyModeUnlocked && localStorage.getItem("fribbyGassyEnabled") === "true"
   } catch (error) {}
+  setGassyMode(gassyModeEnabled)
   scanUwuText()
   setUwuMode(uwuModeEnabled)
   const observer = new MutationObserver(records => {
