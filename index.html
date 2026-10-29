@@ -100,13 +100,14 @@
         <div class="engineering-toolbar">
           <button type="button" onclick="addEngineeringBlock()">＋ Add block</button>
           <button type="button" onclick="runEngineeringScript()">▶ Run script</button>
+          <button type="button" onclick="stopEngineeringScript()">■ Stop script</button>
           <button type="button" onclick="saveEngineeringScript()">💾 Save script</button>
           <button type="button" id="engineeringLoopButton" aria-pressed="false" onclick="toggleEngineeringLoop()">↻ Start loop</button>
           <button type="button" onclick="clearEngineeringBlocks()">Clear blocks</button>
         </div>
         <div id="engineeringBlocks" class="engineering-blocks" aria-label="Script workspace"></div>
         <p id="engineeringStatus" class="engineering-status" aria-live="polite">Add an action block to start building your program.</p>
-        <p class="engineering-hint">Blocks run from top to bottom. A loop repeats the whole program once per second. Saving a script with an Ascend block requires confirmation; once saved, loops may ascend automatically. Each run is capped to keep the game responsive.</p>
+        <p class="engineering-hint">Logic blocks include timed waits, repeat-next-blocks, repeat-until, If condition, When condition, loop-back, and stop. Conditions can compare Fribbies, Mega Fribbies (MF), ascensions, total ascension upgrades, a specific ascension upgrade, Eternal Echo level, or any regular upgrade amount. Use at-least, greater-than, equal, less-than, not-equal, increased-by, or decreased-by comparisons. Compare against a fixed target or a value from script start, outer-loop start, the first check, the enclosing repeat start, or the previous check. For example, repeat a Buy Upgrade #3 block until Regular Upgrade #3 is at least 10 above its value at the start of that Repeat-until block. Repeat and conditional blocks count the rows immediately below them. Loop-back can run indefinitely, so use Stop script when needed. Scripts stop safely after 250 executed blocks or 2 minutes per run. A saved Ascend block can ascend automatically in loops after you confirm the save.</p>
       </section>
 
     <section id="leaderboardArea" class="leaderboard-area">

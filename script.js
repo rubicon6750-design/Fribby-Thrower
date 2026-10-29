@@ -3267,18 +3267,228 @@ document.addEventListener("DOMContentLoaded", () => {
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", addMinigameClickPowerNotes, { once: true }); else addMinigameClickPowerNotes();
 
 
-// Engineering Workbench: visual blocks map only to known game actions.
+// Engineering Workbench: safe visual blocks with bounded control flow and state-aware conditions.
 const ENGINEERING_STORAGE_KEY = "fribbyEngineeringBlocks"
 const ENGINEERING_ASCENSION_CONSENT_KEY = "fribbyEngineeringAscensionConsent"
+const ENGINEERING_ACTIONS = new Set(["throw", "buy", "ascend", "wait", "repeat", "repeatUntil", "loopBack", "ifCondition", "whenCondition", "stop"])
+const ENGINEERING_UPGRADE_NAMES = [
+  "Extra Hand", "Auto Thrower", "Intern", "Fribby Cannon", "Supervisor",
+  "Power Glove", "Turbo Thrower", "Turbo Cannon", "Mega Cannon",
+  "Power Cannon", "Factory Intern", "Turbo Cannon", "Mega Factory",
+  "Super Cannon", "Turbo Factory"
+]
+const ENGINEERING_CONDITION_METRICS = [
+  ["fribbies", "Fribbies"],
+  ["megaFribbies", "Mega Fribbies (MF)"],
+  ["ascensions", "Total ascensions"],
+  ["ascensionUpgradeCount", "Ascension upgrades owned (total)"],
+  ["ascensionUpgrade", "A specific ascension upgrade"],
+  ["regularUpgrade", "A regular upgrade's amount"],
+  ["repeatableEchoes", "Eternal Echo level"]
+]
+const ENGINEERING_CONDITION_OPERATORS = [
+  ["gte", "is at least (≥)"], ["gt", "is greater than (>)"], ["eq", "equals (=)"],
+  ["lte", "is at most (≤)"], ["lt", "is less than (<)"], ["neq", "does not equal (≠)"],
+  ["increasedBy", "increased by at least"], ["decreasedBy", "decreased by at least"]
+]
+const ENGINEERING_CONDITION_REFERENCES = [
+  ["target", "a fixed target"],
+  ["scriptStart", "the value at script start (+ offset)"],
+  ["outerLoopStart", "the value before the outer loop (+ offset)"],
+  ["conditionStart", "the value when this block first checked (+ offset)"],
+  ["repeatStart", "the value when the enclosing repeat began (+ offset)"],
+  ["previousCheck", "the previous checked value (+ offset)"]
+]
 let engineeringBlockCounter = 0
 let engineeringRunning = false
 let engineeringLoading = false
 let engineeringLoopTimer = null
 let engineeringLoopEnabled = false
+let engineeringStopRequested = false
+let engineeringLoopStartSnapshot = null
+let engineeringLoopPreviousValues = new Map()
+let engineeringLoopConditionBaselines = new Map()
 
-function addEngineeringBlock(action = "throw", upgrade = "0") {
+function engineeringBoundNumber(value, fallback, min, max) {
+  const number = Number(value)
+  return Number.isFinite(number) ? Math.min(max, Math.max(min, Math.floor(number))) : fallback
+}
+
+function engineeringAmountString(value) {
+  const digits = String(value ?? "0").replace(/\D/g, "").slice(0, 100)
+  return digits || "0"
+}
+
+function engineeringHasAtLeast(amount) {
+  try { return fribbies >= BigInt(engineeringAmountString(amount)) } catch (error) { return false }
+}
+
+function engineeringSafeBigInt(value) {
+  try { return BigInt(value ?? 0) } catch (error) { return 0n }
+}
+
+function engineeringSkillIds() {
+  const ids = []
+  for (const [branch, names] of Object.entries(skillNames)) {
+    const max = branch === "path" ? Math.min(12, names.length) : names.length
+    for (let index = 0; index < max; index++) ids.push(`${branch}-${index}`)
+  }
+  ids.push("path-12")
+  return [...new Set(ids)]
+}
+
+function engineeringCaptureSnapshot() {
+  const regularAmounts = [u0Amount, u1Amount, u2Amount, u3Amount, u4Amount, u5Amount, u6Amount, u7Amount, u8Amount, u9Amount, u10Amount, u11Amount, u12Amount, u13Amount, u14Amount]
+    .map(value => engineeringSafeBigInt(Math.max(0, Math.floor(Number(value) || 0))))
+  const ascensionUpgrades = Object.create(null)
+  for (const id of engineeringSkillIds()) {
+    ascensionUpgrades[id] = id === "path-12"
+      ? engineeringSafeBigInt(repeatableEchoes)
+      : (purchasedSkills.has(id) ? 1n : 0n)
+  }
+  const regularSkillCount = Math.max(0, purchasedSkills.size - (purchasedSkills.has("path-12") ? 1 : 0))
+  return {
+    fribbies: engineeringSafeBigInt(fribbies),
+    megaFribbies: engineeringSafeBigInt(megaFribbies),
+    ascensions: engineeringSafeBigInt(Math.max(0, Math.floor(Number(ascensionCount) || 0))),
+    ascensionUpgradeCount: BigInt(regularSkillCount) + engineeringSafeBigInt(repeatableEchoes),
+    regularAmounts,
+    ascensionUpgrades,
+    repeatableEchoes: engineeringSafeBigInt(repeatableEchoes)
+  }
+}
+
+function engineeringMetricValue(snapshot, block) {
+  if (!snapshot) return null
+  switch (block.metric || "fribbies") {
+    case "fribbies": return snapshot.fribbies
+    case "megaFribbies": return snapshot.megaFribbies
+    case "ascensions": return snapshot.ascensions
+    case "ascensionUpgradeCount": return snapshot.ascensionUpgradeCount
+    case "ascensionUpgrade": return snapshot.ascensionUpgrades[String(block.skillId || "path-0")] ?? 0n
+    case "regularUpgrade": {
+      const index = engineeringBoundNumber(block.metricUpgrade, 0, 0, 14)
+      return snapshot.regularAmounts[index] ?? 0n
+    }
+    case "repeatableEchoes": return snapshot.repeatableEchoes
+    default: return snapshot.fribbies
+  }
+}
+
+function engineeringConditionKey(index, block) {
+  return `${index}:${block.metric || "fribbies"}:${block.metricUpgrade || 0}:${block.skillId || "path-0"}`
+}
+
+function engineeringCompare(current, target, operator) {
+  if (current == null || target == null) return false
+  switch (operator || "gte") {
+    case "gt": return current > target
+    case "eq": return current === target
+    case "lte": return current <= target
+    case "lt": return current < target
+    case "neq": return current !== target
+    default: return current >= target
+  }
+}
+
+function engineeringConditionSatisfied(block, context, blockIndex, repeatSnapshot = null) {
+  // Older saved scripts did not have a metric selector; preserve their Fribby target behavior.
+  if (!block.metric) return engineeringHasAtLeast(block.amount)
+
+  const currentSnapshot = engineeringCaptureSnapshot()
+  const currentValue = engineeringMetricValue(currentSnapshot, block)
+  if (currentValue == null) return false
+  const amount = engineeringSafeBigInt(engineeringAmountString(block.amount))
+  const reference = block.reference || "target"
+  const operator = block.operator || "gte"
+  const key = engineeringConditionKey(blockIndex, block)
+  let baselineValue = null
+
+  if (reference === "target") {
+    if (operator === "increasedBy") return currentValue >= amount
+    if (operator === "decreasedBy") return currentValue <= amount
+    return engineeringCompare(currentValue, amount, operator)
+  }
+
+  let baselineSnapshot = null
+  if (reference === "scriptStart") baselineSnapshot = context.scriptStartSnapshot
+  else if (reference === "outerLoopStart") baselineSnapshot = engineeringLoopStartSnapshot || context.scriptStartSnapshot
+  else if (reference === "conditionStart") {
+    if (!context.conditionBaselines.has(key)) context.conditionBaselines.set(key, currentSnapshot)
+    baselineSnapshot = context.conditionBaselines.get(key)
+  } else if (reference === "repeatStart") {
+    baselineSnapshot = repeatSnapshot || context.repeatStack.slice().reverse().find(frame => frame.snapshot)?.snapshot || context.scriptStartSnapshot
+  } else if (reference === "previousCheck") {
+    baselineValue = context.previousValues.has(key) ? context.previousValues.get(key) : null
+    // Store the new sample after reading the prior one, whether or not the condition passes.
+    context.previousValues.set(key, currentValue)
+    if (baselineValue == null) return false
+  }
+
+  if (baselineSnapshot) baselineValue = engineeringMetricValue(baselineSnapshot, block)
+  if (baselineValue == null) return false
+
+  if (operator === "increasedBy") return currentValue >= baselineValue + amount
+  if (operator === "decreasedBy") return currentValue <= baselineValue - amount
+  return engineeringCompare(currentValue, baselineValue + amount, operator)
+}
+
+function createEngineeringSelect(className, ariaLabel, options, value) {
+  const select = document.createElement("select")
+  select.className = className
+  select.setAttribute("aria-label", ariaLabel)
+  options.forEach(([optionValue, label]) => {
+    const option = document.createElement("option")
+    option.value = optionValue
+    option.textContent = label
+    select.appendChild(option)
+  })
+  if ([...select.options].some(option => option.value === String(value))) select.value = String(value)
+  return select
+}
+
+function createEngineeringParameter(labelText, className, value, options = {}) {
+  const label = document.createElement("label")
+  label.className = "engineering-param-label"
+  label.textContent = labelText
+  const input = document.createElement("input")
+  input.className = `engineering-param ${className}`
+  input.setAttribute("aria-label", labelText)
+  if (options.text) {
+    input.type = "text"
+    input.inputMode = "numeric"
+    input.maxLength = 100
+  } else {
+    input.type = "number"
+    input.min = String(options.min ?? 1)
+    input.max = String(options.max ?? 100)
+    input.step = String(options.step ?? 1)
+  }
+  input.value = String(value)
+  label.appendChild(input)
+  const onChange = () => {
+    if (options.text) input.value = engineeringAmountString(input.value)
+    else if (options.integer === false) {
+      const number = Number(input.value)
+      const normalized = Number.isFinite(number) ? Math.min(options.max ?? 100, Math.max(options.min ?? 0, number)) : (options.defaultValue ?? 1)
+      input.value = String(Math.round(normalized * 10) / 10)
+    } else input.value = String(engineeringBoundNumber(input.value, options.defaultValue ?? 1, options.min ?? 1, options.max ?? 100))
+    saveEngineeringBlocks()
+  }
+  input.addEventListener("change", onChange)
+  input.addEventListener("input", () => {
+    if (options.text) input.value = input.value.replace(/\D/g, "").slice(0, 100)
+    saveEngineeringBlocks()
+  })
+  return { label, input }
+}
+
+function addEngineeringBlock(action = "throw", upgrade = "0", config = {}) {
   const workspace = document.getElementById("engineeringBlocks")
-  if (!workspace) return
+  if (!workspace || workspace.children.length >= 50) {
+    setEngineeringStatus("The workspace holds up to 50 blocks. Remove a block before adding another.")
+    return
+  }
   const row = document.createElement("div")
   row.className = "engineering-block"
   row.dataset.blockId = String(++engineeringBlockCounter)
@@ -3289,39 +3499,53 @@ function addEngineeringBlock(action = "throw", upgrade = "0") {
 
   const actionLabel = document.createElement("label")
   actionLabel.textContent = "Do"
-  const actionSelect = document.createElement("select")
-  actionSelect.className = "engineering-action"
-  actionSelect.setAttribute("aria-label", "Block action")
-  ;[
+  const actionSelect = createEngineeringSelect("engineering-action", "Block action", [
     ["throw", "Click the throw button"],
-    ["buy", "Buy an upgrade"],
-    ["ascend", "Ascend"]
-  ].forEach(([value, label]) => {
-    const option = document.createElement("option")
-    option.value = value
-    option.textContent = label
-    actionSelect.appendChild(option)
-  })
-  actionSelect.value = action
+    ["buy", "Buy a regular upgrade"],
+    ["ascend", "Ascend"],
+    ["wait", "Wait x seconds"],
+    ["repeat", "Repeat next x blocks"],
+    ["repeatUntil", "Repeat until condition is true"],
+    ["loopBack", "Loop back x blocks (until stopped)"],
+    ["ifCondition", "If condition is true"],
+    ["whenCondition", "When condition is true (wait)"],
+    ["stop", "Stop script"]
+  ], action)
 
   const upgradeLabel = document.createElement("label")
-  upgradeLabel.textContent = "Upgrade"
-  const upgradeSelect = document.createElement("select")
-  upgradeSelect.className = "engineering-upgrade"
-  upgradeSelect.setAttribute("aria-label", "Upgrade to buy")
-  const upgradeNames = [
-    "Extra Hand", "Auto Thrower", "Intern", "Fribby Cannon", "Supervisor",
-    "Power Glove", "Turbo Thrower", "Turbo Cannon", "Fribby Factory",
-    "Mega Cannon", "Factory Intern", "Turbo Cannon+", "Mega Factory",
-    "Super Cannon", "Turbo Factory"
-  ]
-  upgradeNames.forEach((name, index) => {
-    const option = document.createElement("option")
-    option.value = String(index)
-    option.textContent = name
-    upgradeSelect.appendChild(option)
-  })
-  upgradeSelect.value = upgrade
+  upgradeLabel.textContent = "Upgrade to buy"
+  const upgradeSelect = createEngineeringSelect("engineering-upgrade", "Regular upgrade", ENGINEERING_UPGRADE_NAMES.map((name, index) => [String(index), `#${index} — ${name}`]), upgrade)
+
+  const metricLabel = document.createElement("label")
+  metricLabel.textContent = "Compare"
+  const metricSelect = createEngineeringSelect("engineering-metric", "Metric to compare", ENGINEERING_CONDITION_METRICS, config.metric || "fribbies")
+  const operatorLabel = document.createElement("label")
+  operatorLabel.textContent = "Condition"
+  const operatorSelect = createEngineeringSelect("engineering-operator", "Condition operator", ENGINEERING_CONDITION_OPERATORS, config.operator || "gte")
+  const referenceLabel = document.createElement("label")
+  referenceLabel.textContent = "Against"
+  const referenceSelect = createEngineeringSelect("engineering-reference", "Comparison reference", ENGINEERING_CONDITION_REFERENCES, config.reference || "target")
+
+  const skillOptions = []
+  for (const [branch, names] of Object.entries(skillNames)) {
+    const max = branch === "path" ? Math.min(12, names.length) : names.length
+    for (let index = 0; index < max; index++) {
+      const id = `${branch}-${index}`
+      skillOptions.push([id, `${names[index]} (${branch}, ${index})`])
+    }
+  }
+  skillOptions.push(["path-12", "Eternal Echo: Transcendence (path, 12)"])
+  const skillLabel = document.createElement("label")
+  skillLabel.textContent = "Ascension upgrade"
+  const skillSelect = createEngineeringSelect("engineering-skill", "Ascension upgrade to compare", skillOptions, config.skillId || "path-0")
+
+  const params = {
+    seconds: createEngineeringParameter("Seconds", "engineering-seconds", config.seconds ?? 1, { min: 0.1, max: 60, step: 0.1, defaultValue: 1, integer: false }),
+    blockCount: createEngineeringParameter("Next blocks", "engineering-block-count", config.blockCount ?? 1, { min: 1, max: 50, defaultValue: 1 }),
+    repeatCount: createEngineeringParameter("Times", "engineering-repeat-count", config.repeatCount ?? 2, { min: 1, max: 100, defaultValue: 2 }),
+    back: createEngineeringParameter("Blocks back", "engineering-back", config.back ?? 1, { min: 1, max: 50, defaultValue: 1 }),
+    amount: createEngineeringParameter("Target / change", "engineering-amount", config.amount ?? "1000000", { text: true })
+  }
 
   const remove = document.createElement("button")
   remove.type = "button"
@@ -3333,15 +3557,50 @@ function addEngineeringBlock(action = "throw", upgrade = "0") {
     renumberEngineeringBlocks()
     saveEngineeringBlocks()
   })
-  actionSelect.addEventListener("change", () => {
-    upgradeLabel.hidden = upgradeSelect.hidden = actionSelect.value !== "buy"
-    saveEngineeringBlocks()
-  })
-  upgradeSelect.addEventListener("change", saveEngineeringBlocks)
 
-  row.append(number, actionLabel, actionSelect, upgradeLabel, upgradeSelect, remove)
+  const conditionActions = new Set(["ifCondition", "whenCondition", "repeatUntil"])
+  const refreshControls = () => {
+    const selected = actionSelect.value
+    const isCondition = conditionActions.has(selected)
+    const metric = metricSelect.value
+    upgradeLabel.hidden = !(selected === "buy" || (isCondition && metric === "regularUpgrade"))
+    upgradeLabel.textContent = selected === "buy" ? "Upgrade to buy" : "Regular upgrade"
+    upgradeSelect.hidden = !(selected === "buy" || (isCondition && metric === "regularUpgrade"))
+    metricLabel.hidden = operatorLabel.hidden = referenceLabel.hidden = !isCondition
+    metricSelect.hidden = operatorSelect.hidden = referenceSelect.hidden = !isCondition
+    skillLabel.hidden = skillSelect.hidden = !(isCondition && metric === "ascensionUpgrade")
+    Object.values(params).forEach(param => param.label.hidden = true)
+    if (selected === "wait") params.seconds.label.hidden = false
+    if (selected === "repeat") {
+      params.blockCount.label.hidden = false
+      params.repeatCount.label.hidden = false
+    }
+    if (selected === "repeatUntil" || selected === "ifCondition") {
+      params.blockCount.label.hidden = false
+      params.amount.label.hidden = false
+    }
+    if (selected === "whenCondition") params.amount.label.hidden = false
+    if (isCondition && params.amount.label.hidden) params.amount.label.hidden = false
+    if (selected === "loopBack") params.back.label.hidden = false
+    const isRelative = referenceSelect.value !== "target"
+    operatorSelect.options[6].disabled = !isRelative
+    operatorSelect.options[7].disabled = !isRelative
+    if (!isRelative && ["increasedBy", "decreasedBy"].includes(operatorSelect.value)) operatorSelect.value = "gte"
+  }
+
+  actionSelect.addEventListener("change", () => { refreshControls(); saveEngineeringBlocks() })
+  upgradeSelect.addEventListener("change", saveEngineeringBlocks)
+  ;[metricSelect, operatorSelect, referenceSelect, skillSelect].forEach(select => {
+    select.addEventListener("change", () => { refreshControls(); saveEngineeringBlocks() })
+  })
+
+  row.append(number, actionLabel, actionSelect, upgradeLabel, upgradeSelect,
+    metricLabel, metricSelect, operatorLabel, operatorSelect,
+    referenceLabel, referenceSelect, skillLabel, skillSelect)
+  Object.values(params).forEach(param => row.appendChild(param.label))
+  row.appendChild(remove)
   workspace.appendChild(row)
-  upgradeLabel.hidden = upgradeSelect.hidden = actionSelect.value !== "buy"
+  refreshControls()
   renumberEngineeringBlocks()
   saveEngineeringBlocks()
 }
@@ -3354,10 +3613,29 @@ function renumberEngineeringBlocks() {
 }
 
 function getEngineeringProgram() {
-  return [...document.querySelectorAll("#engineeringBlocks .engineering-block")].map(row => ({
-    action: row.querySelector(".engineering-action")?.value || "throw",
-    upgrade: row.querySelector(".engineering-upgrade")?.value || "0"
-  }))
+  return [...document.querySelectorAll("#engineeringBlocks .engineering-block")].map(row => {
+    const action = row.querySelector(".engineering-action")?.value || "throw"
+    const value = selector => row.querySelector(selector)?.value
+    const upgrade = row.querySelector(".engineering-upgrade")?.value || "0"
+    const block = { action }
+    if (action === "buy") block.upgrade = /^\d+$/.test(String(upgrade)) && Number(upgrade) <= 14 ? String(upgrade) : "0"
+    if (action === "wait") block.seconds = Math.min(60, Math.max(0.1, Number(value(".engineering-seconds")) || 1))
+    if (["repeat", "repeatUntil", "ifCondition"].includes(action)) {
+      block.blockCount = engineeringBoundNumber(value(".engineering-block-count"), 1, 1, 50)
+    }
+    if (action === "repeat") block.repeatCount = engineeringBoundNumber(value(".engineering-repeat-count"), 2, 1, 100)
+    if (action === "loopBack") block.back = engineeringBoundNumber(value(".engineering-back"), 1, 1, 50)
+    if (["repeatUntil", "ifCondition", "whenCondition"].includes(action)) {
+      block.metric = ENGINEERING_CONDITION_METRICS.some(([metric]) => metric === value(".engineering-metric")) ? value(".engineering-metric") : "fribbies"
+      block.operator = ENGINEERING_CONDITION_OPERATORS.some(([operator]) => operator === value(".engineering-operator")) ? value(".engineering-operator") : "gte"
+      block.reference = ENGINEERING_CONDITION_REFERENCES.some(([reference]) => reference === value(".engineering-reference")) ? value(".engineering-reference") : "target"
+      block.amount = engineeringAmountString(value(".engineering-amount"))
+      block.metricUpgrade = engineeringBoundNumber(value(".engineering-upgrade"), 0, 0, 14)
+      const selectedSkill = value(".engineering-skill")
+      block.skillId = engineeringSkillIds().includes(selectedSkill) ? selectedSkill : "path-0"
+    }
+    return block
+  })
 }
 
 function hasEngineeringAscensionBlock(program = getEngineeringProgram()) {
@@ -3398,7 +3676,7 @@ function saveEngineeringScript() {
     return
   }
   const hasAscension = hasEngineeringAscensionBlock(program)
-  if (hasAscension && !confirm("This script contains an Ascend block. Saving it confirms that you understand it can reset your regular progress. If you run it in a loop, ascension blocks will ascend automatically without another prompt each time. Save this script?")) {
+  if (hasAscension && !confirm("This script contains an Ascend block. Saving it confirms that you understand it can reset your regular progress. Logic blocks may repeat ascension automatically. Save this script?")) {
     setEngineeringStatus("Script not saved. Your current blocks are still in the workspace.")
     return
   }
@@ -3415,17 +3693,30 @@ function saveEngineeringScript() {
 
 function loadEngineeringBlocks() {
   let program = null
-  try {
-    program = JSON.parse(localStorage.getItem(ENGINEERING_STORAGE_KEY) || "null")
-  } catch (error) {}
+  try { program = JSON.parse(localStorage.getItem(ENGINEERING_STORAGE_KEY) || "null") } catch (error) {}
   const workspace = document.getElementById("engineeringBlocks")
   if (!workspace || workspace.children.length) return
   engineeringLoading = true
   if (Array.isArray(program) && program.length) {
-    program.slice(0, 30).forEach(block => {
-      const action = ["throw", "buy", "ascend"].includes(block.action) ? block.action : "throw"
+    program.slice(0, 50).forEach(savedBlock => {
+      if (!savedBlock || typeof savedBlock !== "object") return
+      const block = { ...savedBlock }
+      let action = block.action
+      // Upgrade old saved conditions to the new metric/operator/reference system.
+      if (action === "ifFribbies") {
+        action = "ifCondition"
+        block.metric = "fribbies"
+        block.operator = "gte"
+        block.reference = "target"
+      } else if (action === "waitUntil") {
+        action = "whenCondition"
+        block.metric = "fribbies"
+        block.operator = "gte"
+        block.reference = "target"
+      }
+      if (!ENGINEERING_ACTIONS.has(action)) action = "throw"
       const upgrade = /^\d+$/.test(String(block.upgrade)) && Number(block.upgrade) <= 14 ? String(block.upgrade) : "0"
-      addEngineeringBlock(action, upgrade)
+      addEngineeringBlock(action, upgrade, block)
     })
   } else {
     addEngineeringBlock("throw")
@@ -3435,6 +3726,9 @@ function loadEngineeringBlocks() {
   if (!Array.isArray(program) || !program.length) saveEngineeringBlocks()
   else if (hasEngineeringAscensionBlock() && !isEngineeringAscensionProgramAuthorized()) {
     setEngineeringStatus("This saved script contains an Ascend block. Click Save script and confirm before running it in a loop.")
+  } else if (!hasEngineeringAscensionBlock()) {
+    // Persist migrated legacy conditions in the new compatible format.
+    saveEngineeringBlocks()
   }
 }
 
@@ -3443,7 +3737,7 @@ function clearEngineeringBlocks() {
   const workspace = document.getElementById("engineeringBlocks")
   if (workspace) workspace.replaceChildren()
   saveEngineeringBlocks()
-  setEngineeringStatus("Workspace cleared. Add a block to build a new script.")
+  setEngineeringStatus("Workspace cleared. Add a block to build a new program.")
 }
 
 function setEngineeringStatus(message) {
@@ -3453,6 +3747,15 @@ function setEngineeringStatus(message) {
 
 function waitForEngineeringStep() {
   return new Promise(resolve => window.setTimeout(resolve, 140))
+}
+
+async function waitForEngineeringDuration(milliseconds) {
+  let remaining = milliseconds
+  while (remaining > 0 && !engineeringStopRequested) {
+    const interval = Math.min(remaining, 100)
+    await new Promise(resolve => window.setTimeout(resolve, interval))
+    remaining -= interval
+  }
 }
 
 async function runEngineeringScript(fromLoop = false) {
@@ -3471,31 +3774,133 @@ async function runEngineeringScript(fromLoop = false) {
     setEngineeringStatus("Save this script and confirm its Ascend block before running it in a loop.")
     return
   }
+
   engineeringRunning = true
+  engineeringStopRequested = false
   let completed = 0
-  const maxActions = Math.min(program.length, 100)
+  let programCounter = 0
+  let steps = 0
+  let stopReason = ""
+  const maxSteps = 250
+  const repeatStack = []
+  const maxRuntime = Date.now() + 120000
+  const context = {
+    scriptStartSnapshot: engineeringCaptureSnapshot(),
+    conditionBaselines: fromLoop ? engineeringLoopConditionBaselines : new Map(),
+    previousValues: fromLoop ? engineeringLoopPreviousValues : new Map(),
+    repeatStack
+  }
+
+  const frameAtEnd = async () => {
+    while (repeatStack.length && programCounter >= repeatStack[repeatStack.length - 1].end) {
+      const frame = repeatStack[repeatStack.length - 1]
+      if (frame.untilCondition) {
+        if (engineeringConditionSatisfied(frame.untilCondition, context, frame.blockIndex, frame.snapshot)) {
+          repeatStack.pop()
+          programCounter = frame.after
+        } else {
+          programCounter = frame.start
+        }
+      } else {
+        frame.remaining--
+        if (frame.remaining > 0) programCounter = frame.start
+        else {
+          repeatStack.pop()
+          programCounter = frame.after
+        }
+      }
+      if (engineeringStopRequested) break
+    }
+  }
+
   try {
-    for (let index = 0; index < maxActions; index++) {
-      const block = program[index]
-      setEngineeringStatus(`Running block ${index + 1} of ${maxActions}…`)
+    while (!engineeringStopRequested) {
+      await frameAtEnd()
+      if (programCounter >= program.length || engineeringStopRequested) break
+      if (steps >= maxSteps || Date.now() >= maxRuntime) {
+        stopReason = "Safety limit reached (250 executed blocks or 2 minutes). Stop the script or simplify its loop to continue."
+        if (fromLoop) stopEngineeringLoop()
+        break
+      }
+      const currentIndex = programCounter
+      const block = program[currentIndex]
+      steps++
+      completed++
+      setEngineeringStatus(`Running block ${currentIndex + 1} of ${program.length}…`)
+
       if (block.action === "throw") {
-        // Use the same game action as pressing the main throw button.
         throwFribby()
+        programCounter++
       } else if (block.action === "buy") {
         const buyAction = window[`buy${Number(block.upgrade)}`]
         if (typeof buyAction === "function") buyAction()
+        programCounter++
       } else if (block.action === "ascend") {
         if (fribbies >= ASCENSION_THRESHOLD) ascend(loopAscensionAuthorized)
         else setEngineeringStatus("Ascend block skipped: you need at least 1,000,000 Fribbies.")
+        programCounter++
+      } else if (block.action === "wait") {
+        await waitForEngineeringDuration(Math.min(60, Math.max(0.1, Number(block.seconds) || 1)) * 1000)
+        programCounter++
+      } else if (block.action === "repeat" || block.action === "repeatUntil") {
+        const span = Math.min(program.length - currentIndex - 1, Math.max(0, Number(block.blockCount) || 1))
+        const initialConditionMet = block.action === "repeatUntil" && engineeringConditionSatisfied(block, context, currentIndex, engineeringCaptureSnapshot())
+        if (span <= 0 || initialConditionMet) {
+          programCounter += span + 1
+        } else {
+          repeatStack.push({
+            blockIndex: currentIndex,
+            start: currentIndex + 1,
+            end: currentIndex + 1 + span,
+            after: currentIndex + 1 + span,
+            remaining: block.action === "repeat" ? Math.min(100, Math.max(1, Number(block.repeatCount) || 1)) : null,
+            untilCondition: block.action === "repeatUntil" ? block : null,
+            snapshot: engineeringCaptureSnapshot()
+          })
+          programCounter++
+        }
+      } else if (block.action === "loopBack") {
+        const back = Math.min(program.length, Math.max(1, Number(block.back) || 1))
+        programCounter = Math.max(0, currentIndex - back)
+      } else if (block.action === "ifCondition") {
+        if (engineeringConditionSatisfied(block, context, currentIndex)) programCounter++
+        else {
+          const span = Math.min(program.length - currentIndex - 1, Math.max(0, Number(block.blockCount) || 1))
+          programCounter = currentIndex + 1 + span
+        }
+      } else if (block.action === "whenCondition") {
+        const deadline = maxRuntime
+        let conditionMet = engineeringConditionSatisfied(block, context, currentIndex)
+        while (!conditionMet && !engineeringStopRequested && Date.now() < deadline) {
+          await new Promise(resolve => window.setTimeout(resolve, 100))
+          if (engineeringStopRequested || Date.now() >= deadline) break
+          conditionMet = engineeringConditionSatisfied(block, context, currentIndex)
+        }
+        if (!conditionMet && !engineeringStopRequested) {
+          stopReason = "When-condition reached the 2-minute safety limit before the condition became true."
+          engineeringStopRequested = true
+          if (fromLoop) stopEngineeringLoop()
+        }
+        programCounter++
+      } else if (block.action === "stop") {
+        engineeringStopRequested = true
+        stopReason = "Stopped by a Stop script block."
+        if (fromLoop) stopEngineeringLoop()
+      } else {
+        programCounter++
       }
-      completed++
-      if (index < maxActions - 1) await waitForEngineeringStep()
+
+      if (programCounter < program.length && !engineeringStopRequested) await waitForEngineeringStep()
     }
-    if (completed && !(fromLoop && !engineeringLoopEnabled)) {
+
+    if (stopReason) setEngineeringStatus(stopReason)
+    else if (engineeringStopRequested) setEngineeringStatus("Script stopped.")
+    else if (completed && !(fromLoop && !engineeringLoopEnabled)) {
       setEngineeringStatus(`Program finished: ran ${completed} block${completed === 1 ? "" : "s"}.`)
     }
   } finally {
     engineeringRunning = false
+    engineeringStopRequested = false
   }
 }
 
@@ -3509,25 +3914,39 @@ function toggleEngineeringLoop() {
     setEngineeringStatus("Save this script and confirm its Ascend block before running it in a loop.")
     return
   }
+  engineeringLoopStartSnapshot = engineeringCaptureSnapshot()
+  engineeringLoopPreviousValues = new Map()
+  engineeringLoopConditionBaselines = new Map()
   engineeringLoopEnabled = true
+  engineeringStopRequested = false
   const button = document.getElementById("engineeringLoopButton")
   if (button) {
     button.textContent = "■ Stop loop"
     button.setAttribute("aria-pressed", "true")
   }
   setEngineeringStatus(hasEngineeringAscensionBlock(program)
-    ? "Loop running. Ascend blocks are enabled and may reset regular progress automatically."
-    : "Loop running. The program repeats once per second.")
+    ? "Loop running. Ascend and state-aware logic blocks are enabled and may reset regular progress automatically."
+    : "Loop running. Conditions can compare currencies and upgrades to fixed targets or earlier values.")
   runEngineeringScript(true)
   engineeringLoopTimer = window.setInterval(() => {
     if (!engineeringRunning && engineeringLoopEnabled) runEngineeringScript(true)
   }, 1000)
 }
 
+function stopEngineeringScript() {
+  engineeringStopRequested = true
+  if (engineeringLoopEnabled) stopEngineeringLoop()
+  else setEngineeringStatus("Stopping script…")
+}
+
 function stopEngineeringLoop() {
   engineeringLoopEnabled = false
   if (engineeringLoopTimer !== null) window.clearInterval(engineeringLoopTimer)
   engineeringLoopTimer = null
+  engineeringStopRequested = true
+  engineeringLoopStartSnapshot = null
+  engineeringLoopPreviousValues = new Map()
+  engineeringLoopConditionBaselines = new Map()
   const button = document.getElementById("engineeringLoopButton")
   if (button) {
     button.textContent = "↻ Start loop"
