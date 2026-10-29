@@ -15,7 +15,8 @@ const skillBranches = [
   { id: "mega", name: "Mega Fribbies", description: "Get more from each ascension and previous runs.", count: 12 },
   { id: "mini", name: "Minigame Lore", description: "Improve minigame rewards and make challenges pay off.", count: 12 },
   { id: "arcade", name: "Arcade Expansion", description: "Improve arcade prizes, streaks, and challenge rewards.", count: 12 },
-  { id: "collection", name: "Minigame Collection", description: "Unlock new challenges and build a bigger arcade, one discovery at a time.", count: 12 }
+  { id: "collection", name: "Minigame Collection", description: "Unlock new challenges and build a bigger arcade, one discovery at a time.", count: 12 },
+  { id: "engineering", name: "Engineering", description: "Build Scratch-like block scripts to throw, buy upgrades, and ascend.", count: 12 }
 ]
 const skillNames = {
   path: ["First Spark", "Pocketed Pouch", "Lucky Compass", "Branching Fate", "Runner's Rhythm", "Discount Glyph", "Minigame Lore", "Starbound Route", "Astral Focus", "Frugal Passage", "Ancient Knowledge", "Ascendant Heart", "Eternal Echo: Transcendence"],
@@ -26,7 +27,8 @@ const skillNames = {
   auto: ["Clockwork Wrist", "Oiled Bearings", "Double Pendulum", "Overtime Circuit", "Self-Feeding Line", "Turbo Thrower", "Unattended Shift", "Assembly Swarm", "Chrono Engine", "Infinite Conveyor", "Feedback Reactor", "Singularity Engine", "Eternal Echo: Singularity Engine"],
   mini: ["Practice Round", "Prize Pouch", "Pattern Sense", "Lucky Streak", "Sweep Expert", "Bonus Round", "Arcade Scholar", "Risk Assessment", "Master Player", "Grand Champion", "Hidden Cabinet", "Perfect Run", "Eternal Echo: Perfect Run"],
   arcade: ["Cabinet Key", "Fresh Cartridge", "Bonus Stage", "Prize Circuit", "Secret Mode", "Combo Token", "Arcade Passport", "High-Score Halo", "Double Feature", "Golden Cabinet", "Endless Festival", "Arcade Mythos", "Eternal Echo: Arcade Mythos"],
-  collection: ["Number Scout", "Prize Practice", "Odd-One Spotter", "Sharp Eyes", "Memory Keeper", "Steady Hands", "Odds Caller", "Risk Reader", "Target Trainer", "Fast Fingers", "Word Scrambler", "Grand Arcade", "Eternal Echo: Grand Arcade"]
+  collection: ["Number Scout", "Prize Practice", "Odd-One Spotter", "Sharp Eyes", "Memory Keeper", "Steady Hands", "Odds Caller", "Risk Reader", "Target Trainer", "Fast Fingers", "Word Scrambler", "Grand Arcade", "Eternal Echo: Grand Arcade"],
+  engineering: ["Block Basics", "Throw Loop", "Upgrade Routine", "Smart Shopper", "Repeat Until Rich", "Ascension Protocol", "Branch Logic", "Cost Scanner", "Click Circuit", "Idle Engineer", "Macro Workshop", "Autonomous Fribby", "Eternal Echo: Infinite Program"]
 }
 const skillEffects = {
   path: [
@@ -45,10 +47,11 @@ const skillEffects = {
   auto: ["+5 automatic throws per second", "Automatic payout +25%", "Each Auto Thrower adds an extra +1 throw/sec, up to +20", "Each Auto Thrower adds +5% automatic payout, up to +50%", "Automatic payout +15%", "Each Auto Thrower adds +10 Fribbies per automatic throw", "Every 5 automatic throws/sec adds +10% payout, up to +100%", "Each Turbo Thrower adds +2 Fribbies to automatic payout", "+25% automatic payout; every 5 Turbo Throwers adds +1 base Fribby", "Automatic payout +40%, +5 base payout, and +5 throws per second", "Each Fribby Factory adds +10% automatic payout, up to +100%", "Automatic payout +50%, +10 base payout, and +5 throws per second", "Automatic throws are 50% faster and pay 25% more."],
   mini: ["Minigame rewards +10%", "Minigame unlock prices -10%", "+5% minigame rewards per unlocked game", "Minigame rewards +15%", "Minigame rewards +25%", "Minigame rewards +20%", "Ascension reward +2% per unlocked minigame", "Minigame rewards +25%", "Minigame rewards +30%", "All minigame rewards +40%", "Minigame rewards +35%", "Minigame rewards +50% and ascension reward +10%", "All minigame rewards are increased by 50%."],
   arcade: ["Rapid Toss reward +25%", "Odd Orbit reward +25%", "Minigame rewards +15%", "Rapid Toss rewards +25%", "Minigame unlock costs -15%", "Odd Orbit rewards +25%", "Minigame rewards +20% per two games unlocked", "All minigames grant +10% rewards", "Rapid Toss time +3 seconds", "Odd Orbit pays out double on a perfect streak", "Minigame rewards +35%", "All minigame rewards +50%", "Arcade-specific bonuses are doubled."],
-  collection: ["Unlock Quick Count", "All minigame rewards +10%", "Unlock Odd One Out", "Minigame rewards +15%", "Unlock Sum Sprint", "Minigame rewards +20%", "Unlock Color Mixer", "Minigame rewards +25%", "Unlock Disc Golf", "Minigame rewards +30%", "Unlock Word Shuffle", "All minigame rewards +50%", "All minigames grant 25% more Fribbies per unlocked minigame."]
+  collection: ["Unlock Quick Count", "All minigame rewards +10%", "Unlock Odd One Out", "Minigame rewards +15%", "Unlock Sum Sprint", "Minigame rewards +20%", "Unlock Color Mixer", "Minigame rewards +25%", "Unlock Disc Golf", "Minigame rewards +30%", "Unlock Word Shuffle", "All minigame rewards +50%", "All minigames grant 25% more Fribbies per unlocked minigame."],
+  engineering: ["Unlock the block editor", "Run repeated throw blocks", "Buy upgrades from scripts", "Prioritize affordable upgrades", "Repeat a routine while enabled", "Allow scripts to request ascension", "Add conditional blocks to routines", "Read upgrade affordability", "Run throw sequences quickly", "Keep scripts between sessions", "Build longer block programs", "Unlock unattended routines", "Engineering scripts run 25% faster."]
 }
-const skillBranchOrder = ["auto", "cheap", "strong", "path", "click", "mega", "mini", "arcade", "collection"]
-const skillNodeIcons = { path: "◇", strong: "▰", click: "⊕", mega: "✧", cheap: "−", auto: "↻", mini: "▦", arcade: "▤", collection: "▧" }
+const skillBranchOrder = ["auto", "cheap", "strong", "path", "click", "mega", "mini", "arcade", "collection", "engineering"]
+const skillNodeIcons = { path: "◇", strong: "▰", click: "⊕", mega: "✧", cheap: "−", auto: "↻", mini: "▦", arcade: "▤", collection: "▧", engineering: "⌘" }
 const skillNodeIconSets = {
   path: Array(13).fill("◇"),
   strong: Array(13).fill("▰"),
@@ -58,7 +61,8 @@ const skillNodeIconSets = {
   auto: Array(13).fill("↻"),
   mini: Array(13).fill("▦"),
   arcade: Array(13).fill("▤"),
-  collection: Array(13).fill("▧")
+  collection: Array(13).fill("▧"),
+  engineering: Array(13).fill("⌘")
 }
 
 let u0Amount = 0
@@ -526,7 +530,7 @@ function skillIdToIndex(id) {
   const match = /^(path|strong|click|mega|cheap|auto|mini|arcade|collection)-(\d+)$/.exec(id)
   if (!match) return -1
   const number = Number(match[2])
-  if (match[2] === "12" && ["strong", "click", "mega", "cheap", "auto", "mini", "arcade", "collection"].includes(match[1])) return 109 + ["strong", "click", "mega", "cheap", "auto", "mini", "arcade", "collection"].indexOf(match[1])
+  if (match[2] === "12" && ["strong", "click", "mega", "cheap", "auto", "mini", "arcade", "collection", "engineering"].includes(match[1])) return 109 + ["strong", "click", "mega", "cheap", "auto", "mini", "arcade", "collection", "engineering"].indexOf(match[1])
   if (match[1] === "auto" && number >= 10 && number < 12) return 81 + number - 10
   if (match[1] === "mini" && number >= 10 && number < 12) return 83 + number - 10
   if (match[1] === "arcade") return number >= 0 && number < 12 ? 85 + number : -1
@@ -544,6 +548,8 @@ function repeatableEchoCost() {
   return 10n * (3n ** BigInt(repeatableEchoes))
 }
 function updateAscensionUI() {
+  const engineeringPanel = document.getElementById("engineeringPanel")
+  if (engineeringPanel) engineeringPanel.hidden = !hasSkill("engineering-0")
   const label = document.getElementById("megaFribbyAmount")
   const button = document.getElementById("ascendButton")
   if (label) label.textContent = `Mega Fribbies: ${formatFribbies(megaFribbies)} · Ascensions: ${ascensionCount}`
@@ -573,10 +579,10 @@ function calculateAscensionReward() {
   if (hasSkill("mega-10") && fribbies >= 5000000n) reward += 15n
   return reward > 0n ? reward : 1n
 }
-function ascend() {
+function ascend(skipConfirmation = false) {
   if (fribbies < ASCENSION_THRESHOLD) return
   const reward = calculateAscensionReward()
-  if (!confirm(`Ascend and gain ${formatFribbies(reward)} Mega Fribbies? This resets your Fribbies, regular upgrades, and minigame unlocks.`)) return
+  if (!skipConfirmation && !confirm(`Ascend and gain ${formatFribbies(reward)} Mega Fribbies? This resets your Fribbies, regular upgrades, and minigame unlocks.`)) return
   megaFribbies += reward
   ascensionCount++
   fribbies = hasSkill("path-1") ? 1000n : 0n
@@ -731,8 +737,8 @@ function getSkillGraph() {
   if (cachedSkillGraph) return cachedSkillGraph
   const graph = []
   const cx = 1100, cy = 1100
-  const branchStep = (Math.PI * 2) / 9
-  const branchAngles = { path: -Math.PI / 2, strong: -Math.PI / 2 + branchStep, click: -Math.PI / 2 + branchStep * 2, mega: -Math.PI / 2 + branchStep * 3, mini: -Math.PI / 2 + branchStep * 4, arcade: -Math.PI / 2 + branchStep * 5, collection: -Math.PI / 2 + branchStep * 6, auto: -Math.PI / 2 + branchStep * 7, cheap: -Math.PI / 2 + branchStep * 8 }
+  const branchStep = (Math.PI * 2) / 10
+  const branchAngles = { path: -Math.PI / 2, strong: -Math.PI / 2 + branchStep, click: -Math.PI / 2 + branchStep * 2, mega: -Math.PI / 2 + branchStep * 3, mini: -Math.PI / 2 + branchStep * 4, arcade: -Math.PI / 2 + branchStep * 5, collection: -Math.PI / 2 + branchStep * 6, auto: -Math.PI / 2 + branchStep * 7, cheap: -Math.PI / 2 + branchStep * 8, engineering: -Math.PI / 2 + branchStep * 9 }
   const point = (branch, index) => {
     if (branch === "path" && index === 12) {
       return { x: Math.round(cx + Math.cos(branchAngles.path) * 990), y: Math.round(cy + Math.sin(branchAngles.path) * 990) }
@@ -749,7 +755,7 @@ function getSkillGraph() {
     const p = point("path", i)
     graph.push({ id: `path-${i}`, branch: "path", index: i, ...p, parents: [i === 0 ? "core" : `path-${i - 1}`] })
   }
-  for (const branch of ["strong", "click", "mega", "cheap", "auto", "mini", "arcade", "collection"]) {
+  for (const branch of ["strong", "click", "mega", "cheap", "auto", "mini", "arcade", "collection", "engineering"]) {
     const count = skillNames[branch].length
     for (let i = 0; i < count; i++) {
       const p = point(branch, i)
@@ -761,7 +767,7 @@ function getSkillGraph() {
     }
   }
   const echo = point("path", 12)
-  graph.push({ id: "path-12", branch: "path", index: 12, ...echo, parents: ["path-11", "strong-11", "click-11", "mega-11", "cheap-11", "auto-11", "mini-11", "arcade-11", "collection-11"] })
+  graph.push({ id: "path-12", branch: "path", index: 12, ...echo, parents: ["path-11", "strong-11", "click-11", "mega-11", "cheap-11", "auto-11", "mini-11", "arcade-11", "collection-11", "engineering-11"] })
   cachedSkillGraph = graph
   cachedSkillGraphById = new Map(graph.map(node => [node.id, node]))
   return graph
@@ -873,7 +879,7 @@ function renderSkillTree() {
   })
   // Join each rung to the matching rung in the two neighboring outer branches.
   // Drawing each pair once avoids doubled lines where the web closes into a ring.
-  const webBranches = ["path", "strong", "click", "mega", "mini", "arcade", "collection", "auto", "cheap"]
+  const webBranches = ["path", "strong", "click", "mega", "mini", "arcade", "collection", "auto", "cheap", "engineering"]
   const addWebEdge = (from, to) => {
     if (!from || !to) return
     const start = edgeAnchor(from, to)
@@ -933,7 +939,7 @@ function skillCost(id) {
   if (isRepeatableSkillId(id)) return repeatableEchoCost()
   const [branch, rawIndex] = id.split("-")
   const index = Number(rawIndex)
-  const base = { path: 2n, strong: 3n, click: 3n, mega: 2n, cheap: 4n, auto: 4n, mini: 4n, arcade: 4n, collection: 4n }[branch] || 3n
+  const base = { path: 2n, strong: 3n, click: 3n, mega: 2n, cheap: 4n, auto: 4n, mini: 4n, arcade: 4n, collection: 4n, engineering: 4n }[branch] || 3n
   // Each node multiplies the next cost; later subdivisions quickly become long-term goals.
   return base ** BigInt(index)
 }
@@ -3259,3 +3265,274 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", addMinigameClickPowerNotes, { once: true }); else addMinigameClickPowerNotes();
+
+
+// Engineering Workbench: visual blocks map only to known game actions.
+const ENGINEERING_STORAGE_KEY = "fribbyEngineeringBlocks"
+const ENGINEERING_ASCENSION_CONSENT_KEY = "fribbyEngineeringAscensionConsent"
+let engineeringBlockCounter = 0
+let engineeringRunning = false
+let engineeringLoading = false
+let engineeringLoopTimer = null
+let engineeringLoopEnabled = false
+
+function addEngineeringBlock(action = "throw", upgrade = "0") {
+  const workspace = document.getElementById("engineeringBlocks")
+  if (!workspace) return
+  const row = document.createElement("div")
+  row.className = "engineering-block"
+  row.dataset.blockId = String(++engineeringBlockCounter)
+
+  const number = document.createElement("span")
+  number.className = "engineering-block-number"
+  number.textContent = `BLOCK ${workspace.children.length + 1}`
+
+  const actionLabel = document.createElement("label")
+  actionLabel.textContent = "Do"
+  const actionSelect = document.createElement("select")
+  actionSelect.className = "engineering-action"
+  actionSelect.setAttribute("aria-label", "Block action")
+  ;[
+    ["throw", "Click the throw button"],
+    ["buy", "Buy an upgrade"],
+    ["ascend", "Ascend"]
+  ].forEach(([value, label]) => {
+    const option = document.createElement("option")
+    option.value = value
+    option.textContent = label
+    actionSelect.appendChild(option)
+  })
+  actionSelect.value = action
+
+  const upgradeLabel = document.createElement("label")
+  upgradeLabel.textContent = "Upgrade"
+  const upgradeSelect = document.createElement("select")
+  upgradeSelect.className = "engineering-upgrade"
+  upgradeSelect.setAttribute("aria-label", "Upgrade to buy")
+  const upgradeNames = [
+    "Extra Hand", "Auto Thrower", "Intern", "Fribby Cannon", "Supervisor",
+    "Power Glove", "Turbo Thrower", "Turbo Cannon", "Fribby Factory",
+    "Mega Cannon", "Factory Intern", "Turbo Cannon+", "Mega Factory",
+    "Super Cannon", "Turbo Factory"
+  ]
+  upgradeNames.forEach((name, index) => {
+    const option = document.createElement("option")
+    option.value = String(index)
+    option.textContent = name
+    upgradeSelect.appendChild(option)
+  })
+  upgradeSelect.value = upgrade
+
+  const remove = document.createElement("button")
+  remove.type = "button"
+  remove.className = "engineering-remove"
+  remove.textContent = "×"
+  remove.setAttribute("aria-label", "Remove block")
+  remove.addEventListener("click", () => {
+    row.remove()
+    renumberEngineeringBlocks()
+    saveEngineeringBlocks()
+  })
+  actionSelect.addEventListener("change", () => {
+    upgradeLabel.hidden = upgradeSelect.hidden = actionSelect.value !== "buy"
+    saveEngineeringBlocks()
+  })
+  upgradeSelect.addEventListener("change", saveEngineeringBlocks)
+
+  row.append(number, actionLabel, actionSelect, upgradeLabel, upgradeSelect, remove)
+  workspace.appendChild(row)
+  upgradeLabel.hidden = upgradeSelect.hidden = actionSelect.value !== "buy"
+  renumberEngineeringBlocks()
+  saveEngineeringBlocks()
+}
+
+function renumberEngineeringBlocks() {
+  document.querySelectorAll("#engineeringBlocks .engineering-block").forEach((row, index) => {
+    const number = row.querySelector(".engineering-block-number")
+    if (number) number.textContent = `BLOCK ${index + 1}`
+  })
+}
+
+function getEngineeringProgram() {
+  return [...document.querySelectorAll("#engineeringBlocks .engineering-block")].map(row => ({
+    action: row.querySelector(".engineering-action")?.value || "throw",
+    upgrade: row.querySelector(".engineering-upgrade")?.value || "0"
+  }))
+}
+
+function hasEngineeringAscensionBlock(program = getEngineeringProgram()) {
+  return program.some(block => block.action === "ascend")
+}
+
+function isEngineeringAscensionProgramAuthorized(program = getEngineeringProgram()) {
+  if (!hasEngineeringAscensionBlock(program)) return true
+  const serialized = JSON.stringify(program)
+  try {
+    return localStorage.getItem(ENGINEERING_STORAGE_KEY) === serialized &&
+      localStorage.getItem(ENGINEERING_ASCENSION_CONSENT_KEY) === serialized
+  } catch (error) {
+    return false
+  }
+}
+
+function saveEngineeringBlocks() {
+  if (engineeringLoading) return
+  const program = getEngineeringProgram()
+  // Ascension scripts require an explicit save and a clear confirmation.
+  if (hasEngineeringAscensionBlock(program)) {
+    setEngineeringStatus("This script contains an Ascend block. Click Save script and confirm to save it for looping.")
+    return
+  }
+  try {
+    localStorage.setItem(ENGINEERING_STORAGE_KEY, JSON.stringify(program))
+    localStorage.removeItem(ENGINEERING_ASCENSION_CONSENT_KEY)
+  } catch (error) {
+    // The current program remains usable for this session if storage is blocked.
+  }
+}
+
+function saveEngineeringScript() {
+  const program = getEngineeringProgram()
+  if (!program.length) {
+    setEngineeringStatus("Add at least one block before saving the script.")
+    return
+  }
+  const hasAscension = hasEngineeringAscensionBlock(program)
+  if (hasAscension && !confirm("This script contains an Ascend block. Saving it confirms that you understand it can reset your regular progress. If you run it in a loop, ascension blocks will ascend automatically without another prompt each time. Save this script?")) {
+    setEngineeringStatus("Script not saved. Your current blocks are still in the workspace.")
+    return
+  }
+  const serialized = JSON.stringify(program)
+  try {
+    localStorage.setItem(ENGINEERING_STORAGE_KEY, serialized)
+    if (hasAscension) localStorage.setItem(ENGINEERING_ASCENSION_CONSENT_KEY, serialized)
+    else localStorage.removeItem(ENGINEERING_ASCENSION_CONSENT_KEY)
+    setEngineeringStatus(hasAscension ? "Script saved. Ascension is authorized for this exact program when it runs in a loop." : "Script saved.")
+  } catch (error) {
+    setEngineeringStatus("The script is ready, but browser storage is unavailable so it could not be saved.")
+  }
+}
+
+function loadEngineeringBlocks() {
+  let program = null
+  try {
+    program = JSON.parse(localStorage.getItem(ENGINEERING_STORAGE_KEY) || "null")
+  } catch (error) {}
+  const workspace = document.getElementById("engineeringBlocks")
+  if (!workspace || workspace.children.length) return
+  engineeringLoading = true
+  if (Array.isArray(program) && program.length) {
+    program.slice(0, 30).forEach(block => {
+      const action = ["throw", "buy", "ascend"].includes(block.action) ? block.action : "throw"
+      const upgrade = /^\d+$/.test(String(block.upgrade)) && Number(block.upgrade) <= 14 ? String(block.upgrade) : "0"
+      addEngineeringBlock(action, upgrade)
+    })
+  } else {
+    addEngineeringBlock("throw")
+    addEngineeringBlock("buy", "0")
+  }
+  engineeringLoading = false
+  if (!Array.isArray(program) || !program.length) saveEngineeringBlocks()
+  else if (hasEngineeringAscensionBlock() && !isEngineeringAscensionProgramAuthorized()) {
+    setEngineeringStatus("This saved script contains an Ascend block. Click Save script and confirm before running it in a loop.")
+  }
+}
+
+function clearEngineeringBlocks() {
+  stopEngineeringLoop()
+  const workspace = document.getElementById("engineeringBlocks")
+  if (workspace) workspace.replaceChildren()
+  saveEngineeringBlocks()
+  setEngineeringStatus("Workspace cleared. Add a block to build a new script.")
+}
+
+function setEngineeringStatus(message) {
+  const status = document.getElementById("engineeringStatus")
+  if (status) status.textContent = message
+}
+
+function waitForEngineeringStep() {
+  return new Promise(resolve => window.setTimeout(resolve, 140))
+}
+
+async function runEngineeringScript(fromLoop = false) {
+  if (!hasSkill("engineering-0")) {
+    setEngineeringStatus("Unlock Block Basics in the Engineering ascension branch first.")
+    return
+  }
+  if (engineeringRunning) return
+  const program = getEngineeringProgram()
+  if (!program.length) {
+    setEngineeringStatus("Your workspace is empty. Add a block first.")
+    return
+  }
+  const loopAscensionAuthorized = fromLoop && isEngineeringAscensionProgramAuthorized(program)
+  if (fromLoop && hasEngineeringAscensionBlock(program) && !loopAscensionAuthorized) {
+    setEngineeringStatus("Save this script and confirm its Ascend block before running it in a loop.")
+    return
+  }
+  engineeringRunning = true
+  let completed = 0
+  const maxActions = Math.min(program.length, 100)
+  try {
+    for (let index = 0; index < maxActions; index++) {
+      const block = program[index]
+      setEngineeringStatus(`Running block ${index + 1} of ${maxActions}…`)
+      if (block.action === "throw") {
+        // Use the same game action as pressing the main throw button.
+        throwFribby()
+      } else if (block.action === "buy") {
+        const buyAction = window[`buy${Number(block.upgrade)}`]
+        if (typeof buyAction === "function") buyAction()
+      } else if (block.action === "ascend") {
+        if (fribbies >= ASCENSION_THRESHOLD) ascend(loopAscensionAuthorized)
+        else setEngineeringStatus("Ascend block skipped: you need at least 1,000,000 Fribbies.")
+      }
+      completed++
+      if (index < maxActions - 1) await waitForEngineeringStep()
+    }
+    if (completed && !(fromLoop && !engineeringLoopEnabled)) {
+      setEngineeringStatus(`Program finished: ran ${completed} block${completed === 1 ? "" : "s"}.`)
+    }
+  } finally {
+    engineeringRunning = false
+  }
+}
+
+function toggleEngineeringLoop() {
+  if (engineeringLoopEnabled) {
+    stopEngineeringLoop()
+    return
+  }
+  const program = getEngineeringProgram()
+  if (hasEngineeringAscensionBlock(program) && !isEngineeringAscensionProgramAuthorized(program)) {
+    setEngineeringStatus("Save this script and confirm its Ascend block before running it in a loop.")
+    return
+  }
+  engineeringLoopEnabled = true
+  const button = document.getElementById("engineeringLoopButton")
+  if (button) {
+    button.textContent = "■ Stop loop"
+    button.setAttribute("aria-pressed", "true")
+  }
+  setEngineeringStatus(hasEngineeringAscensionBlock(program)
+    ? "Loop running. Ascend blocks are enabled and may reset regular progress automatically."
+    : "Loop running. The program repeats once per second.")
+  runEngineeringScript(true)
+  engineeringLoopTimer = window.setInterval(() => {
+    if (!engineeringRunning && engineeringLoopEnabled) runEngineeringScript(true)
+  }, 1000)
+}
+
+function stopEngineeringLoop() {
+  engineeringLoopEnabled = false
+  if (engineeringLoopTimer !== null) window.clearInterval(engineeringLoopTimer)
+  engineeringLoopTimer = null
+  const button = document.getElementById("engineeringLoopButton")
+  if (button) {
+    button.textContent = "↻ Start loop"
+    button.setAttribute("aria-pressed", "false")
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadEngineeringBlocks)

@@ -90,8 +90,23 @@
 
       <section id="skillTreePanel" class="skill-tree-panel" aria-labelledby="skillTreeTitle">
         <h2 id="skillTreeTitle">Mega Fribby Skill Tree</h2>
-        <p>The Fribby Core sits at the center of a radial upgrade web, with seven branches growing outward from it, including a new Arcade Expansion branch. Each upgrade you buy on the central Ascension Path unlocks the next tier of upgrades across every outer branch. To access stronger ascension upgrades, buy the Ascension Path nodes first; outer-branch upgrades stay locked until their matching path rung is unlocked. Hover over or focus any node to inspect its effect and cost. Eternal Echo waits beyond the final rung.</p>
+        <p>The Fribby Core sits at the center of a radial upgrade web, with ten branches growing outward, including Engineering, which unlocks a Scratch-like block-coding workbench. Each upgrade you buy on the central Ascension Path unlocks the next tier of upgrades across every outer branch. To access stronger ascension upgrades, buy the Ascension Path nodes first; outer-branch upgrades stay locked until their matching path rung is unlocked. Hover over or focus any node to inspect its effect and cost. Eternal Echo waits beyond the final rung.</p>
         <div id="skillTree" class="skill-tree" aria-label="Connected ascension skill tree"></div>
+      </section>
+
+      <section id="engineeringPanel" class="engineering-panel" hidden aria-labelledby="engineeringTitle">
+        <h2 id="engineeringTitle">Engineering Workbench</h2>
+        <p>Build a program from visual blocks. Scripts use a safe set of game actions—no typing or executing JavaScript required.</p>
+        <div class="engineering-toolbar">
+          <button type="button" onclick="addEngineeringBlock()">＋ Add block</button>
+          <button type="button" onclick="runEngineeringScript()">▶ Run script</button>
+          <button type="button" onclick="saveEngineeringScript()">💾 Save script</button>
+          <button type="button" id="engineeringLoopButton" aria-pressed="false" onclick="toggleEngineeringLoop()">↻ Start loop</button>
+          <button type="button" onclick="clearEngineeringBlocks()">Clear blocks</button>
+        </div>
+        <div id="engineeringBlocks" class="engineering-blocks" aria-label="Script workspace"></div>
+        <p id="engineeringStatus" class="engineering-status" aria-live="polite">Add an action block to start building your program.</p>
+        <p class="engineering-hint">Blocks run from top to bottom. A loop repeats the whole program once per second. Saving a script with an Ascend block requires confirmation; once saved, loops may ascend automatically. Each run is capped to keep the game responsive.</p>
       </section>
 
     <section id="leaderboardArea" class="leaderboard-area">
