@@ -18,7 +18,7 @@ const skillBranches = [
   { id: "collection", name: "Minigame Collection", description: "Unlock new challenges and build a bigger arcade, one discovery at a time.", count: 12 }
 ]
 const skillNames = {
-  path: ["First Spark", "Pocketed Pouch", "Lucky Compass", "Branching Fate", "Runner's Rhythm", "Discount Glyph", "Minigame Lore", "Starbound Route", "Astral Focus", "Frugal Passage", "Ancient Knowledge", "Ascendant Heart", "Eternal Echo"],
+  path: ["First Spark", "Pocketed Pouch", "Lucky Compass", "Branching Fate", "Runner's Rhythm", "Discount Glyph", "Minigame Lore", "Starbound Route", "Astral Focus", "Frugal Passage", "Ancient Knowledge", "Ascendant Heart", "Eternal Echo: Transcendence"],
   strong: ["Reinforced Grip", "Automation Manual", "Budget Blueprint", "Spare Gear", "Compound Crew", "Double Shift", "Cannon Lathing", "Idle Logistics", "Minigame Playbook", "Torque Calibration", "Factory Foreman", "Grand Foundry", "Eternal Echo: Grand Foundry"],
   click: ["Lucky Reflex", "Steady Aim", "Split-Second", "Heavy Disc", "Double Grip", "Charged Toss", "Cannon Synergy", "Bullseye", "Muscle Memory", "Meteor Arm", "Quick Release", "Cosmic Launch", "Eternal Echo: Cosmic Launch"],
   mega: ["Packed Satchel", "Lucky Star", "Deep Reserve", "Overflowing Core", "Past Lives", "Golden Harvest", "Early Ascender", "Relic Pockets", "Singular Offering", "Echo Chamber", "Infinite Bounty", "Mega Mastery", "Eternal Echo: Mega Mastery"],
@@ -782,20 +782,20 @@ function createSkillNode(nodeData) {
   wrapper.dataset.skillId = id
   const graphNode = typeof nodeData === "string" ? getSkillGraph().find(node => node.id === id) : nodeData
   if (graphNode) {
-    const diameter = id === "path-12" ? 72 : (Number(id.split("-")[1]) === 12 ? 66 : 58)
+    const diameter = Number(id.split("-")[1]) === 12 ? 72 : 58
     wrapper.style.left = `${graphNode.x - diameter / 2}px`
     wrapper.style.top = `${graphNode.y - diameter / 2}px`
   }
   const button = document.createElement("button")
   button.type = "button"
-  button.className = "skill-node"
+  button.className = Number(id.split("-")[1]) === 12 ? "skill-node eternal-echo-node" : "skill-node"
   button.dataset.skillId = id
   button.setAttribute("aria-label", skillNodeLabel(id))
   button.onclick = () => buySkill(id)
   const icon = document.createElement("span")
   icon.className = "skill-node-icon"
   icon.setAttribute("aria-hidden", "true")
-  icon.textContent = skillNodeIconSets[branch]?.[index] || skillNodeIcons[branch] || "◇"
+  icon.textContent = index === 12 ? "◇" : (skillNodeIconSets[branch]?.[index] || skillNodeIcons[branch] || "◇")
   const name = document.createElement("span")
   name.className = "skill-node-name"
   name.hidden = true

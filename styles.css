@@ -1063,3 +1063,25 @@ body.dark-mode .skill-tree-origin.skill-web-origin { background: radial-gradient
 body.dark-mode .fribby-stats { background: #202636; color: #e6eaf2; border-color: #52617d; }
 
 .minigame-click-power-note { margin: 0 0 12px; padding: 8px 11px; border: 1px solid var(--border-color, #64748b); border-radius: 8px; background: color-mix(in srgb, var(--panel-bg, #64748b) 12%, transparent); font-size: .9rem; opacity: .92; }
+
+/* Every branch's Eternal Echo shares the central Echo's gold, diamond-marked mastery style. */
+.skill-node-wrap .skill-node.eternal-echo-node,
+.skill-node-wrap .skill-node.repeatable {
+  color: #92400e;
+  border-color: #f59e0b;
+  background: radial-gradient(circle, #fff7d6, #fcd34d);
+  box-shadow: 0 0 0 3px #f59e0b35, 0 0 22px #fbbf2466, inset 0 0 0 3px #ffffff70;
+}
+.skill-node-wrap .skill-node.eternal-echo-node .skill-node-icon,
+.skill-node-wrap .skill-node.repeatable .skill-node-icon { color: #92400e; }
+.skill-web-map .skill-node-wrap .skill-node.eternal-echo-node { width: 72px; height: 72px; min-width: 72px; min-height: 72px; flex-basis: 72px; }
+.skill-web-map .skill-node-wrap:has(.skill-node.eternal-echo-node) { width: 72px; height: 72px; min-height: 72px; }
+.skill-node-wrap .skill-node.eternal-echo-node.purchased {
+  color: #92400e; border-color: #f59e0b; background: radial-gradient(circle, #fff7d6, #fcd34d);
+}
+body.dark-mode .skill-node-wrap .skill-node.eternal-echo-node,
+body.dark-mode .skill-node-wrap .skill-node.repeatable {
+  color: #78350f; border-color: #fbbf24; background: radial-gradient(circle, #fde68a, #d97706);
+}
+body.dark-mode .skill-node-wrap .skill-node.eternal-echo-node .skill-node-icon,
+body.dark-mode .skill-node-wrap .skill-node.repeatable .skill-node-icon { color: #78350f; }
