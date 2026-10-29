@@ -739,7 +739,7 @@ function getSkillGraph() {
     }
     const count = branch === "path" ? 12 : skillNames[branch].length
     const maxIndex = Math.max(1, count - 1)
-    const radius = index === 12 && branch !== "path" ? 950 : 155 + Math.min(index, 11) * (735 / 11)
+    const radius = index === 12 && branch !== "path" ? 990 : 155 + Math.min(index, 11) * (735 / 11)
     const angle = branchAngles[branch]
     return { x: Math.round(cx + Math.cos(angle) * radius), y: Math.round(cy + Math.sin(angle) * radius) }
   }
