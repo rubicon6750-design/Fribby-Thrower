@@ -816,7 +816,7 @@ body.dark-mode .skill-node.skill-unlock-flash { box-shadow: 0 0 0 3px #6ee7b788,
 .branch-cheap { --branch-color: #e16b91; --branch-glow: #f9a8d4; }
 .branch-auto { --branch-color: #4b91d1; --branch-glow: #93c5fd; }
 .branch-mini { --branch-color: #7eaa4f; --branch-glow: #bef264; }
-.branch-arcade { --branch-color: #bb70d9; --branch-glow: #e9b8ff; }
+.branch-arcade { --branch-color: #287f8c; --branch-glow: #8ee7e7; } /* Synergy Matrix: cross-upgrade links */
 .skill-web-map {
   position: relative;
   width: 2200px;

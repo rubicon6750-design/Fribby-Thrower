@@ -14,7 +14,8 @@ const skillBranches = [
   { id: "click", name: "Clicking Power", description: "Sharper throws, critical hits, and powerful manual clicks.", count: 12 },
   { id: "mega", name: "Mega Fribbies", description: "Get more from each ascension and previous runs.", count: 12 },
   { id: "mini", name: "Minigame Lore", description: "Improve minigame rewards and make challenges pay off.", count: 12 },
-  { id: "arcade", name: "Arcade Expansion", description: "Improve arcade prizes, streaks, and challenge rewards.", count: 12 },
+  // Keep the legacy internal ID so existing saves retain their purchased nodes, but replace the minigame-focused branch with a different mechanic.
+  { id: "arcade", name: "Synergy Matrix", description: "Link click and automation upgrades so balanced builds, paired families, and cross-effects become stronger.", count: 12 },
   { id: "collection", name: "Minigame Collection", description: "Unlock new challenges and build a bigger arcade, one discovery at a time.", count: 12 },
   { id: "engineering", name: "Engineering", description: "Build Scratch-like block scripts to throw, buy upgrades, and ascend.", count: 12 }
 ]
@@ -26,7 +27,7 @@ const skillNames = {
   cheap: ["Bulk Order", "Click Coupon", "Machine Rebate", "Arcade Voucher", "Supplier Pact", "Heavy Parts Deal", "Stockpile Savings", "Automation Contract", "Precision Coupon", "Wholesale Network", "Clearance Ledger", "Cost Collapse", "Eternal Echo: Cost Collapse"],
   auto: ["Clockwork Wrist", "Oiled Bearings", "Double Pendulum", "Overtime Circuit", "Self-Feeding Line", "Turbo Thrower", "Unattended Shift", "Assembly Swarm", "Chrono Engine", "Infinite Conveyor", "Feedback Reactor", "Singularity Engine", "Eternal Echo: Singularity Engine"],
   mini: ["Practice Round", "Prize Pouch", "Pattern Sense", "Lucky Streak", "Sweep Expert", "Bonus Round", "Arcade Scholar", "Risk Assessment", "Master Player", "Grand Champion", "Hidden Cabinet", "Perfect Run", "Eternal Echo: Perfect Run"],
-  arcade: ["Cabinet Key", "Fresh Cartridge", "Bonus Stage", "Prize Circuit", "Secret Mode", "Combo Token", "Arcade Passport", "High-Score Halo", "Double Feature", "Golden Cabinet", "Endless Festival", "Arcade Mythos", "Eternal Echo: Arcade Mythos"],
+  arcade: ["Coupled Grip", "Shared Motion", "Cannon-Furnace Link", "Balance Window", "Turbo Resonance", "Dual-Fuel Engine", "Matched Output", "Counterweight", "Feedback Dividend", "Family Resonance", "Synthesis Refund", "Matrix Singularity", "Eternal Echo: Perfect Harmony"],
   collection: ["Number Scout", "Prize Practice", "Odd-One Spotter", "Sharp Eyes", "Memory Keeper", "Steady Hands", "Odds Caller", "Risk Reader", "Target Trainer", "Fast Fingers", "Word Scrambler", "Grand Arcade", "Eternal Echo: Grand Arcade"],
   engineering: ["Block Basics", "Throw Loop", "Upgrade Routine", "Smart Shopper", "Repeat Until Rich", "Ascension Protocol", "Branch Logic", "Cost Scanner", "Click Circuit", "Idle Engineer", "Macro Workshop", "Autonomous Fribby", "Eternal Echo: Infinite Program"]
 }
@@ -46,12 +47,26 @@ const skillEffects = {
   cheap: ["All regular upgrade prices -8%", "Click-focused upgrade prices -10%", "Automation upgrade prices -12%", "Minigame unlock price -20%", "All regular upgrade prices -10%", "Fribby Cannon and Mega Cannon prices -20%", "All regular upgrade prices -12%", "Auto Thrower and Turbo Thrower prices -25%", "Click-focused upgrade prices -20%", "All regular upgrade prices -14%", "All regular upgrade prices -16%", "All regular upgrade prices -20%", "All regular upgrade prices are reduced by 20%."],
   auto: ["+5 automatic throws per second", "Automatic payout +25%", "Each Auto Thrower adds an extra +1 throw/sec, up to +20", "Each Auto Thrower adds +5% automatic payout, up to +50%", "Automatic payout +15%", "Each Auto Thrower adds +10 Fribbies per automatic throw", "Every 5 automatic throws/sec adds +10% payout, up to +100%", "Each Turbo Thrower adds +2 Fribbies to automatic payout", "+25% automatic payout; every 5 Turbo Throwers adds +1 base Fribby", "Automatic payout +40%, +5 base payout, and +5 throws per second", "Each Fribby Factory adds +10% automatic payout, up to +100%", "Automatic payout +50%, +10 base payout, and +5 throws per second", "Automatic throws are 50% faster and pay 25% more."],
   mini: ["Minigame rewards +10%", "Minigame unlock prices -10%", "+5% minigame rewards per unlocked game", "Minigame rewards +15%", "Minigame rewards +25%", "Minigame rewards +20%", "Ascension reward +2% per unlocked minigame", "Minigame rewards +25%", "Minigame rewards +30%", "All minigame rewards +40%", "Minigame rewards +35%", "Minigame rewards +50% and ascension reward +10%", "All minigame rewards are increased by 50%."],
-  arcade: ["Rapid Toss reward +25%", "Odd Orbit reward +25%", "Minigame rewards +15%", "Rapid Toss rewards +25%", "Minigame unlock costs -15%", "Odd Orbit rewards +25%", "Minigame rewards +20% per two games unlocked", "All minigames grant +10% rewards", "Rapid Toss time +3 seconds", "Odd Orbit pays out double on a perfect streak", "Minigame rewards +35%", "All minigame rewards +50%", "Arcade-specific bonuses are doubled."],
+  arcade: [
+    "Each Auto Thrower level adds +1% click payout, up to +30%.",
+    "Each Extra Hand level adds +1% automatic payout, up to +30%.",
+    "Each Fribby Factory adds +1 base Fribby per click; each Fribby Cannon adds +1 base Fribby per auto throw.",
+    "When both upgrade groups are owned and their level totals differ by 3 or less, click and auto payout +25%.",
+    "Each Turbo Thrower level adds +2% click payout, up to +40%.",
+    "Every 10 levels in both click and automation upgrades grants +1 automatic throw per second, up to +3.",
+    "Each matched level across paired upgrade families adds +1% to click and auto payout, up to +30%.",
+    "The upgrade group with fewer levels gains +30% payout; a non-zero tie grants +15% to both.",
+    "Each manual throw also earns 10% of your current automatic throw reward.",
+    "Each paired upgrade family you own on both sides adds +5% to click and auto payout, up to +35%.",
+    "Buying an upgrade whose paired family you own refunds 5% of its cost.",
+    "All other Synergy Matrix effects are doubled.",
+    "All Synergy Matrix effects gain another 25% power."
+  ],
   collection: ["Unlock Quick Count", "All minigame rewards +10%", "Unlock Odd One Out", "Minigame rewards +15%", "Unlock Sum Sprint", "Minigame rewards +20%", "Unlock Color Mixer", "Minigame rewards +25%", "Unlock Disc Golf", "Minigame rewards +30%", "Unlock Word Shuffle", "All minigame rewards +50%", "All minigames grant 25% more Fribbies per unlocked minigame."],
   engineering: ["Unlock the block editor", "Run repeated throw blocks", "Buy upgrades from scripts", "Prioritize affordable upgrades", "Repeat a routine while enabled", "Allow scripts to request ascension", "Add conditional blocks to routines", "Read upgrade affordability", "Run throw sequences quickly", "Keep scripts between sessions", "Build longer block programs", "Unlock unattended routines", "Engineering scripts run 25% faster."]
 }
 const skillBranchOrder = ["auto", "cheap", "strong", "path", "click", "mega", "mini", "arcade", "collection", "engineering"]
-const skillNodeIcons = { path: "◇", strong: "▰", click: "⊕", mega: "✧", cheap: "−", auto: "↻", mini: "▦", arcade: "▤", collection: "▧", engineering: "⌘" }
+const skillNodeIcons = { path: "◇", strong: "▰", click: "⊕", mega: "✧", cheap: "−", auto: "↻", mini: "▦", arcade: "⧉", collection: "▧", engineering: "⌘" }
 const skillNodeIconSets = {
   path: Array(13).fill("◇"),
   strong: Array(13).fill("▰"),
@@ -60,7 +75,7 @@ const skillNodeIconSets = {
   cheap: Array(13).fill("−"),
   auto: Array(13).fill("↻"),
   mini: Array(13).fill("▦"),
-  arcade: Array(13).fill("▤"),
+  arcade: Array(13).fill("⧉"),
   collection: Array(13).fill("▧"),
   engineering: Array(13).fill("⌘")
 }
@@ -137,7 +152,6 @@ function getMinigameUnlockPrice() {
   let discount = hasSkill("path-9") ? 20 : 0
   if (hasSkill("mini-1")) discount += 10
   if (hasSkill("cheap-3")) discount += 20
-  if (hasSkill("arcade-4")) discount += 15
   return (minigameUnlockCost * BigInt(100 - discount) / 100n) || 1n
 }
 function addMinigameClickPowerNotes() {
@@ -156,28 +170,92 @@ function getMinigameRewardMultiplierPercent() {
   const miniBonuses = [10, 0, 0, 15, 25, 20, 0, 25, 30, 40, 35, 50]
   miniBonuses.forEach((amount, index) => { if (hasSkill(`mini-${index}`)) bonus += amount })
   if (hasSkill("mini-2")) bonus += getTotalUnlockedMinigames() * 5
-  bonus += (hasSkill("arcade-2") ? 15 : 0) + (hasSkill("arcade-6") ? Math.floor(getTotalUnlockedMinigames() / 2) * 20 : 0) + (hasSkill("arcade-7") ? 10 : 0) + (hasSkill("arcade-10") ? 35 : 0) + (hasSkill("arcade-11") ? 50 : 0)
   bonus += (hasSkill("collection-1") ? 10 : 0) + (hasSkill("collection-3") ? 15 : 0) + (hasSkill("collection-5") ? 20 : 0) + (hasSkill("collection-7") ? 25 : 0) + (hasSkill("collection-9") ? 30 : 0) + (hasSkill("collection-11") ? 50 : 0)
   if (hasSkill("mini-12")) bonus += 50
-  if (hasSkill("arcade-12")) bonus += 50
   if (hasSkill("collection-12")) bonus += 25 * getTotalUnlockedMinigames()
   return 100 + bonus
 }
 function getMinigamePayout(baseReward) {
   let bonusPercent = getMinigameRewardMultiplierPercent()
-  const activeRapidToss = document.getElementById("minigame-rapidToss") && !document.getElementById("minigame-rapidToss").hidden
-  const activeOddOrbit = document.getElementById("minigame-oddOrbit") && !document.getElementById("minigame-oddOrbit").hidden
-  if (activeRapidToss && (hasSkill("arcade-0") || hasSkill("arcade-3"))) bonusPercent += ((hasSkill("arcade-0") ? 25 : 0) + (hasSkill("arcade-3") ? 25 : 0)) * (hasSkill("arcade-12") ? 2 : 1)
-  if (activeOddOrbit && (hasSkill("arcade-1") || hasSkill("arcade-5"))) bonusPercent += ((hasSkill("arcade-1") ? 25 : 0) + (hasSkill("arcade-5") ? 25 : 0)) * (hasSkill("arcade-12") ? 2 : 1)
   return BigInt(baseReward) * BigInt(getFribbiesPerClick()) * BigInt(bonusPercent) / 100n
 }
 function getAutoThrowsPerSecond() {
   return u1Amount + u7Amount * 5 + (hasSkill("path-4") ? 5 : 0)
     + (hasSkill("auto-0") ? 5 : 0) + (hasSkill("auto-2") ? Math.min(20, u1Amount) : 0) + (hasSkill("auto-9") ? 5 : 0)
     + (hasSkill("auto-11") ? 5 : 0) + (hasSkill("auto-12") ? Math.max(1, Math.floor(u1Amount * 0.5)) : 0)
+    + getSynergyMatrixAutoThrowBonus()
 }
 function getRegularUpgradeLevelCount() {
   return u0Amount + u1Amount + u2Amount + u3Amount + u4Amount + u5Amount + u6Amount + u7Amount + u8Amount + u9Amount + u10Amount + u11Amount + u12Amount + u13Amount + u14Amount
+}
+
+// The Synergy Matrix pairs one click-focused upgrade with one automation-focused upgrade.
+// `arcade-*` remains the internal ID only for compatibility with existing local and exported saves.
+const SYNERGY_MATRIX_UPGRADE_FAMILIES = [[0, 1], [3, 2], [5, 4], [8, 6], [9, 10], [11, 12], [13, 14]]
+function getRegularUpgradeAmount(index) {
+  return [u0Amount, u1Amount, u2Amount, u3Amount, u4Amount, u5Amount, u6Amount, u7Amount, u8Amount, u9Amount, u10Amount, u11Amount, u12Amount, u13Amount, u14Amount][index] || 0
+}
+function getClickUpgradeLevelCount() {
+  return u0Amount + u3Amount + u5Amount + u8Amount + u9Amount + u11Amount + u13Amount
+}
+function getAutomationUpgradeLevelCount() {
+  return u1Amount + u2Amount + u4Amount + u6Amount + u7Amount + u10Amount + u12Amount + u14Amount
+}
+function getSynergyMatrixMatchedLevels() {
+  return SYNERGY_MATRIX_UPGRADE_FAMILIES.reduce((total, [clickIndex, autoIndex]) =>
+    total + Math.min(getRegularUpgradeAmount(clickIndex), getRegularUpgradeAmount(autoIndex)), 0)
+}
+function getSynergyMatrixOwnedFamilies() {
+  return SYNERGY_MATRIX_UPGRADE_FAMILIES.filter(([clickIndex, autoIndex]) =>
+    getRegularUpgradeAmount(clickIndex) > 0 && getRegularUpgradeAmount(autoIndex) > 0).length
+}
+function getSynergyMatrixMultiplierPercent() {
+  return 100 + (hasSkill("arcade-11") ? 100 : 0) + (hasSkill("arcade-12") ? 25 : 0)
+}
+function applySynergyMatrixMultiplier(value) {
+  return Math.floor(value * getSynergyMatrixMultiplierPercent() / 100)
+}
+function getSynergyMatrixClickBonusPercent() {
+  const clickLevels = getClickUpgradeLevelCount()
+  const autoLevels = getAutomationUpgradeLevelCount()
+  let bonus = 0
+  if (hasSkill("arcade-0")) bonus += Math.min(30, u1Amount)
+  if (hasSkill("arcade-3") && clickLevels > 0 && autoLevels > 0 && Math.abs(clickLevels - autoLevels) <= 3) bonus += 25
+  if (hasSkill("arcade-4")) bonus += Math.min(40, u7Amount * 2)
+  if (hasSkill("arcade-6")) bonus += Math.min(30, getSynergyMatrixMatchedLevels())
+  if (hasSkill("arcade-7")) {
+    if (clickLevels < autoLevels) bonus += 30
+    else if (clickLevels === autoLevels && clickLevels > 0) bonus += 15
+  }
+  if (hasSkill("arcade-9")) bonus += getSynergyMatrixOwnedFamilies() * 5
+  return applySynergyMatrixMultiplier(bonus)
+}
+function getSynergyMatrixAutoBonusPercent() {
+  const clickLevels = getClickUpgradeLevelCount()
+  const autoLevels = getAutomationUpgradeLevelCount()
+  let bonus = 0
+  if (hasSkill("arcade-1")) bonus += Math.min(30, u0Amount)
+  if (hasSkill("arcade-3") && clickLevels > 0 && autoLevels > 0 && Math.abs(clickLevels - autoLevels) <= 3) bonus += 25
+  if (hasSkill("arcade-6")) bonus += Math.min(30, getSynergyMatrixMatchedLevels())
+  if (hasSkill("arcade-7")) {
+    if (autoLevels < clickLevels) bonus += 30
+    else if (autoLevels === clickLevels && autoLevels > 0) bonus += 15
+  }
+  if (hasSkill("arcade-9")) bonus += getSynergyMatrixOwnedFamilies() * 5
+  return applySynergyMatrixMultiplier(bonus)
+}
+function getSynergyMatrixAutoThrowBonus() {
+  if (!hasSkill("arcade-5")) return 0
+  return applySynergyMatrixMultiplier(Math.min(3, Math.floor(Math.min(getClickUpgradeLevelCount(), getAutomationUpgradeLevelCount()) / 10)))
+}
+function getSynergyMatrixPurchaseRefund(index, purchaseCost) {
+  if (!hasSkill("arcade-10") || purchaseCost <= 0n) return 0n
+  const family = SYNERGY_MATRIX_UPGRADE_FAMILIES.find(([clickIndex, autoIndex]) => clickIndex === index || autoIndex === index)
+  if (!family) return 0n
+  const partnerIndex = family[0] === index ? family[1] : family[0]
+  if (getRegularUpgradeAmount(partnerIndex) <= 0) return 0n
+  // Five percent at base strength; Matrix upgrades amplify the refund too.
+  return purchaseCost * 5n * BigInt(getSynergyMatrixMultiplierPercent()) / 10000n
 }
 function getClickBonusPercent() {
   return 100
@@ -192,6 +270,7 @@ function getClickBonusPercent() {
     + (hasSkill("path-8") ? 15 : 0)
     + (hasSkill("path-11") ? 10 : 0)
     + (repeatableEchoes * 5) + (hasSkill("click-12") ? 50 : 0)
+    + getSynergyMatrixClickBonusPercent()
 }
 function getAutoBonusPercent() {
   return 100
@@ -215,6 +294,7 @@ function getAutoBonusPercent() {
     + (hasSkill("auto-11") ? 50 : 0)
     + (hasSkill("auto-12") ? 25 : 0)
     + (repeatableEchoes * 5)
+    + getSynergyMatrixAutoBonusPercent()
 }
 function refreshUpgradeLabels() {
   const labels = [
@@ -241,6 +321,7 @@ function refreshUpgradeLabels() {
 }
 function getFribbiesPerClick() {
   let base = u0Amount + 1 + u3Amount * 5 + u5Amount * 10 + u8Amount * (hasSkill("strong-6") ? 150 : 100) + u9Amount * 500 + u11Amount * 2500 + u13Amount * 10000
+  if (hasSkill("arcade-2")) base += applySynergyMatrixMultiplier(u6Amount)
   if (hasSkill("path-0")) base += 10
   if (hasSkill("path-8")) base += 0
   if (hasSkill("click-3")) base += 50
@@ -251,6 +332,7 @@ function getFribbiesPerClick() {
 }
 function getAutoThrowReward() {
   let base = 1 + u2Amount + u4Amount * 5 + u6Amount * 10 + u10Amount * 25 + u12Amount * 100 + u14Amount * 500
+  if (hasSkill("arcade-2")) base += applySynergyMatrixMultiplier(u3Amount)
   if (hasSkill("path-10")) base += 10
   if (hasSkill("auto-5")) base += u1Amount * 10
   if (hasSkill("auto-7")) base += u7Amount * 2
@@ -263,6 +345,7 @@ function getAutoThrowReward() {
 function throwFribby() {
   playSoundEffect("throwSound")
   let gain = getFribbiesPerClick()
+  if (hasSkill("arcade-8")) gain += Math.floor(getAutoThrowReward() * getSynergyMatrixMultiplierPercent() / 1000)
   const criticalChance = (hasSkill("click-0") ? 10 : 0) + (hasSkill("click-2") ? 5 : 0) + (hasSkill("click-7") ? 10 : 0)
   if (criticalChance > 0 && Math.random() * 100 < criticalChance) gain *= hasSkill("click-5") ? 5 : 3
   triggerFribbyClickEffect(gain)
@@ -279,7 +362,7 @@ function buy0() {
   const purchaseCost = getRegularUpgradeCost(u0Cost, 0)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
-   triggerRegularUpgradeEffect(0)
+   triggerRegularUpgradeEffect(0, purchaseCost)
    fribbies -= purchaseCost
    u0Amount += 1
    u0Cost = u0Cost * 3n
@@ -296,7 +379,7 @@ function buy1() {
   const purchaseCost = getRegularUpgradeCost(u1Cost, 1)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
-   triggerRegularUpgradeEffect(1)
+   triggerRegularUpgradeEffect(1, purchaseCost)
    fribbies -= purchaseCost
       u1Amount += 1
    u1Cost = (u1Cost * 3n + 1n) / 2n
@@ -314,7 +397,7 @@ function buy2() {
   const purchaseCost = getRegularUpgradeCost(u2Cost, 2)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
-   triggerRegularUpgradeEffect(2)
+   triggerRegularUpgradeEffect(2, purchaseCost)
    fribbies -= purchaseCost
       u2Amount += 1
    u2Cost = (u2Cost * 3n + 1n) / 2n
@@ -331,7 +414,7 @@ function buy3() {
   const purchaseCost = getRegularUpgradeCost(u3Cost, 3)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
-   triggerRegularUpgradeEffect(3)
+   triggerRegularUpgradeEffect(3, purchaseCost)
     fribbies -= purchaseCost
     u3Amount += 1
     u3Cost = (u3Cost * 3n + 1n) / 2n
@@ -348,7 +431,7 @@ function buy4() {
   const purchaseCost = getRegularUpgradeCost(u4Cost, 4)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
-   triggerRegularUpgradeEffect(4)
+   triggerRegularUpgradeEffect(4, purchaseCost)
     fribbies -= purchaseCost
     u4Amount += 1
     u4Cost = (u4Cost * 3n + 1n) / 2n
@@ -365,7 +448,7 @@ function buy5() {
   const purchaseCost = getRegularUpgradeCost(u5Cost, 5)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
-   triggerRegularUpgradeEffect(5)
+   triggerRegularUpgradeEffect(5, purchaseCost)
     fribbies -= purchaseCost
     u5Amount += 1
     u5Cost = (u5Cost * 3n + 1n) / 2n
@@ -382,7 +465,7 @@ function buy6() {
   const purchaseCost = getRegularUpgradeCost(u6Cost, 6)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
-   triggerRegularUpgradeEffect(6)
+   triggerRegularUpgradeEffect(6, purchaseCost)
     fribbies -= purchaseCost
     u6Amount += 1
     u6Cost = (u6Cost * 3n + 1n) / 2n
@@ -399,7 +482,7 @@ function buy7() {
   const purchaseCost = getRegularUpgradeCost(u7Cost, 7)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
-   triggerRegularUpgradeEffect(7)
+   triggerRegularUpgradeEffect(7, purchaseCost)
     fribbies -= purchaseCost
     u7Amount += 1
     u7Cost = (u7Cost * 3n + 1n) / 2n
@@ -417,7 +500,7 @@ function buy8() {
   const purchaseCost = getRegularUpgradeCost(u8Cost, 8)
   if (fribbies >= purchaseCost) {
    playSoundEffect("upgradeSound")
-   triggerRegularUpgradeEffect(8)
+   triggerRegularUpgradeEffect(8, purchaseCost)
     fribbies -= purchaseCost
     u8Amount += 1
     u8Cost = (u8Cost * 3n + 1n) / 2n
@@ -444,7 +527,7 @@ function purchaseNewRegularUpgrade(index) {
     return
   }
   playSoundEffect("upgradeSound")
-  triggerRegularUpgradeEffect(index)
+  triggerRegularUpgradeEffect(index, purchaseCost)
   fribbies -= purchaseCost
   if (index === 9) { u9Amount++; u9Cost = (u9Cost * 3n + 1n) / 2n }
   else if (index === 10) { u10Amount++; u10Cost = (u10Cost * 3n + 1n) / 2n }
@@ -664,14 +747,16 @@ function triggerFribbyClickEffect(gain) {
   window.setTimeout(() => gainPop.remove(), motionIsReduced() ? 250 : 900)
   window.setTimeout(() => button.classList.remove("fribby-click-burst"), motionIsReduced() ? 250 : 600)
 }
-function triggerRegularUpgradeEffect(index) {
+function triggerRegularUpgradeEffect(index, purchaseCost = 0n) {
+  const refund = getSynergyMatrixPurchaseRefund(index, BigInt(purchaseCost || 0))
+  if (refund > 0n) fribbies += refund
   const button = document.getElementById(`upgrade${index}`)
   if (!button) return
   button.classList.remove("regular-upgrade-purchase")
   void button.offsetWidth
   button.classList.add("regular-upgrade-purchase")
   makeSkillParticles(button, 14, [145, 165, 190, 270, 45, 52])
-  const toast = makeElement("span", "regular-upgrade-toast", "UPGRADE ACQUIRED")
+  const toast = makeElement("span", "regular-upgrade-toast", refund > 0n ? `+${formatFribbies(refund)} SYNTHESIS REFUND` : "UPGRADE ACQUIRED")
   toast.setAttribute("aria-hidden", "true")
   button.appendChild(toast)
   window.setTimeout(() => toast.remove(), motionIsReduced() ? 250 : 1100)
@@ -1145,7 +1230,7 @@ function startRapidToss() {
   clearInterval(rapidTossTimer)
   rapidTossActive = true
   rapidTossCount = 0
-  let seconds = 10 + (hasSkill("arcade-8") ? 3 : 0)
+  let seconds = 10
   const start = document.getElementById("rapidTossStart")
   const tap = document.getElementById("rapidTossTap")
   const status = document.getElementById("rapidTossStatus")
@@ -1183,7 +1268,6 @@ function playOddOrbit(prediction) {
   if (prediction === result) {
     oddOrbitStreak++
     let reward = getMinigamePayout(150)
-    if (hasSkill("arcade-9") && oddOrbitStreak >= 3) reward *= 2n
     fribbies += reward
     updateFribby()
     playSoundEffect("minigameCompleteSound")
