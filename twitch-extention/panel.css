@@ -1,0 +1,21 @@
+:root { color-scheme: dark light; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; background: transparent; color: var(--color-text, #f2f2f2); }
+.panel { padding: 16px; border-radius: 14px; background: #17171d; color: #f3f3f8; border: 1px solid #373744; }
+.header { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
+.mark { display: grid; place-items: center; width: 42px; height: 42px; flex: 0 0 42px; border-radius: 12px; color: white; font-size: 24px; font-weight: 900; background: linear-gradient(145deg, #a78bfa, #6d5bd0); box-shadow: 0 4px 18px #8065dc55; }
+.heading { min-width: 0; flex: 1; }
+h1 { margin: 0; font-size: 17px; line-height: 1.25; }
+.eyebrow { margin: 3px 0 0; font-size: 10px; font-weight: 800; letter-spacing: .16em; color: #aaa6c2; }
+.live-dot { padding: 4px 7px; border-radius: 5px; font-size: 10px; letter-spacing: .08em; font-weight: 800; color: #ffdfe3; background: #8f263b; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.stat { min-width: 0; padding: 13px; border-radius: 10px; background: #24242d; border: 1px solid #343440; }
+.stat.primary { border-color: #6e5bd1; background: linear-gradient(145deg, #302a48, #24242d); }
+.stat.wide { grid-column: 1 / -1; }
+.label { display: block; margin-bottom: 6px; font-size: 12px; color: #bbb8ca; }
+.stat strong { display: block; overflow-wrap: anywhere; font-size: clamp(20px, 5vw, 27px); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.primary strong { color: #c5b8ff; }
+.status { min-height: 2.4em; margin: 13px 0 0; color: #c5c0d8; font-size: 12px; line-height: 1.45; overflow-wrap: anywhere; }
+.updated { margin: 3px 0 0; color: #9692a7; font-size: 11px; }
+footer { margin-top: 12px; padding-top: 10px; border-top: 1px solid #343440; font-size: 11px; color: #9692a7; }
+@media (prefers-color-scheme: light) { body { color: #222; } .panel { background: #fff; color: #252433; border-color: #e0ddeb; } .eyebrow, .label, .status, .updated, footer { color: #6e687f; } .stat { background: #f7f5fc; border-color: #e5e0f3; } .stat.primary { background: #f0ebff; } .primary strong { color: #6145c6; } }

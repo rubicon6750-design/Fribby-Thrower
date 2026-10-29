@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fribby Thrower Extension Setup</title>
+  <link rel="stylesheet" href="config.css">
+  <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+  <script src="config.js" defer></script>
+</head>
+<body>
+  <main class="config-card">
+    <h1>Fribby Thrower Stats Setup</h1>
+    <p>This key links the stats from your game to this Twitch panel. It is a matching ID, not a password.</p>
+    <form id="configForm">
+      <label for="streamKey">Stream Link Key</label>
+      <input id="streamKey" name="streamKey" type="text" maxlength="80" autocomplete="off" spellcheck="false" placeholder="Click Generate Key" required>
+      <div class="actions">
+        <button id="generateKey" type="button" class="secondary">Generate Key</button>
+        <button id="saveConfig" type="submit" disabled>Save Configuration</button>
+      </div>
+    </form>
+    <p id="configStatus" class="status" role="status" aria-live="polite">Connecting to Twitch…</p>
+    <ol>
+      <li>Click <strong>Generate Key</strong>, then <strong>Save Configuration</strong>.</li>
+      <li>Copy the key above into Fribby Thrower → Settings → Twitch Extension Stats.</li>
+      <li>Click <strong>Connect Twitch Stats</strong> in the game.</li>
+    </ol>
+  </main>
+</body>
+</html>
