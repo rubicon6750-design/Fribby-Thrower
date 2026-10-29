@@ -604,13 +604,16 @@ function skillIndexToId(index) {
   if (index === 82) return "auto-11"
   if (index === 83) return "mini-10"
   if (index === 84) return "mini-11"
-  if (index >= 109 && index < 117) return ["strong-12", "click-12", "mega-12", "cheap-12", "auto-12", "mini-12", "arcade-12", "collection-12"][index - 109]
+  // Branch-end Eternal Echo upgrades occupy legacy bit positions 109-117.
+  if (index >= 109 && index <= 116) return ["strong-12", "click-12", "mega-12", "cheap-12", "auto-12", "mini-12", "arcade-12", "collection-12"][index - 109]
+  if (index === 117) return "engineering-12"
+  if (index >= 118 && index < 130) return `engineering-${index - 118}`
   if (index >= 85 && index < 97) return `arcade-${index - 85}`
   if (index >= 97 && index < 109) return `collection-${index - 97}`
   return null
 }
 function skillIdToIndex(id) {
-  const match = /^(path|strong|click|mega|cheap|auto|mini|arcade|collection)-(\d+)$/.exec(id)
+  const match = /^(path|strong|click|mega|cheap|auto|mini|arcade|collection|engineering)-(\d+)$/.exec(id)
   if (!match) return -1
   const number = Number(match[2])
   if (match[2] === "12" && ["strong", "click", "mega", "cheap", "auto", "mini", "arcade", "collection", "engineering"].includes(match[1])) return 109 + ["strong", "click", "mega", "cheap", "auto", "mini", "arcade", "collection", "engineering"].indexOf(match[1])
@@ -618,6 +621,7 @@ function skillIdToIndex(id) {
   if (match[1] === "mini" && number >= 10 && number < 12) return 83 + number - 10
   if (match[1] === "arcade") return number >= 0 && number < 12 ? 85 + number : -1
   if (match[1] === "collection") return number >= 0 && number < 12 ? 97 + number : -1
+  if (match[1] === "engineering") return number >= 0 && number < 12 ? 118 + number : -1
   const offset = { path: 0, strong: 13, click: 25, mega: 37, cheap: 49, auto: 61, mini: 71 }[match[1]]
   const limit = { path: 13, strong: 12, click: 12, mega: 12, cheap: 12, auto: 10, mini: 10 }[match[1]]
   return number >= 0 && number < limit ? offset + number : -1
@@ -2739,7 +2743,7 @@ function fieldsToSaveData(decoded) {
   const maskIndex = tail + 4
   const mask = decoded.length > maskIndex ? toBigIntAmount(decoded[maskIndex]) : 0n
   const skillIds = decoded.length > maskIndex
-    ? Array.from({ length: 97 }, (_, index) => (mask & (1n << BigInt(index))) ? skillIndexToId(index) : null).filter(Boolean)
+    ? Array.from({ length: 130 }, (_, index) => (mask & (1n << BigInt(index))) ? skillIndexToId(index) : null).filter(Boolean)
     : []
   const legacyEchoLevel = skillIds.includes("path-12") ? 1 : 0
   return {
