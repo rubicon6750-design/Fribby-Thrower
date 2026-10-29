@@ -2310,6 +2310,11 @@ document.addEventListener("DOMContentLoaded", () => {
 const SUPABASE_URL = "https://soofisuqqwszdhqxiqzw.supabase.co"
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_r68LSwAd5IFOdsI9sm31Gg_cx2-DmSe"
 const LEADERBOARD_TABLE = "fribby_leaderboard"
+const TWITCH_STATS_TABLE = "fribby_stream_stats"
+const TWITCH_STREAM_KEY_STORAGE = "fribbyTwitchStreamKey"
+let twitchStreamKey = ""
+let twitchStatsPublishTimer = null
+let twitchStatsPublishBusy = false
 let leaderboardClient = null
 let leaderboardAdminClient = null
 let leaderboardUserId = null
@@ -2355,9 +2360,90 @@ async function initializeLeaderboard() {
     if (status) status.textContent = "Connected! Choose a player name and submit your score."
     await checkLeaderboardAdmin()
     await refreshLeaderboard()
+    startTwitchStatsPublisher()
   } catch (error) {
     if (status) status.textContent = "Couldn't connect to the leaderboard. Check Supabase settings and anonymous sign-ins."
     console.error("Leaderboard initialization failed:", error)
+  }
+}
+
+function initializeTwitchStatsSettings() {
+  try { twitchStreamKey = String(localStorage.getItem(TWITCH_STREAM_KEY_STORAGE) || "").trim() } catch (error) {}
+  const input = document.getElementById("twitchStreamKey")
+  const status = document.getElementById("twitchStatsStatus")
+  if (input) input.value = twitchStreamKey
+  if (status && twitchStreamKey) status.textContent = "Stream key saved. Waiting for the game's Supabase connection…"
+}
+
+function saveTwitchStreamKey() {
+  const input = document.getElementById("twitchStreamKey")
+  const status = document.getElementById("twitchStatsStatus")
+  const key = String(input?.value || "").trim()
+  if (key.length < 8 || key.length > 80 || !/^[a-zA-Z0-9_-]+$/.test(key)) {
+    if (status) status.textContent = "Enter the Stream Link Key from Twitch config (8–80 letters, numbers, underscores, or hyphens)."
+    return
+  }
+  twitchStreamKey = key
+  try { localStorage.setItem(TWITCH_STREAM_KEY_STORAGE, key) } catch (error) {
+    if (status) status.textContent = "Browser storage is blocked, so the key could not be saved."
+    return
+  }
+  if (status) status.textContent = leaderboardClient && leaderboardUserId
+    ? "Key saved. Sending your current stats…"
+    : "Key saved. Waiting for Supabase sign-in to finish…"
+  startTwitchStatsPublisher()
+  publishTwitchStats()
+}
+
+function clearTwitchStreamKey() {
+  twitchStreamKey = ""
+  if (twitchStatsPublishTimer !== null) window.clearInterval(twitchStatsPublishTimer)
+  twitchStatsPublishTimer = null
+  try { localStorage.removeItem(TWITCH_STREAM_KEY_STORAGE) } catch (error) {}
+  const input = document.getElementById("twitchStreamKey")
+  const status = document.getElementById("twitchStatsStatus")
+  if (input) input.value = ""
+  if (status) status.textContent = "Disconnected. This browser will stop publishing stats to Twitch."
+}
+
+function startTwitchStatsPublisher() {
+  if (twitchStatsPublishTimer !== null) window.clearInterval(twitchStatsPublishTimer)
+  if (!twitchStreamKey || !leaderboardClient || !leaderboardUserId) return
+  publishTwitchStats()
+  twitchStatsPublishTimer = window.setInterval(publishTwitchStats, 5000)
+}
+
+async function publishTwitchStats() {
+  if (twitchStatsPublishBusy || !twitchStreamKey || !leaderboardClient || !leaderboardUserId) return
+  twitchStatsPublishBusy = true
+  const status = document.getElementById("twitchStatsStatus")
+  try {
+    const payload = {
+      stream_key: twitchStreamKey,
+      user_id: leaderboardUserId,
+      fribbies: fribbies.toString(),
+      mega_fribbies: megaFribbies.toString(),
+      ascension_count: Math.max(0, Math.floor(Number(ascensionCount) || 0)),
+      updated_at: new Date().toISOString()
+    }
+    const { error } = await leaderboardClient
+      .from(TWITCH_STATS_TABLE)
+      .upsert(payload, { onConflict: "stream_key" })
+    if (error) throw error
+    if (status) status.textContent = "Connected! Your Fribbies, Mega Fribbies, and ascensions update about every 5 seconds while this game is open."
+  } catch (error) {
+    if (status) status.textContent = "Could not publish stats. Run the SQL in README-TWITCH-EXTENSION-SETUP.txt in your Supabase SQL Editor, and check that anonymous sign-ins are enabled."
+    console.error("Twitch stats publishing failed:", error)
+    // Avoid hammering Supabase if the table or its policies have not been created yet.
+    if (twitchStatsPublishTimer !== null) {
+      window.clearInterval(twitchStatsPublishTimer)
+      twitchStatsPublishTimer = window.setTimeout(() => {
+        twitchStatsPublishTimer = null
+        startTwitchStatsPublisher()
+      }, 30000)
+    }
+  } finally {
+    twitchStatsPublishBusy = false
   }
 }
 
@@ -2624,6 +2710,7 @@ async function removeLeaderboardPlayer(userId, playerName) {
   }
 }
 
+document.addEventListener("DOMContentLoaded", initializeTwitchStatsSettings)
 document.addEventListener("DOMContentLoaded", initializeLeaderboard)
 
 /* -------------------- SAVE FILE EXPORT / IMPORT --------------------

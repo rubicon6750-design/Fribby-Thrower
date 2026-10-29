@@ -45,6 +45,15 @@
         <button type="button" class="wipe-save" onclick="wipeSave()">Wipe Save</button>
         <input id="importSaveFile" type="file" accept=".txt,.json,text/plain,application/json" hidden onchange="importSaveFile(event)">
         <p id="saveStatus" role="status" aria-live="polite">Autosave is ready.</p>
+        <section class="twitch-stats-settings" aria-labelledby="twitchStatsTitle">
+          <h3 id="twitchStatsTitle">Twitch Extension Stats</h3>
+          <p>Paste the same Stream Link Key saved in your Twitch Extension configuration to publish this game's stats.</p>
+          <label for="twitchStreamKey">Stream Link Key</label>
+          <input id="twitchStreamKey" type="text" maxlength="80" autocomplete="off" spellcheck="false" placeholder="Paste the key from Twitch config">
+          <button type="button" onclick="saveTwitchStreamKey()">Connect Twitch Stats</button>
+          <button type="button" onclick="clearTwitchStreamKey()">Disconnect Twitch Stats</button>
+          <p id="twitchStatsStatus" role="status" aria-live="polite">Not connected. Configure the Twitch Extension first.</p>
+        </section>
       </div>
     </div>
     <main class="clicker-area">

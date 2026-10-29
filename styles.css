@@ -1179,3 +1179,28 @@ body.dark-mode .skill-node-wrap .skill-node.repeatable .skill-node-icon { color:
 }
 
 .branch-engineering { --branch-color: #22c55e; --branch-glow: #bbf7d0; }
+
+
+/* Twitch Extension stats publisher */
+.twitch-stats-settings {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color, #777);
+  min-width: 0;
+}
+.twitch-stats-settings h3, .twitch-stats-settings p { margin: 0; }
+.twitch-stats-settings p { font-size: 0.88rem; line-height: 1.4; }
+.twitch-stats-settings label { font-size: 0.9rem; font-weight: 600; }
+.twitch-stats-settings input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 0.6rem;
+  border: 1px solid var(--border-color, #777);
+  border-radius: 0.4rem;
+  background: var(--input-bg, Canvas);
+  color: var(--text-color, CanvasText);
+}
+#twitchStatsStatus { overflow-wrap: anywhere; }
