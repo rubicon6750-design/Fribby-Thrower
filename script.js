@@ -628,8 +628,19 @@ function skillIdToIndex(id) {
 }
 function isRepeatableSkillId(id) { return id === "path-12" }
 function hasAllCoreSkills() {
-  return pathSkillCount() === 12
-    && skillBranches.filter(branch => branch.id !== "path").every(branch => countSkills(branch.id) === branch.count)
+  // Eternal Echo sits at the 12 o'clock end of the web. Require every
+  // ordinary node (0–11) in every branch explicitly; counting IDs can be
+  // fooled by legacy/extra Eternal Echo IDs or partially migrated saves.
+  for (let index = 0; index < 12; index++) {
+    if (!purchasedSkills.has(`path-${index}`)) return false
+  }
+  for (const branch of skillBranches) {
+    if (branch.id === "path") continue
+    for (let index = 0; index < 12; index++) {
+      if (!purchasedSkills.has(`${branch.id}-${index}`)) return false
+    }
+  }
+  return true
 }
 function repeatableEchoCost() {
   return 10n * (3n ** BigInt(repeatableEchoes))
@@ -1016,7 +1027,9 @@ function renderSkillTree() {
   updateSkillTreeButtons()
 }
 function isSkillAvailable(id) {
-  if (isRepeatableSkillId(id)) return hasAllCoreSkills() && repeatableEchoes < MAX_REPEATABLE_ECHOES
+  if (isRepeatableSkillId(id)) {
+    return hasAllCoreSkills() && repeatableEchoes < MAX_REPEATABLE_ECHOES
+  }
   if (purchasedSkills.has(id)) return false
   getSkillGraph()
   const node = cachedSkillGraphById.get(id)
@@ -1092,7 +1105,11 @@ function updateSkillTreeButtons() {
 } 
 function buySkill(id) {
   if (isRepeatableSkillId(id)) {
-    if (!isSkillAvailable(id)) return
+    if (!isSkillAvailable(id)) {
+      playSoundEffect("upgradeFailSound")
+      updateSkillTreeButtons()
+      return
+    }
     const cost = repeatableEchoCost()
     if (megaFribbies < cost) { playSoundEffect("upgradeFailSound"); return }
     megaFribbies -= cost
